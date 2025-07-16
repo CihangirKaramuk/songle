@@ -270,3 +270,132 @@ input:checked + .slider:before {
     max-width: 100%;
   }
 }
+.toast-success {
+  position: fixed;
+  bottom: 36px;
+  right: -350px;
+  min-width: 180px;
+  max-width: 340px;
+  background: #6c5ce7;
+  color: #fff;
+  padding: 16px 36px;
+  border-radius: 14px 32px 32px 14px;
+  box-shadow: 0 4px 28px rgba(80, 67, 183, 0.15);
+  font-size: 16px;
+  z-index: 888;
+  opacity: 0;
+  pointer-events: none;
+  transition: right 0.5s cubic-bezier(.7,0,.3,1), opacity 0.22s;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+body.light .toast-success {
+  background: #fff;
+  color: #6c5ce7;
+  border: 1px solid #6c5ce7;
+}
+.toast-success.show {
+  right: 36px;
+  opacity: 1;
+  pointer-events: auto;
+}
+.toast-success.hide {
+  right: -350px;
+  opacity: 0;
+}
+.modal-onay {
+  display: none;
+  position: fixed;
+  left: 0; top: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(24,21,42,0.45);
+  z-index: 999;
+  justify-content: center;
+  align-items: center;
+}
+.modal-onay .modal-icerik {
+  background: #242043;
+  color: #fff;
+  padding: 36px 36px 28px 36px;
+  border-radius: 22px;
+  box-shadow: 0 8px 36px 0 rgba(100,90,220,0.14);
+  min-width: 240px;
+  max-width: 90vw;
+  text-align: center;
+  animation: modalPop 0.25s cubic-bezier(.7,0,.3,1);
+}
+@keyframes modalPop {
+  0% { transform: scale(0.9); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+body.light .modal-onay .modal-icerik {
+  background: #fff;
+  color: #6c5ce7;
+  border: 1px solid #6c5ce7;
+}
+.modal-btnlar {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  margin-top: 18px;
+}
+.btn-evet, .btn-hayir {
+  font-size: 16px;
+  padding: 8px 22px;
+  border-radius: 16px;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s, color 0.2s;
+}
+.btn-evet {
+  background: #d72660;
+  color: #fff;
+}
+.btn-evet:hover { background: #a02d3c; }
+.btn-hayir {
+  background: #6c5ce7;
+  color: #fff;
+}
+body.light .btn-hayir {
+  background: #ece5fc;
+  color: #6c5ce7;
+  border: 1px solid #6c5ce7;
+}
+.btn-hayir:hover { background: #a29bfe; color: #fff;}
+
+.toast-delete {
+  position: fixed;
+  top: 36px;
+  right: -350px;
+  min-width: 180px;
+  max-width: 340px;
+  background: #d72660;
+  color: #fff;
+  padding: 16px 36px;
+  border-radius: 14px 32px 32px 14px;
+  box-shadow: 0 4px 28px rgba(215,38,96,0.15);
+  font-size: 16px;
+  z-index: 2000;
+  opacity: 0;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: right 0.5s cubic-bezier(.7,0,.3,1), opacity 0.22s;
+}
+body.light .toast-delete {
+  background: #fff;
+  color: #d72660;
+  border: 1px solid #d72660;
+}
+.toast-delete.show {
+  right: 36px;
+  opacity: 1;
+  pointer-events: auto;
+}
+.toast-delete.hide {
+  right: -350px;
+  opacity: 0;
+}

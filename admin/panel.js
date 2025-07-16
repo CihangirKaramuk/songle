@@ -1,6 +1,21 @@
 let sarkiListesi = JSON.parse(localStorage.getItem("sarkilar")) || [];
 let duzenlenenIndex = null;
 let siralamaArtan = true;
+let silinecekIndex = null;
+
+function showSuccessToast(msg) {
+  // Sadece "Şarkı Ekle" sekmesi aktifse göster
+  if (!document.getElementById("ekle").classList.contains("active")) return;
+  const toast = document.getElementById("toast-success");
+  toast.textContent = msg;
+  toast.classList.add("show");
+  toast.classList.remove("hide");
+  clearTimeout(window.toastSuccessTimeout);
+  window.toastSuccessTimeout = setTimeout(() => {
+    toast.classList.add("hide");
+    toast.classList.remove("show");
+  }, 3000);
+}
 
 function guncelleListe() {
   const arama = document.getElementById("aramaInput")?.value?.toLowerCase() || "";
@@ -20,32 +35,21 @@ function guncelleListe() {
     return siralamaArtan ? sanatciA.localeCompare(sanatciB) : sanatciB.localeCompare(sanatciA);
   });
 
-filtrelenmisListe.forEach((sarki) => {
-  const li = document.createElement("li");
-
-  li.innerHTML = `
-    [${sarki.kategori}] ${sarki.cevap}
-    <div class="btn-group">
-      <button class="duzenleBtn">✏️</button>
-      <button class="silBtn">🗑️</button>
-      ${sarki.audio ? '<span class="audio-var">🎵</span>' : ''}
-    </div>
-  `;
-
-  const duzenleBtn = li.querySelector(".duzenleBtn");
-  const silBtn = li.querySelector(".silBtn");
-
-  duzenleBtn.addEventListener("click", () => {
-    sarkiDuzenleManual(sarki);
+  filtrelenmisListe.forEach((sarki, index) => {
+    const li = document.createElement("li");
+    li.innerHTML = `
+      [${sarki.kategori}] ${sarki.cevap}
+      <div class="btn-group">
+        <button class="duzenleBtn" onclick='sarkiDuzenleManual(${JSON.stringify(sarki)})'>✏️</button>
+        <button class="silBtn" onclick="sarkiSil(${index})">🗑️</button>
+        ${sarki.audio ? '<span class="audio-var">🎵</span>' : ''}
+      </div>
+    `;
+    ul.appendChild(li);
   });
 
-  silBtn.addEventListener("click", () => {
-    const index = sarkiListesi.findIndex(s => s.cevap === sarki.cevap && s.kategori === sarki.kategori);
-    if (index !== -1) sarkiSil(index);
-  });
-
-  ul.appendChild(li);
-});
+  document.getElementById("duzenleFormu").style.display = "none";
+}
 
 function sarkiDuzenleManual(secilenSarki) {
   const index = sarkiListesi.findIndex(s => s.cevap === secilenSarki.cevap && s.kategori === secilenSarki.kategori);
@@ -64,33 +68,14 @@ function sarkiDuzenleManual(secilenSarki) {
 }
 
 
-
-  document.getElementById("duzenleFormu").style.display = "none";
-}
-
-function sarkiSil(index) {
-  sarkiListesi.splice(index, 1);
-  localStorage.setItem("sarkilar", JSON.stringify(sarkiListesi));
-  guncelleListe();
-}
-
 function sarkiDuzenle(index) {
   const sarki = sarkiListesi[index];
-  function sarkiDuzenleManual(secilenSarki) {
-  const index = sarkiListesi.findIndex(s => s.cevap === secilenSarki.cevap && s.kategori === secilenSarki.kategori);
-  if (index === -1) {
-    alert("Şarkı bulunamadı.");
-    return;
-  }
-  duzenlenenIndex = index;
+  const [sanatci, sarkiAdi] = sarki.cevap.split(" - ");
 
-  const [sanatci, sarkiAdi] = secilenSarki.cevap.split(" - ");
   document.getElementById("duzenleSanatci").value = sanatci;
   document.getElementById("duzenleSarki").value = sarkiAdi;
-  document.getElementById("duzenleKategori").value = secilenSarki.kategori;
+  document.getElementById("duzenleKategori").value = sarki.kategori;
   document.getElementById("duzenleFormu").style.display = "block";
-}
-
 
   duzenlenenIndex = index;
 }
@@ -148,6 +133,8 @@ document.getElementById("ekleBtn").addEventListener("click", () => {
     document.getElementById("sanatciAdi").value = "";
     document.getElementById("kategori").value = "";
     document.getElementById("mp3File").value = "";
+
+    showSuccessToast('✅ Şarkı başarıyla eklendi!'); // ← işte burası!
 
     guncelleListe();
   };
@@ -218,3 +205,82 @@ window.addEventListener("load", () => {
     guncelleListe();
   });
 });
+
+  // "Evet" butonuna tıklanınca çalışır
+  document.getElementById("btn-evet").onclick = function() {
+    if (silinecekIndex !== null) {
+      sarkiListesi.splice(silinecekIndex, 1);
+      localStorage.setItem("sarkilar", JSON.stringify(sarkiListesi));
+      guncelleListe();
+      silinecekIndex = null;
+    }
+    document.getElementById("modal-onay").style.display = "none";
+  };
+
+  // "Hayır" butonuna tıklanınca çalışır
+  document.getElementById("btn-hayir").onclick = function() {
+    document.getElementById("modal-onay").style.display = "none";
+    silinecekIndex = null;
+  };
+
+  // Modalın dışına tıklayınca da kapanır
+  document.getElementById("modal-onay").onclick = function(e) {
+    if (e.target === this) {
+      this.style.display = "none";
+      silinecekIndex = null;
+    }
+  };
+
+document.getElementById("modal-onay").onclick = function(e) {
+  if (e.target === this) {
+    this.style.display = "none";
+    silinecekIndex = null;
+  }
+};
+
+// Şarkı silme butonuna basınca çalışır
+function sarkiSil(index) {
+  if (!document.getElementById("liste").classList.contains("active")) return;
+  silinecekIndex = index;
+  document.getElementById("modal-onay").style.display = "flex";
+  document.getElementById("modal-msg").textContent = "Şarkıyı silmek istediğine emin misin?";
+}
+
+// "Evet" butonuna tıklanınca çalışır
+document.getElementById("btn-evet").onclick = function() {
+  if (silinecekIndex !== null) {
+    sarkiListesi.splice(silinecekIndex, 1);
+    localStorage.setItem("sarkilar", JSON.stringify(sarkiListesi));
+    guncelleListe();
+    silinecekIndex = null;
+  }
+  document.getElementById("modal-onay").style.display = "none";
+  showDeleteToast('🗑️ Şarkı silindi!');
+};
+
+// "Hayır" butonuna tıklanınca çalışır
+document.getElementById("btn-hayir").onclick = function() {
+  document.getElementById("modal-onay").style.display = "none";
+  silinecekIndex = null;
+};
+
+// Modalın dışına tıklayınca da kapanır
+document.getElementById("modal-onay").onclick = function(e) {
+  if (e.target === this) {
+    this.style.display = "none";
+    silinecekIndex = null;
+  }
+};
+
+// Silme bildirimi (sağ üstte çıkan)
+function showDeleteToast(msg) {
+  const toast = document.getElementById("toast-delete");
+  toast.textContent = msg;
+  toast.classList.add("show");
+  toast.classList.remove("hide");
+  clearTimeout(window.toastDeleteTimeout);
+  window.toastDeleteTimeout = setTimeout(() => {
+    toast.classList.add("hide");
+    toast.classList.remove("show");
+  }, 3000);
+}
