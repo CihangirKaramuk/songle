@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Songle</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- 🔙 Geri Dön Butonu -->
+  <button class="geri-btn" id="geriBtn" style="display: none;">← Geri Dön</button>
+
+  <!-- 🎮 Giriş Ekranı -->
+  <div class="container">
+    <h1 class="logo">SONGLE</h1>
+    <p class="slogan">Şarkıyı tahmin et. Atmosferi hisset.</p>
+
+    <!-- Buton üstte -->
+    <button class="start-btn">Oynamaya Başla</button>
+
+    <!-- Dropdown altta -->
+    <div class="custom-dropdown">
+      <div class="dropdown-selected">Kategori Seç</div>
+      <div class="dropdown-options">
+        <div class="option" data-value="turkce">Türkçe Karışık</div>
+        <div class="option" data-value="yabanci">Yabancı Karışık</div>
+      </div>
+    </div>
+
+    <p class="alt-yazi">Her gün yeni şarkılar. Tahmin et, puan topla, zirveye oyna!</p>
+  </div>
+
+  <!-- 🎮 Oyun Ekranı (başlangıçta gizli) -->
+  <div class="game-screen" style="display: none;">
+    <h2 class="oyun-baslik">Kategori: <span id="secili-kategori">-</span></h2>
+
+    <div id="zamanGoster" class="zaman-sayaci">Kalan Süre: 30</div>
+
+    <!-- YENİ ŞARKI BAR ALANI -->
+<div id="song-bar" class="neumorphic-bar">
+  <span class="music-icon" id="musicNote">
+  <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+    <g>
+      <ellipse cx="19" cy="42" rx="8" ry="6" fill="#fff"/>
+      <ellipse cx="38" cy="33" rx="6" ry="4.5" fill="#fff"/>
+      <rect x="24" y="17" width="4" height="25" rx="1.7" fill="#fff"/>
+      <rect x="41" y="17" width="3" height="16" rx="1.1" fill="#fff"/>
+      <rect x="27" y="20" width="16" height="3.5" rx="1.7" fill="#fff" transform="rotate(-15 27 20)"/>
+    </g>
+  </svg>
+</span>
+  <div class="progress-container">
+    <div class="progress-bar-bg">
+      <div class="progress-bar" id="progressBar"></div>
+      <div class="progress-glow" id="progressGlow"></div>
+    </div>
+  </div>
+  <button class="replay-btn" id="replayBtn" aria-label="Tekrar Çal">
+  <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
+    <path d="M7 17c0-5.5 4.5-10 10-10 2.4 0 4.6 0.9 6.3 2.4" stroke="#fff" stroke-width="2" fill="none"/>
+    <polygon points="22,6 27,8 24,12" fill="#fff"/>
+    <path d="M27 17c0 5.5-4.5 10-10 10-2.4 0-4.6-0.9-6.3-2.4" stroke="#fff" stroke-width="2" fill="none"/>
+    <polygon points="12,28 7,26 10,22" fill="#fff"/>
+  </svg>
+</button>
+
+<!-- Ses kontrol alanı -->
+<div class="volume-control">
+  <button class="volume-btn" id="volumeBtn" aria-label="Ses">
+    <!-- Modern hoparlör SVG ikonu -->
+    <svg width="32" height="32" viewBox="0 0 28 28" fill="none">
+      <path d="M4 10v8h6l6 5V3l-6 5H4z" fill="#fff"/>
+      <path d="M20 9a5 5 0 0 1 0 10" stroke="#fff" stroke-width="2" fill="none"/>
+    </svg>
+  </button>
+  <div class="volume-slider-container">
+    <input type="range" min="0" max="1" step="0.01" value="1" class="volume-slider" id="volumeSlider" orient="vertical">
+  </div>
+</div>
+  <audio id="audio-player"></audio>
+</div>
+
+<div class="sarki-kutusu"></div>
+
+<input type="text" placeholder="Tahminini yaz..." class="tahmin-input" />
+
+    <button class="tahmin-gonder">Tahmin Et</button>
+  </div>
+
+  <script src="script.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Panel</title>
+  <link rel="stylesheet" href="panel-style.css" />
+</head>
+<body id="panelBody">
+  <div class="admin-panel">
+    <div class="sidebar">
+      <div class="logo">Songle 🎧</div>
+      <ul class="menu">
+        <li class="menu-item active" data-section="ekle">🎵 Şarkı Ekle</li>
+        <li class="menu-item" data-section="liste">📋 Şarkı Listesi</li>
+        <li class="menu-item" data-section="ayarlar">⚙️ Ayarlar</li>
+        <li class="menu-item" onclick="logout()">🚪 Çıkış</li>
+      </ul>
+    </div>
+
+    <div class="main-content">
+      <!-- Tema Geçişi -->
+      <div class="theme-toggle">
+        <label class="switch">
+          <input type="checkbox" id="themeToggle">
+          <span class="slider"></span>
+        </label>
+        <span id="temaLabel">🌙 Dark</span>
+      </div>
+
+      <!-- Şarkı Ekle -->
+      <section id="ekle" class="panel-section active">
+        <h1>Yeni Şarkı Ekle</h1>
+        <div class="ekle-formu">
+          <input type="text" id="sanatciAdi" placeholder="Sanatçı Adı" />
+          <input type="text" id="sarkiAdi" placeholder="Şarkı Adı" />
+          <select id="kategori">
+            <option value="turkce">Türkçe</option>
+            <option value="yabanci">Yabancı</option>
+          </select>
+          <!-- MP3 Dosyası input'u eklendi (ZORUNLU) -->
+          <input type="file" id="mp3File" accept="audio/mpeg" required />
+          <button id="ekleBtn">Şarkıyı Ekle</button>
+        </div>
+      </section>
+
+      <!-- Şarkı Listesi -->
+      <section id="liste" class="panel-section">
+        <h1>Eklenen Şarkılar</h1>
+        <select id="kategoriFiltre">
+          <option value="tum">Tüm Kategoriler</option>
+          <option value="turkce">Türkçe</option>
+          <option value="yabanci">Yabancı</option>
+        </select>
+        <input type="text" id="aramaInput" placeholder="Şarkı veya sanatçı ara..." />
+        <button id="siralaBtn">🔼 A-Z Sırala</button>
+        <ul id="sarkiListesi"></ul>
+        <div class="duzenle-formu" id="duzenleFormu" style="display: none;">
+          <h2>Şarkı Düzenle</h2>
+          <input type="text" id="duzenleSanatci" placeholder="Yeni Sanatçı Adı" />
+          <input type="text" id="duzenleSarki" placeholder="Yeni Şarkı Adı" />
+          <select id="duzenleKategori">
+            <option value="turkce">Türkçe</option>
+            <option value="yabanci">Yabancı</option>
+          </select>
+          <button id="kaydetBtn">Kaydet</button>
+        </div>
+      </section>
+
+      <!-- Ayarlar -->
+      <section id="ayarlar" class="panel-section">
+        <h1>Ayarlar</h1>
+        <p>Yeni ayarlar buraya eklenecek...</p>
+      </section>
+    </div>
+  </div>
+  <script src="panel.js"></script>
+</body>
+</html>
