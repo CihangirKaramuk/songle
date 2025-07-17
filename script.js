@@ -3,6 +3,8 @@ let sarkiListesi = JSON.parse(localStorage.getItem("sarkilar")) || [];
 let soruListesi = [];
 let kullanilanSarkilar = [];
 let soruIndex = 0;
+let selectedDiziAltKategori = "";
+let selectedFilmAltKategori = "";
 
 // Custom dropdown işlemleri
 const dropdownSelected = document.querySelector(".dropdown-selected");
@@ -20,7 +22,57 @@ options.forEach((option) => {
     dropdownSelected.setAttribute("data-value", option.getAttribute("data-value"));
     dropdownOptions.style.display = "none";
     document.getElementById("secili-kategori").textContent = option.textContent;
+
+const diziAltKategoriler = document.getElementById("diziAltKategoriler");
+const filmAltKategoriler = document.getElementById("filmAltKategoriler");
+
+if (option.getAttribute("data-value") === "dizi") {
+  diziAltKategoriler.style.display = "flex";
+  diziAltKategoriler.classList.add("gorunur");
+  filmAltKategoriler.classList.remove("gorunur");
+  setTimeout(() => { filmAltKategoriler.style.display = "none"; }, 300);
+} else if (option.getAttribute("data-value") === "film") {
+  filmAltKategoriler.style.display = "flex";
+  filmAltKategoriler.classList.add("gorunur");
+  diziAltKategoriler.classList.remove("gorunur");
+  setTimeout(() => { diziAltKategoriler.style.display = "none"; }, 300);
+} else {
+  diziAltKategoriler.classList.remove("gorunur");
+  filmAltKategoriler.classList.remove("gorunur");
+  setTimeout(() => { diziAltKategoriler.style.display = "none"; }, 300);
+  setTimeout(() => { filmAltKategoriler.style.display = "none"; }, 300);
+  selectedDiziAltKategori = "";
+  selectedFilmAltKategori = "";
+  document.getElementById('diziTurkceCard').classList.remove('selected');
+  document.getElementById('diziYabanciCard').classList.remove('selected');
+  document.getElementById('filmTurkceCard').classList.remove('selected');
+  document.getElementById('filmYabanciCard').classList.remove('selected');
+}
   });
+});
+
+document.getElementById('diziTurkceCard').addEventListener('click', function() {
+  selectedDiziAltKategori = "dizi-turkce";
+  this.classList.add('selected');
+  document.getElementById('diziYabanciCard').classList.remove('selected');
+});
+
+document.getElementById('diziYabanciCard').addEventListener('click', function() {
+  selectedDiziAltKategori = "dizi-yabanci";
+  this.classList.add('selected');
+  document.getElementById('diziTurkceCard').classList.remove('selected');
+});
+
+document.getElementById('filmTurkceCard').addEventListener('click', function() {
+  selectedFilmAltKategori = "film-turkce";
+  this.classList.add('selected');
+  document.getElementById('filmYabanciCard').classList.remove('selected');
+});
+
+document.getElementById('filmYabanciCard').addEventListener('click', function() {
+  selectedFilmAltKategori = "film-yabanci";
+  this.classList.add('selected');
+  document.getElementById('filmTurkceCard').classList.remove('selected');
 });
 
 document.addEventListener("click", (e) => {
@@ -33,7 +85,27 @@ document.querySelector(".start-btn").addEventListener("click", function () {
   const secilenKategori = dropdownSelected.textContent;
   const kategoriKey = dropdownSelected.getAttribute("data-value");
 
-  if (!kategoriKey || secilenKategori === "Kategori Seç") {
+  // --- Dizi kontrolü
+  if (kategoriKey === "dizi") {
+    if (!selectedDiziAltKategori) {
+      alert("Lütfen dizi için Türkçe veya Yabancı seçin!");
+      return;
+    }
+  }
+
+  // --- Film kontrolü
+  if (kategoriKey === "film") {
+    if (!selectedFilmAltKategori) {
+      alert("Lütfen film için Türkçe veya Yabancı seçin!");
+      return;
+    }
+  }
+
+  // Diğer kategorilerde boşsa uyarı
+  if (
+    (!kategoriKey || secilenKategori === "Kategori Seç") &&
+    kategoriKey !== "dizi" && kategoriKey !== "film"
+  ) {
     alert("Lütfen bir kategori seç!");
     return;
   }
@@ -41,7 +113,15 @@ document.querySelector(".start-btn").addEventListener("click", function () {
   sarkiListesi = JSON.parse(localStorage.getItem("sarkilar")) || [];
 
   // Kategoriye göre filtrele
-  soruListesi = sarkiListesi.filter(sarki => sarki.kategori === kategoriKey);
+  let oyunKategoriKey = kategoriKey;
+  if (kategoriKey === "dizi") {
+    oyunKategoriKey = selectedDiziAltKategori;
+  }
+  if (kategoriKey === "film") {
+    oyunKategoriKey = selectedFilmAltKategori;
+  }
+
+  soruListesi = sarkiListesi.filter(sarki => sarki.kategori === oyunKategoriKey);
 
   if (!soruListesi || soruListesi.length === 0) {
     alert("Bu kategoride henüz şarkı yok!");
@@ -71,7 +151,6 @@ geriBtn.addEventListener("click", function () {
   audioPlayer.currentTime = 0;
   if (window.durdurCalmaAnimasyonu) durdurCalmaAnimasyonu();
 });
-
 
 function rastgeleSoruIndex() {
   if (kullanilanSarkilar.length === soruListesi.length) {

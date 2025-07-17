@@ -444,3 +444,180 @@ body.error {
   opacity: 1;
   pointer-events: auto;
 }
+
+.dizi-alt-kategoriler {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 32px;
+  margin: 20px 0 25px 0;
+  z-index: 3;
+}
+
+.dizi-alt-kategori-card {
+  background: linear-gradient(135deg, #6c5ce7, #a259c7 70%);
+  border-radius: 20px;
+  box-shadow: 0 4px 22px rgba(90,70,180,0.11);
+  padding: 26px 38px;
+  font-size: 21px;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 600;
+  outline: none;
+  border: none;
+  transition: 
+    background 0.3s,
+    box-shadow 0.24s,
+    color 0.2s,
+    transform 0.17s;
+  user-select: none;
+  min-width: 120px;
+  text-align: center;
+  position: relative;
+}
+
+.dizi-alt-kategori-card.selected,
+.dizi-alt-kategori-card:hover {
+  background: linear-gradient(135deg, #a29bfe 70%, #6c5ce7 100%);
+  color: #201040;
+  box-shadow: 0 8px 32px #4c35a8, 0 1px 12px 0 rgba(130,93,200,0.17);
+  transform: translateY(-2px) scale(1.04);
+}
+
+/* Mobilde kutuları alt alta göster */
+@media (max-width: 600px) {
+  .dizi-alt-kategoriler {
+    flex-direction: column;
+    gap: 14px;
+  }
+  .dizi-alt-kategori-card {
+    padding: 19px 0;
+    font-size: 17px;
+    min-width: 0;
+  }
+}
+
+.dizi-alt-kategoriler {
+  display: flex;
+  justify-content: center;
+  gap: 32px;    /* Kartlar arası boşluk */
+  margin: 32px 0 12px 0; /* Üst-alt boşluk */
+}
+
+.dizi-alt-kategori-card {
+  background: linear-gradient(135deg, #6c5ce7 60%, #a259c7 100%);
+  border-radius: 16px;
+  box-shadow: 0 4px 22px rgba(90,70,180,0.08);
+  padding: 18px 38px;
+  font-size: 20px;
+  color: #fff;
+  font-weight: 500;
+  cursor: pointer;
+  user-select: none;
+  min-width: 100px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+  border: 2px solid transparent;
+}
+
+.dizi-alt-kategori-card.selected,
+.dizi-alt-kategori-card:hover {
+  background: linear-gradient(135deg, #a29bfe 70%, #6c5ce7 100%);
+  color: #291770;
+  box-shadow: 0 8px 32px #4c35a8, 0 1px 12px 0 rgba(130,93,200,0.12);
+  border-color: #fff;
+  transform: scale(1.06) translateY(-2px);
+}
+
+@media (max-width: 600px) {
+  .dizi-alt-kategoriler {
+    flex-direction: column;
+    gap: 16px;
+  }
+  .dizi-alt-kategori-card {
+    padding: 14px 0;
+    font-size: 16px;
+    min-width: 0;
+  }
+}
+
+/* Animasyonlu görünme için başlangıç */
+.dizi-alt-kategoriler {
+  opacity: 0;
+  transform: translateY(18px) scale(0.98);
+  pointer-events: none;
+  transition: 
+    opacity 0.34s cubic-bezier(.68,-0.42,.27,1.35),
+    transform 0.32s cubic-bezier(.68,-0.42,.27,1.35);
+  margin-top: 20px;
+  margin-bottom: 16px;
+}
+
+/* Görünür olunca class eklenince animasyonlu açılır */
+.dizi-alt-kategoriler.gorunur {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+.film-alt-kategoriler {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 32px;
+  margin: 20px 0 25px 0;
+  z-index: 3;
+  opacity: 0;
+  transform: translateY(18px) scale(0.98);
+  pointer-events: none;
+  transition: 
+    opacity 0.34s cubic-bezier(.68,-0.42,.27,1.35),
+    transform 0.32s cubic-bezier(.68,-0.42,.27,1.35);
+}
+.film-alt-kategoriler.gorunur {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+.film-alt-kategori-card {
+  background: linear-gradient(135deg, #6c5ce7 60%, #a259c7 100%);
+  border-radius: 16px;
+  box-shadow: 0 4px 22px rgba(90,70,180,0.08);
+  padding: 18px 38px;
+  font-size: 20px;
+  color: #fff;
+  font-weight: 500;
+  cursor: pointer;
+  user-select: none;
+  min-width: 100px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+  border: 2px solid transparent;
+}
+
+.film-alt-kategori-card.selected,
+.film-alt-kategori-card:hover {
+  background: linear-gradient(135deg, #a29bfe 70%, #6c5ce7 100%);
+  color: #291770;
+  box-shadow: 0 8px 32px #4c35a8, 0 1px 12px 0 rgba(130,93,200,0.12);
+  border-color: #fff;
+  transform: scale(1.06) translateY(-2px);
+}
+
+@media (max-width: 600px) {
+  .film-alt-kategoriler {
+    flex-direction: column;
+    gap: 16px;
+  }
+  .film-alt-kategori-card {
+    padding: 14px 0;
+    font-size: 16px;
+    min-width: 0;
+  }
+}
