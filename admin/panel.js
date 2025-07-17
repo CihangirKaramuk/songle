@@ -85,7 +85,7 @@ document.getElementById("kaydetBtn").addEventListener("click", () => {
   const yeniSarki = document.getElementById("duzenleSarki").value.trim();
   const yeniKategori = document.getElementById("duzenleKategori").value;
 
-  if (!yeniSanatci || !yeniSarki || (yeniKategori !== "turkce" && yeniKategori !== "yabanci")) {
+  if (!yeniSanatci || !yeniSarki || (yeniKategori !== "turkce" && yeniKategori !== "yabanci" && yeniKategori !== "dizi" && yeniKategori !== "film")) {
     alert("Lütfen geçerli tüm bilgileri girin.");
     return;
   }
@@ -113,7 +113,7 @@ document.getElementById("ekleBtn").addEventListener("click", () => {
   const kategori = document.getElementById("kategori").value;
   const mp3Input = document.getElementById("mp3File");
 
-  if (!sarki || !sanatci || (kategori !== "turkce" && kategori !== "yabanci") || !mp3Input.files[0]) {
+  if (!sarki || !sanatci || (kategori !== "turkce" && kategori !== "yabanci" && kategori !== "dizi" && kategori !== "film") || !mp3Input.files[0]) {
     alert("Lütfen tüm alanları doldurun ve bir MP3 dosyası yükleyin.");
     return;
   }
