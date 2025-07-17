@@ -48,7 +48,6 @@ document.querySelector(".start-btn").addEventListener("click", function () {
     return;
   }
 
-  // Sıfırlama: yeni oturum
   kullanilanSarkilar = [];
 
   soruIndex = rastgeleSoruIndex();
@@ -67,7 +66,12 @@ geriBtn.addEventListener("click", function () {
   document.getElementById("geriBtn").style.display = "none";
   document.getElementById("zamanGoster").textContent = "Kalan Süre: 30";
   clearInterval(sayacInterval);
+
+  audioPlayer.pause();
+  audioPlayer.currentTime = 0;
+  if (window.durdurCalmaAnimasyonu) durdurCalmaAnimasyonu();
 });
+
 
 function rastgeleSoruIndex() {
   if (kullanilanSarkilar.length === soruListesi.length) {
