@@ -78,8 +78,29 @@
       <!-- Ayarlar -->
       <section id="ayarlar" class="panel-section">
         <h1>Ayarlar</h1>
-        <p>Yeni ayarlar buraya eklenecek...</p>
+        <div class="ayarlar-listesi">
+          <div class="ayarlar-item" id="islemKaydiBtn">
+            <span>📜 İşlem Kaydı</span>
+            <span class="arrow" id="islemKaydiArrow">▶</span>
+          </div>
+          <div id="islemKaydiPanel" class="islem-kaydi-panel" style="display:none;">
+            <!-- İşlem kayıtları buraya JS ile gelecek -->
+            <div class="islem-kaydi-ust">
+              <span>Son İşlemler</span>
+              <button id="islemTopluSilBtn" title="İşlem Kaydı Sil"> 🗑️ </button>
+              <div id="topluSilMenu" style="display:none;position:absolute;right:30px;top:55px;z-index:11;background:#fff;color:#232046;padding:15px 14px 10px 14px;border-radius:9px;box-shadow:0 4px 18px rgba(90,70,180,0.18);">
+                <button class="toplu-sil-btn" data-tip="son">Son işlemi sil</button>
+                <button class="toplu-sil-btn" data-tip="saat">Son 1 saati sil</button>
+                <button class="toplu-sil-btn" data-tip="gun">Bugünü sil</button>
+                <button class="toplu-sil-btn" data-tip="tum">Tümünü sil</button>
+              </div>
+            </div>
+
+            <ul id="islemKaydiListesi"></ul>
+          </div>
+        </div>
       </section>
+
     </div>
   </div>
   <div id="toast-success" class="toast-success"></div>

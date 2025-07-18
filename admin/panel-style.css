@@ -399,3 +399,126 @@ body.light .toast-delete {
   right: -350px;
   opacity: 0;
 }
+
+.ayarlar-listesi {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ayarlar-item {
+  background: linear-gradient(135deg, #232046 70%, #6c5ce7 100%);
+  color: #fff;
+  border-radius: 12px;
+  padding: 18px 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 18px;
+  font-weight: 600;
+  transition: background 0.2s;
+  box-shadow: 0 4px 18px rgba(90,70,180,0.07);
+}
+
+.ayarlar-item:hover {
+  background: linear-gradient(135deg, #6c5ce7 80%, #232046 100%);
+}
+
+.islem-kaydi-panel {
+  margin: 12px 0 0 0;
+  background: #19162e;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(80, 67, 183, 0.10);
+  padding: 16px 14px 8px 14px;
+  max-width: 550px;
+}
+
+.islem-kaydi-ust {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 7px;
+  gap: 14px;
+  position: relative;
+}
+
+#islemTopluSilBtn {
+  background: none !important;
+  color: #d72660;
+  border: none;
+  border-radius: 50%;
+  font-size: 22px;
+  font-weight: bold;
+  cursor: pointer;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+  transition: background 0.2s, color 0.2s;
+  box-shadow: none !important;
+}
+#islemTopluSilBtn:hover {
+  background: #d7266022;
+  color: #a02d3c;
+}
+
+#islemKaydiListesi {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.islem-kaydi-item {
+  background: #231e39;
+  color: #fff;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  padding: 11px 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: background 0.2s;
+}
+
+.islem-kaydi-item:hover {
+  background: #342b53;
+}
+
+.islem-kaydi-tarih {
+  color: #aaa;
+  font-size: 13px;
+  margin-left: 12px;
+}
+
+body.light .ayarlar-item,
+body.light .islem-kaydi-panel,
+body.light .islem-kaydi-item {
+  background: #fff;
+  color: #232046;
+}
+
+body.light .islem-kaydi-item:hover {
+  background: #ece5fc;
+}
+
+.toplu-sil-btn {
+  display: block;
+  background: #ece5fc;
+  color: #6c5ce7;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 18px;
+  margin-bottom: 8px;
+  font-size: 16px;
+  width: 100%;
+  cursor: pointer;
+}
+.toplu-sil-btn:hover { background: #6c5ce7; color: #fff; }
+
