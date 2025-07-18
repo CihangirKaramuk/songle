@@ -19,6 +19,13 @@ dropdownSelected.addEventListener("click", () => {
 
 options.forEach((option) => {
   option.addEventListener("click", () => {
+    document.querySelectorAll('.alt-kategori-card').forEach(card => card.classList.remove('selected'));
+    document.querySelectorAll('.dizi-alt-kategori-card.selected').forEach(card => card.classList.remove('selected'));
+    document.querySelectorAll('.film-alt-kategori-card.selected').forEach(card => card.classList.remove('selected'));
+    selectedTurkceAltKategori = "";
+    selectedYabanciAltKategori = "";
+    selectedDiziAltKategori = "";
+    selectedFilmAltKategori = "";
     dropdownSelected.textContent = option.textContent;
     dropdownSelected.setAttribute("data-value", option.getAttribute("data-value"));
     dropdownOptions.style.display = "none";
