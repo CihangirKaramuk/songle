@@ -5,8 +5,9 @@ let kullanilanSarkilar = [];
 let soruIndex = 0;
 let selectedDiziAltKategori = "";
 let selectedFilmAltKategori = "";
+let selectedTurkceAltKategori = "";
+let selectedYabanciAltKategori = "";
 
-// Custom dropdown işlemleri
 const dropdownSelected = document.querySelector(".dropdown-selected");
 const dropdownOptions = document.querySelector(".dropdown-options");
 const options = document.querySelectorAll(".option");
@@ -23,31 +24,38 @@ options.forEach((option) => {
     dropdownOptions.style.display = "none";
     document.getElementById("secili-kategori").textContent = option.textContent;
 
-const diziAltKategoriler = document.getElementById("diziAltKategoriler");
-const filmAltKategoriler = document.getElementById("filmAltKategoriler");
+    const tumAltlar = [
+      "diziAltKategoriler",
+      "filmAltKategoriler",
+      "turkceAltKategoriler",
+      "yabanciAltKategoriler"
+    ];
+    tumAltlar.forEach(id => {
+      document.getElementById(id).classList.remove("gorunur");
+      document.getElementById(id).style.display = "none";
+    });
 
-if (option.getAttribute("data-value") === "dizi") {
-  diziAltKategoriler.style.display = "flex";
-  diziAltKategoriler.classList.add("gorunur");
-  filmAltKategoriler.classList.remove("gorunur");
-  setTimeout(() => { filmAltKategoriler.style.display = "none"; }, 300);
-} else if (option.getAttribute("data-value") === "film") {
-  filmAltKategoriler.style.display = "flex";
-  filmAltKategoriler.classList.add("gorunur");
-  diziAltKategoriler.classList.remove("gorunur");
-  setTimeout(() => { diziAltKategoriler.style.display = "none"; }, 300);
-} else {
-  diziAltKategoriler.classList.remove("gorunur");
-  filmAltKategoriler.classList.remove("gorunur");
-  setTimeout(() => { diziAltKategoriler.style.display = "none"; }, 300);
-  setTimeout(() => { filmAltKategoriler.style.display = "none"; }, 300);
-  selectedDiziAltKategori = "";
-  selectedFilmAltKategori = "";
-  document.getElementById('diziTurkceCard').classList.remove('selected');
-  document.getElementById('diziYabanciCard').classList.remove('selected');
-  document.getElementById('filmTurkceCard').classList.remove('selected');
-  document.getElementById('filmYabanciCard').classList.remove('selected');
-}
+    // Seçilen kategoriye göre aç+gorunur ekle
+    if (option.getAttribute("data-value") === "dizi") {
+      const el = document.getElementById("diziAltKategoriler");
+      el.style.display = "flex";
+      setTimeout(() => { el.classList.add("gorunur"); }, 10);
+    }
+    if (option.getAttribute("data-value") === "film") {
+      const el = document.getElementById("filmAltKategoriler");
+      el.style.display = "flex";
+      setTimeout(() => { el.classList.add("gorunur"); }, 10);
+    }
+    if (option.getAttribute("data-value") === "turkce") {
+      const el = document.getElementById("turkceAltKategoriler");
+      el.style.display = "flex";
+      setTimeout(() => { el.classList.add("gorunur"); }, 10);
+    }
+    if (option.getAttribute("data-value") === "yabanci") {
+      const el = document.getElementById("yabanciAltKategoriler");
+      el.style.display = "flex";
+      setTimeout(() => { el.classList.add("gorunur"); }, 10);
+    }
   });
 });
 
@@ -74,6 +82,48 @@ document.getElementById('filmYabanciCard').addEventListener('click', function() 
   this.classList.add('selected');
   document.getElementById('filmTurkceCard').classList.remove('selected');
 });
+// Türkçe alt kategori kartları
+document.getElementById('turkceRockCard').addEventListener('click', function() {
+    selectedTurkceAltKategori = "rock";
+    altKategoriCardSec('turkceAltKategoriler', this);
+});
+document.getElementById('turkcePopCard').addEventListener('click', function() {
+    selectedTurkceAltKategori = "pop";
+    altKategoriCardSec('turkceAltKategoriler', this);
+});
+document.getElementById('turkceHipHopCard').addEventListener('click', function() {
+    selectedTurkceAltKategori = "hiphop";
+    altKategoriCardSec('turkceAltKategoriler', this);
+});
+document.getElementById('turkceKarisikCard').addEventListener('click', function() {
+    selectedTurkceAltKategori = "karisik";
+    altKategoriCardSec('turkceAltKategoriler', this);
+});
+
+// Yabancı alt kategori kartları
+document.getElementById('yabanciRockCard').addEventListener('click', function() {
+    selectedYabanciAltKategori = "rock";
+    altKategoriCardSec('yabanciAltKategoriler', this);
+});
+document.getElementById('yabanciPopCard').addEventListener('click', function() {
+    selectedYabanciAltKategori = "pop";
+    altKategoriCardSec('yabanciAltKategoriler', this);
+});
+document.getElementById('yabanciHipHopCard').addEventListener('click', function() {
+    selectedYabanciAltKategori = "hiphop";
+    altKategoriCardSec('yabanciAltKategoriler', this);
+});
+document.getElementById('yabanciKarisikCard').addEventListener('click', function() {
+    selectedYabanciAltKategori = "karisik";
+    altKategoriCardSec('yabanciAltKategoriler', this);
+});
+
+function altKategoriCardSec(altKategoriDivId, secilenCard) {
+  document.querySelectorAll(`#${altKategoriDivId} .alt-kategori-card`).forEach(card => {
+    card.classList.remove('selected');
+  });
+  secilenCard.classList.add('selected');
+}
 
 document.addEventListener("click", (e) => {
   if (!e.target.closest(".custom-dropdown")) {
@@ -85,7 +135,19 @@ document.querySelector(".start-btn").addEventListener("click", function () {
   const secilenKategori = dropdownSelected.textContent;
   const kategoriKey = dropdownSelected.getAttribute("data-value");
 
-  // --- Dizi kontrolü
+if (kategoriKey === "turkce") {
+  if (!selectedTurkceAltKategori) {
+    alert("Lütfen Türkçe için bir alt kategori seçin!");
+    return;
+  }
+}
+if (kategoriKey === "yabanci") {
+  if (!selectedYabanciAltKategori) {
+    alert("Lütfen Yabancı için bir alt kategori seçin!");
+    return;
+  }
+}
+
   if (kategoriKey === "dizi") {
     if (!selectedDiziAltKategori) {
       alert("Lütfen dizi için Türkçe veya Yabancı seçin!");
@@ -112,14 +174,19 @@ document.querySelector(".start-btn").addEventListener("click", function () {
 
   sarkiListesi = JSON.parse(localStorage.getItem("sarkilar")) || [];
 
-  // Kategoriye göre filtrele
-  let oyunKategoriKey = kategoriKey;
-  if (kategoriKey === "dizi") {
-    oyunKategoriKey = selectedDiziAltKategori;
-  }
-  if (kategoriKey === "film") {
-    oyunKategoriKey = selectedFilmAltKategori;
-  }
+let oyunKategoriKey = kategoriKey;
+if (kategoriKey === "turkce") {
+  oyunKategoriKey = selectedTurkceAltKategori;
+}
+if (kategoriKey === "yabanci") {
+  oyunKategoriKey = selectedYabanciAltKategori;
+}
+if (kategoriKey === "dizi") {
+  oyunKategoriKey = selectedDiziAltKategori;
+}
+if (kategoriKey === "film") {
+  oyunKategoriKey = selectedFilmAltKategori;
+}
 
   soruListesi = sarkiListesi.filter(sarki => sarki.kategori === oyunKategoriKey);
 
