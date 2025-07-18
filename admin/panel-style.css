@@ -522,3 +522,38 @@ body.light .islem-kaydi-item:hover {
 }
 .toplu-sil-btn:hover { background: #6c5ce7; color: #fff; }
 
+.toast-guncelle {
+  position: fixed;
+  bottom: 36px;
+  right: -350px;
+  min-width: 180px;
+  max-width: 340px;
+  background: #21b573; /* Yeşil-mavi arası bir ton */
+  color: #fff;
+  padding: 16px 36px;
+  border-radius: 14px 32px 32px 14px;
+  box-shadow: 0 4px 28px rgba(33,181,115,0.15);
+  font-size: 16px;
+  z-index: 889;
+  opacity: 0;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: right 0.5s cubic-bezier(.7,0,.3,1), opacity 0.22s;
+}
+body.light .toast-guncelle {
+  background: #eafff4;
+  color: #21b573;
+  border: 1px solid #21b573;
+}
+.toast-guncelle.show {
+  right: 36px;
+  opacity: 1;
+  pointer-events: auto;
+}
+.toast-guncelle.hide {
+  right: -350px;
+  opacity: 0;
+}
+

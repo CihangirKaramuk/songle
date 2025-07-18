@@ -5,6 +5,18 @@ let duzenlenenIndex = null;
 let siralamaArtan = true;
 let silinecekIndex = null;
 
+function showGuncelleToast(msg) {
+  const toast = document.getElementById("toast-guncelle");
+  toast.innerHTML = `<span style="font-size:22px;line-height:1;vertical-align:middle;">✅</span> ${msg}`;
+  toast.classList.add("show");
+  toast.classList.remove("hide");
+  clearTimeout(window.toastGuncelleTimeout);
+  window.toastGuncelleTimeout = setTimeout(() => {
+    toast.classList.add("hide");
+    toast.classList.remove("show");
+  }, 3000);
+}
+
 function showSuccessToast(msg) {
   // Sadece "Şarkı Ekle" sekmesi aktifse göster
   if (!document.getElementById("ekle").classList.contains("active")) return;
@@ -129,18 +141,7 @@ document.getElementById("kaydetBtn").addEventListener("click", () => {
 
   // Düzenleme panelini kapat
   document.getElementById("duzenleFormu").style.display = "none";
-
-  // Güncellendi TOAST animasyonu (isteğe bağlı ekle)
-  const toast = document.getElementById("toast-guncelle");
-  if (toast) {
-    toast.style.right = "38px";
-    toast.style.opacity = "1";
-    clearTimeout(window.toastGuncelleTimeout);
-    window.toastGuncelleTimeout = setTimeout(() => {
-      toast.style.right = "-330px";
-      toast.style.opacity = "0";
-    }, 3000);
-  }
+  showGuncelleToast('Güncellendi');
 });
 
 document.getElementById("ekleBtn").addEventListener("click", () => {
