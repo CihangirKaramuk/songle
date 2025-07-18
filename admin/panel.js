@@ -552,11 +552,17 @@ window.addEventListener("DOMContentLoaded", function() {
   });
 });
 
-document.body.addEventListener("click", function(e) {
-  // Eğer "Emin misin?" modalı açıksa, toplu sil menüsünü kapatma
+// KAPATMA - Kopyala ve yapıştır
+document.addEventListener("mousedown", function(e) {
   if (document.getElementById("ozelEminModal")) return;
   const topluSilMenu = document.getElementById("topluSilMenu");
-  if (topluSilMenu && topluSilMenu.style.display === "block") {
+  const topluSilBtn = document.getElementById("islemTopluSilBtn");
+  if (
+    topluSilMenu &&
+    topluSilMenu.style.display === "block" &&
+    !topluSilMenu.contains(e.target) &&
+    !topluSilBtn.contains(e.target)
+  ) {
     topluSilMenu.style.display = "none";
   }
 });
