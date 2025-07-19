@@ -50,3 +50,47 @@ button:hover {
   color: #ff4d4d;
   margin-top: 15px;
 }
+
+.password-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.password-wrapper input[type="password"],
+.password-wrapper input[type="text"] {
+  padding-right: 45px;
+}
+
+/* Simge tam ortalı ve responsive */
+.toggle-password {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #aaa;
+  z-index: 2;
+}
+.toggle-password svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Mouse üstüne gelince oynamasın, sadece renk koyulaşsın */
+.toggle-password:hover {
+  color: #888;
+}
+
+@media (max-width: 480px) {
+  .toggle-password {
+    width: 24px;
+    height: 24px;
+    right: 10px;
+  }
+}
+
