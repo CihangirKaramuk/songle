@@ -50,12 +50,16 @@ function guncelleListe() {
   });
 
   filtrelenmisListe.forEach((sarki, index) => {
+    // ANA LİSTEDEKİ GERÇEK INDEX'İ BUL
+    const realIndex = sarkiListesi.findIndex(s =>
+      s.cevap === sarki.cevap && s.kategori === sarki.kategori
+    );
     const li = document.createElement("li");
     li.innerHTML = `
       [${sarki.kategori}] ${sarki.cevap}
       <div class="btn-group">
         <button class="duzenleBtn" onclick='sarkiDuzenleManual(${JSON.stringify(sarki)})'>✏️</button>
-        <button class="silBtn" onclick="sarkiSil(${index})">🗑️</button>
+        <button class="silBtn" onclick="sarkiSil(${realIndex})">🗑️</button>
         ${sarki.audio ? '<span class="audio-var">🎵</span>' : ''}
       </div>
     `;
