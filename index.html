@@ -7,18 +7,14 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <!-- 🔙 Geri Dön Butonu -->
   <button class="geri-btn" id="geriBtn" style="display: none;">← Geri Dön</button>
 
-  <!-- 🎮 Giriş Ekranı -->
   <div class="container">
     <h1 class="logo">SONGLE</h1>
     <p class="slogan">Şarkıyı tahmin et. Atmosferi hisset.</p>
 
-    <!-- Buton üstte -->
     <button class="start-btn">Oynamaya Başla</button>
 
-    <!-- Dropdown altta -->
     <div class="custom-dropdown">
       <div class="dropdown-selected">Kategori Seç</div>
       <div class="dropdown-options">
@@ -52,13 +48,11 @@
     <p class="alt-yazi">Her gün yeni şarkılar. Tahmin et, puan topla, zirveye oyna!</p>
   </div>
 
-  <!-- 🎮 Oyun Ekranı (başlangıçta gizli) -->
   <div class="game-screen" style="display: none;">
     <h2 class="oyun-baslik">Kategori: <span id="secili-kategori">-</span></h2>
 
     <div id="zamanGoster" class="zaman-sayaci">Kalan Süre: 30</div>
 
-    <!-- YENİ ŞARKI BAR ALANI -->
 <div id="song-bar" class="neumorphic-bar">
   <span class="music-icon" id="musicNote">
   <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
@@ -86,10 +80,8 @@
   </svg>
 </button>
 
-<!-- Ses kontrol alanı -->
 <div class="volume-control">
   <button class="volume-btn" id="volumeBtn" aria-label="Ses">
-    <!-- Modern hoparlör SVG ikonu -->
     <svg width="32" height="32" viewBox="0 0 28 28" fill="none">
       <path d="M4 10v8h6l6 5V3l-6 5H4z" fill="#fff"/>
       <path d="M20 9a5 5 0 0 1 0 10" stroke="#fff" stroke-width="2" fill="none"/>

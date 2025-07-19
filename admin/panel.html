@@ -19,7 +19,6 @@
     </div>
 
     <div class="main-content">
-      <!-- Tema Geçişi -->
       <div class="theme-toggle">
         <label class="switch">
           <input type="checkbox" id="themeToggle">
@@ -28,7 +27,6 @@
         <span id="temaLabel">🌙 Dark</span>
       </div>
 
-      <!-- Şarkı Ekle -->
       <section id="ekle" class="panel-section active">
         <h1>Yeni Şarkı Ekle</h1>
         <div class="ekle-formu">
@@ -41,13 +39,11 @@
             <option value="dizi">Dizi</option>
             <option value="film">Film</option>
           </select>
-          <!-- MP3 Dosyası input'u eklendi (ZORUNLU) -->
           <input type="file" id="mp3File" accept="audio/mpeg" required />
           <button id="ekleBtn">Şarkıyı Ekle</button>
         </div>
       </section>
 
-      <!-- Şarkı Listesi -->
       <section id="liste" class="panel-section">
         <h1>Eklenen Şarkılar</h1>
         <select id="kategoriFiltre">
@@ -75,7 +71,6 @@
         </div>
       </section>
 
-      <!-- Ayarlar -->
       <section id="ayarlar" class="panel-section">
         <h1>Ayarlar</h1>
         <div class="ayarlar-listesi">
@@ -84,7 +79,6 @@
             <span class="arrow" id="islemKaydiArrow">▶</span>
           </div>
           <div id="islemKaydiPanel" class="islem-kaydi-panel" style="display:none;">
-            <!-- İşlem kayıtları buraya JS ile gelecek -->
             <div class="islem-kaydi-ust">
               <span>Son İşlemler</span>
               <button id="islemTopluSilBtn" title="İşlem Kaydı Sil"> 🗑️ </button>

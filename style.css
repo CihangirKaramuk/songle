@@ -1,4 +1,3 @@
-/* Genel ayarlar */
 body {
   margin: 0;
   padding: 0;
@@ -17,7 +16,6 @@ body {
   overflow: hidden;
 }
 
-/* Geri Butonu */
 #geriBtn {
   position: absolute;
   top: 20px;
@@ -37,7 +35,6 @@ body {
   background-color: #a29bfe;
 }
 
-/* İçerik kutusu */
 .container {
   text-align: center;
   display: flex;
@@ -45,21 +42,18 @@ body {
   align-items: center;
 }
 
-/* Logo */
 .logo {
   font-size: 48px;
   font-weight: bold;
   margin-bottom: 10px;
 }
 
-/* Slogan */
 .slogan {
   font-size: 18px;
   margin-bottom: 30px;
   color: #ccc;
 }
 
-/* Başla Butonu */
 .start-btn {
   padding: 15px 30px;
   font-size: 18px;
@@ -75,13 +69,11 @@ body {
   background-color: #a29bfe;
 }
 
-/* Alt yazı */
 .alt-yazi {
   font-size: 14px;
   color: #aaa;
 }
 
-/* Custom Dropdown */
 .custom-dropdown {
   position: relative;
   display: inline-block;
@@ -134,7 +126,6 @@ body {
   background-color: #6c63ff;
 }
 
-/* Oyun ekranı */
 .game-screen {
   text-align: center;
 }
@@ -177,7 +168,6 @@ body {
   background-color: #a29bfe;
 }
 
-/* Hatalı tahmin efekti */
 body.error {
   animation: shakeBg 0.3s;
   background-color: #2c0d0d !important;
@@ -231,7 +221,6 @@ body.error {
   fill: #fff;
 }
 
-/* Nota sallanma animasyonu */
 .music-icon.sallaniyor {
   animation: notaSalla 1.3s infinite cubic-bezier(0.62,0.09,0.32,0.97);
 }
@@ -395,13 +384,13 @@ body.error {
   pointer-events: none;
   transition: opacity 0.35s cubic-bezier(.4,1,.4,1);
   z-index: 99;
-  display: block; /* Dikkat: display: none; DEĞİL, block olacak */
+  display: block;
 }
 
 .volume-slider {
   width: 38px;
   height: 120px;
-  writing-mode: bt-lr; /* dikey görünüm */
+  writing-mode: bt-lr;
   -webkit-appearance: slider-vertical;
   appearance: slider-vertical;
   background: linear-gradient(180deg, #6c5ce7 0%, #a29bfe 100%);
@@ -484,7 +473,6 @@ body.error {
   transform: translateY(-2px) scale(1.04);
 }
 
-/* Mobilde kutuları alt alta göster */
 @media (max-width: 600px) {
   .dizi-alt-kategoriler {
     flex-direction: column;
@@ -500,8 +488,8 @@ body.error {
 .dizi-alt-kategoriler {
   display: flex;
   justify-content: center;
-  gap: 32px;    /* Kartlar arası boşluk */
-  margin: 32px 0 12px 0; /* Üst-alt boşluk */
+  gap: 32px;
+  margin: 32px 0 12px 0;
 }
 
 .dizi-alt-kategori-card {
@@ -544,7 +532,6 @@ body.error {
   }
 }
 
-/* Animasyonlu görünme için başlangıç */
 .dizi-alt-kategoriler {
   opacity: 0;
   transform: translateY(18px) scale(0.98);
@@ -556,7 +543,6 @@ body.error {
   margin-bottom: 16px;
 }
 
-/* Görünür olunca class eklenince animasyonlu açılır */
 .dizi-alt-kategoriler.gorunur {
   opacity: 1;
   transform: translateY(0) scale(1);

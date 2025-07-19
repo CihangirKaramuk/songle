@@ -1,5 +1,5 @@
 let islemKayitlari = JSON.parse(localStorage.getItem("islemKayitlari")) || [];
-let acikIslemDetay = null; // Tıklanan detayın id'si
+let acikIslemDetay = null;
 let sarkiListesi = JSON.parse(localStorage.getItem("sarkilar")) || [];
 let duzenlenenIndex = null;
 let siralamaArtan = true;
@@ -18,7 +18,6 @@ function showGuncelleToast(msg) {
 }
 
 function showSuccessToast(msg) {
-  // Sadece "Şarkı Ekle" sekmesi aktifse göster
   if (!document.getElementById("ekle").classList.contains("active")) return;
   const toast = document.getElementById("toast-success");
   toast.textContent = msg;
@@ -50,7 +49,6 @@ function guncelleListe() {
   });
 
   filtrelenmisListe.forEach((sarki, index) => {
-    // ANA LİSTEDEKİ GERÇEK INDEX'İ BUL
     const realIndex = sarkiListesi.findIndex(s =>
       s.cevap === sarki.cevap && s.kategori === sarki.kategori
     );
@@ -85,7 +83,6 @@ function sarkiDuzenleManual(secilenSarki) {
   document.getElementById("duzenleFormu").style.display = "block";
 }
 
-
 function sarkiDuzenle(index) {
   const sarki = sarkiListesi[index];
   const [sanatci, sarkiAdi] = sarki.cevap.split(" - ");
@@ -108,19 +105,15 @@ document.getElementById("kaydetBtn").addEventListener("click", () => {
     return;
   }
 
-  // Eski bilgileri güncellemeden ÖNCE al!
   const eskiSanatci = sarkiListesi[duzenlenenIndex].cevap.split(" - ")[0];
   const eskiSarki = sarkiListesi[duzenlenenIndex].cevap.split(" - ")[1];
   const eskiKategori = sarkiListesi[duzenlenenIndex].kategori;
 
-  // Mevcut şarkının audio verisini kaybetme!
   let eskiAudio = sarkiListesi[duzenlenenIndex]?.audio || "";
 
-  // Cevap ve gosterim hazırla (bunlar yukarıda da hazırlanmış olabilir)
   const tamCevap = `${yeniSanatci} - ${yeniSarki}`;
   const gosterim = `🎵 Şarkı çalıyor... (${tamCevap})`;
 
-  // 1) ÖNCE LOG'A EKLE
   islemKayitlari.push({
     baslik: "Şarkı Düzenlendi",
     tarih: new Date().toLocaleString("tr-TR"),
@@ -133,7 +126,6 @@ document.getElementById("kaydetBtn").addEventListener("click", () => {
   localStorage.setItem("islemKayitlari", JSON.stringify(islemKayitlari));
   guncelleIslemKaydiListesi();
 
-  // 2) SONRA GÜNCELLEMEYİ YAP
   sarkiListesi[duzenlenenIndex] = {
     kategori: yeniKategori,
     cevap: tamCevap,
@@ -143,7 +135,6 @@ document.getElementById("kaydetBtn").addEventListener("click", () => {
   localStorage.setItem("sarkilar", JSON.stringify(sarkiListesi));
   guncelleListe();
 
-  // Düzenleme panelini kapat
   document.getElementById("duzenleFormu").style.display = "none";
   showGuncelleToast('Güncellendi');
 });
@@ -175,9 +166,8 @@ document.getElementById("ekleBtn").addEventListener("click", () => {
     document.getElementById("kategori").value = "";
     document.getElementById("mp3File").value = "";
 
-    showSuccessToast('✅ Şarkı başarıyla eklendi!'); // ← işte burası!
+    showSuccessToast('✅ Şarkı başarıyla eklendi!');
 
-    // BURAYA EKLE
     islemKayitlari.push({
       baslik: "Şarkı Eklendi",
       tarih: new Date().toLocaleString("tr-TR"),
@@ -186,11 +176,10 @@ document.getElementById("ekleBtn").addEventListener("click", () => {
     });
     localStorage.setItem("islemKayitlari", JSON.stringify(islemKayitlari));
 
-    guncelleIslemKaydiListesi(); // ← BUNU EKLE!
+    guncelleIslemKaydiListesi();
 
     guncelleListe();
   };
-
 
   reader.readAsDataURL(file);
 });
@@ -210,19 +199,16 @@ document.querySelectorAll(".menu-item").forEach(item => {
       if (sec.id === section) sec.classList.add("active");
     });
     document.getElementById("duzenleFormu").style.display = "none";
-    // İşlem kaydı paneli açık ise kapat
     const islemKaydiPanel = document.getElementById("islemKaydiPanel");
     if (islemKaydiPanel) islemKaydiPanel.style.display = "none";
     const islemKaydiArrow = document.getElementById("islemKaydiArrow");
     if (islemKaydiArrow) islemKaydiArrow.textContent = "▶";
     
-    // *** EKLE: Sekme değişince toplu sil menüsü kapansın ***
     const topluSilMenu = document.getElementById("topluSilMenu");
     if (topluSilMenu) topluSilMenu.style.display = "none";
   });
 });
 
-// Tema başlatma (sayfa yüklenmeden önce tema uygula)
 (function () {
   const theme = localStorage.getItem("panelTheme");
   const body = document.getElementById("panelBody");
@@ -234,14 +220,12 @@ document.querySelectorAll(".menu-item").forEach(item => {
   }
 })();
 
-// Sayfa tamamen yüklendiğinde
 window.addEventListener("load", () => {
   guncelleListe();
 
   const toggle = document.getElementById("themeToggle");
   const body = document.getElementById("panelBody");
 
-  // Tema toggle ilk durumu
   toggle.checked = !body.classList.contains("light");
   document.getElementById("temaLabel").textContent = toggle.checked ? "🌙 Dark" : "☀️ Light";
 
@@ -266,13 +250,11 @@ window.addEventListener("load", () => {
   });
 });
 
-  // "Hayır" butonuna tıklanınca çalışır
   document.getElementById("btn-hayir").onclick = function() {
     document.getElementById("modal-onay").style.display = "none";
     silinecekIndex = null;
   };
 
-  // Modalın dışına tıklayınca da kapanır
   document.getElementById("modal-onay").onclick = function(e) {
     if (e.target === this) {
       this.style.display = "none";
@@ -287,7 +269,6 @@ document.getElementById("modal-onay").onclick = function(e) {
   }
 };
 
-// Şarkı silme butonuna basınca çalışır
 function sarkiSil(index) {
   if (!document.getElementById("liste").classList.contains("active")) return;
   silinecekIndex = index;
@@ -297,7 +278,6 @@ function sarkiSil(index) {
 
 document.getElementById("btn-evet").onclick = function() {
   if (silinecekIndex !== null) {
-    // Silinen şarkının bilgileri:
     const silinenSarki = sarkiListesi[silinecekIndex];
     islemKayitlari.push({
       baslik: "Şarkı Silindi",
@@ -311,9 +291,8 @@ document.getElementById("btn-evet").onclick = function() {
     });
     localStorage.setItem("islemKayitlari", JSON.stringify(islemKayitlari));
 
-    guncelleIslemKaydiListesi(); // ← BUNU EKLE!
+    guncelleIslemKaydiListesi();
 
-    // Sonra sil
     sarkiListesi.splice(silinecekIndex, 1);
     localStorage.setItem("sarkilar", JSON.stringify(sarkiListesi));
     guncelleListe();
@@ -323,13 +302,11 @@ document.getElementById("btn-evet").onclick = function() {
   showDeleteToast('🗑️ Şarkı silindi!');
 };
 
-// "Hayır" butonuna tıklanınca çalışır
 document.getElementById("btn-hayir").onclick = function() {
   document.getElementById("modal-onay").style.display = "none";
   silinecekIndex = null;
 };
 
-// Modalın dışına tıklayınca da kapanır
 document.getElementById("modal-onay").onclick = function(e) {
   if (e.target === this) {
     this.style.display = "none";
@@ -337,7 +314,6 @@ document.getElementById("modal-onay").onclick = function(e) {
   }
 };
 
-// Silme bildirimi (sağ üstte çıkan)
 function showDeleteToast(msg) {
   const toast = document.getElementById("toast-delete");
   toast.textContent = msg;
@@ -350,7 +326,6 @@ function showDeleteToast(msg) {
   }, 3000);
 }
 
-// İşlem Kaydı Aç/Kapat
 const islemKaydiBtn = document.getElementById('islemKaydiBtn');
 const islemKaydiPanel = document.getElementById('islemKaydiPanel');
 const islemKaydiArrow = document.getElementById('islemKaydiArrow');
@@ -366,7 +341,6 @@ islemKaydiBtn.onclick = function() {
   }
 };
 
-// Kayıtları listele
 function guncelleIslemKaydiListesi() {
   const ul = document.getElementById("islemKaydiListesi");
   ul.innerHTML = "";
@@ -376,7 +350,6 @@ function guncelleIslemKaydiListesi() {
     return;
   }
 
-  // En son işlem en üstte!
   islemKayitlari.slice().reverse().forEach((kayit, i) => {
     const index = islemKayitlari.length - 1 - i;
     const li = document.createElement("li");
@@ -390,7 +363,6 @@ function guncelleIslemKaydiListesi() {
   });
 }
 
-// Detay penceresi
 function islemDetayGoster(index) {
   const kayit = islemKayitlari[index];
   let detay = `
@@ -477,7 +449,6 @@ function islemDetayGoster(index) {
   };
 }
 
-// Kayıt sil
 function islemKaydiSil(index, modalEl) {
   gosterEminMisiniz("İşlem kaydını silmek istediğine emin misin?", () => {
     islemKayitlari.splice(index, 1);
@@ -487,7 +458,6 @@ function islemKaydiSil(index, modalEl) {
   });
 }
 
-// Toplu Sil Menü Aç/Kapat
 const topluSilBtn = document.getElementById("islemTopluSilBtn");
 const topluSilMenu = document.getElementById("topluSilMenu");
 topluSilBtn.onclick = (e) => {
@@ -497,8 +467,6 @@ topluSilBtn.onclick = (e) => {
 
 topluSilMenu.onclick = (e) => e.stopPropagation();
 
-// Güncellenmiş Emin misin fonksiyonu
-// Emin misin? modalı (BİR TANE OLACAK)
 function gosterEminMisiniz(mesaj, evetCallback, hayirCallback) {
   let eskiModal = document.getElementById('ozelEminModal');
   if (eskiModal) eskiModal.remove();
@@ -526,9 +494,7 @@ function gosterEminMisiniz(mesaj, evetCallback, hayirCallback) {
   modal.onclick = (e) => { if (e.target === modal) { modal.remove(); hayirCallback && hayirCallback(); } };
 }
 
-// SAYFA YÜKLENDİĞİNDE TOPLU SİL BUTONLARI ÇALIŞSIN
 window.addEventListener("DOMContentLoaded", function() {
-  // Toplu sil butonlarına tıklama ekle
   document.querySelectorAll(".toplu-sil-btn").forEach(btn => {
     btn.onclick = function() {
       let tip = this.getAttribute("data-tip");
@@ -549,7 +515,6 @@ window.addEventListener("DOMContentLoaded", function() {
         }
         localStorage.setItem("islemKayitlari", JSON.stringify(islemKayitlari));
         guncelleIslemKaydiListesi();
-        // Menü kapansın
         const topluSilMenu = document.getElementById("topluSilMenu");
         if (topluSilMenu) topluSilMenu.style.display = "none";
       });
@@ -557,7 +522,6 @@ window.addEventListener("DOMContentLoaded", function() {
   });
 });
 
-// KAPATMA - Kopyala ve yapıştır
 document.addEventListener("mousedown", function(e) {
   if (document.getElementById("ozelEminModal")) return;
   const topluSilMenu = document.getElementById("topluSilMenu");
@@ -571,4 +535,3 @@ document.addEventListener("mousedown", function(e) {
     topluSilMenu.style.display = "none";
   }
 });
-

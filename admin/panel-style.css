@@ -83,7 +83,6 @@ body.light .menu-item.active {
   max-width: 1000px;
 }
 
-/* Input, select ve button stilleri */
 input,
 select,
 button {
@@ -141,12 +140,11 @@ button:hover {
   display: block;
 }
 
-/* 🎵 Şarkı Listesi Kartları */
 #sarkiListesi {
   max-width: 1000px;
   padding-left: 0;
   padding-right: 0;
-  margin: 0 auto; /* Ortalar */
+  margin: 0 auto;
 }
 
 #sarkiListesi li {
@@ -163,7 +161,7 @@ button:hover {
   width: 95%;
   max-width: 850px;
   min-height: 38px;
-  margin-left: 0; /* Sol boşluk yok */
+  margin-left: 0;
 }
 
 #sarkiListesi li:hover {
@@ -182,7 +180,6 @@ body.light #sarkiListesi li:hover {
   background: #f9f9f9;
 }
 
-/* Buton grubu */
 .btn-group {
   display: flex;
   gap: 5px;
@@ -194,7 +191,6 @@ body.light #sarkiListesi li:hover {
   border-radius: 6px;
 }
 
-/* 🌙 Tema Butonu */
 .theme-toggle {
   position: absolute;
   top: 15px;
@@ -204,7 +200,6 @@ body.light #sarkiListesi li:hover {
   gap: 10px;
 }
 
-/* Tema Switch */
 .switch {
   position: relative;
   display: inline-block;
@@ -250,7 +245,6 @@ input:checked + .slider:before {
   transform: translateX(26px);
 }
 
-/* Responsive */
 @media screen and (max-width: 768px) {
   .sidebar {
     width: 100%;
@@ -528,7 +522,7 @@ body.light .islem-kaydi-item:hover {
   right: -350px;
   min-width: 180px;
   max-width: 340px;
-  background: #21b573; /* Yeşil-mavi arası bir ton */
+  background: #21b573;
   color: #fff;
   padding: 16px 36px;
   border-radius: 14px 32px 32px 14px;
@@ -556,4 +550,3 @@ body.light .toast-guncelle {
   right: -350px;
   opacity: 0;
 }
-

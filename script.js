@@ -1,4 +1,3 @@
-// 🎵 Şarkı listesi admin panelden gelir
 let sarkiListesi = JSON.parse(localStorage.getItem("sarkilar")) || [];
 let soruListesi = [];
 let kullanilanSarkilar = [];
@@ -42,7 +41,6 @@ options.forEach((option) => {
       document.getElementById(id).style.display = "none";
     });
 
-    // Seçilen kategoriye göre aç+gorunur ekle
     if (option.getAttribute("data-value") === "dizi") {
       const el = document.getElementById("diziAltKategoriler");
       el.style.display = "flex";
@@ -89,7 +87,6 @@ document.getElementById('filmYabanciCard').addEventListener('click', function() 
   this.classList.add('selected');
   document.getElementById('filmTurkceCard').classList.remove('selected');
 });
-// Türkçe alt kategori kartları
 document.getElementById('turkceRockCard').addEventListener('click', function() {
     selectedTurkceAltKategori = "rock";
     altKategoriCardSec('turkceAltKategoriler', this);
@@ -107,7 +104,6 @@ document.getElementById('turkceKarisikCard').addEventListener('click', function(
     altKategoriCardSec('turkceAltKategoriler', this);
 });
 
-// Yabancı alt kategori kartları
 document.getElementById('yabanciRockCard').addEventListener('click', function() {
     selectedYabanciAltKategori = "rock";
     altKategoriCardSec('yabanciAltKategoriler', this);
@@ -162,7 +158,6 @@ if (kategoriKey === "yabanci") {
     }
   }
 
-  // --- Film kontrolü
   if (kategoriKey === "film") {
     if (!selectedFilmAltKategori) {
       alert("Lütfen film için Türkçe veya Yabancı seçin!");
@@ -170,7 +165,6 @@ if (kategoriKey === "yabanci") {
     }
   }
 
-  // Diğer kategorilerde boşsa uyarı
   if (
     (!kategoriKey || secilenKategori === "Kategori Seç") &&
     kategoriKey !== "dizi" && kategoriKey !== "film"
@@ -228,7 +222,7 @@ geriBtn.addEventListener("click", function () {
 
 function rastgeleSoruIndex() {
   if (kullanilanSarkilar.length === soruListesi.length) {
-    kullanilanSarkilar = []; // tüm sorular kullanıldıysa sıfırla
+    kullanilanSarkilar = [];
   }
 
   let index;
@@ -296,12 +290,10 @@ function guncelleSoru() {
   document.getElementById("zamanGoster").textContent = "Kalan Süre: 30";
   document.getElementById('audio-player').src = soru.dosya;
 
-  // Yeni bar için: bar ve glow sıfırla, nota animasyonunu durdur
   if(window.progressBar) progressBar.style.width = '0%';
   if(window.progressGlow) progressGlow.style.left = '0px';
   if(window.durdurCalmaAnimasyonu) durdurCalmaAnimasyonu();
 
-  // --- BURAYA EKLE ---
   setTimeout(() => {
     audioPlayer.play();
   }, 150);
@@ -328,7 +320,6 @@ function baslatSayac() {
   }, 1000);
 }
 
-// --- YENİ MÜZİK BAR JS KISMI --- //
 const audioPlayer = document.getElementById('audio-player');
 const progressBar = document.getElementById('progressBar');
 const progressGlow = document.getElementById('progressGlow');
@@ -337,7 +328,6 @@ const replayBtn = document.getElementById('replayBtn');
 
 let progressInterval = null;
 
-// Şarkı çalmaya başlayınca nota sallansın, bar ilerlesin
 function baslatCalmaAnimasyonu() {
   if (musicNote) musicNote.classList.add('sallaniyor');
   clearInterval(progressInterval);
@@ -351,45 +341,38 @@ function baslatCalmaAnimasyonu() {
   }, 100);
 }
 
-// Şarkı durunca nota dursun, bar olduğu yerde kalsın
 function durdurCalmaAnimasyonu() {
   if (musicNote) musicNote.classList.remove('sallaniyor');
   clearInterval(progressInterval);
 }
 
-// Oynat/durdur yönetimi
 audioPlayer.addEventListener('play', baslatCalmaAnimasyonu);
 audioPlayer.addEventListener('pause', durdurCalmaAnimasyonu);
 audioPlayer.addEventListener('ended', durdurCalmaAnimasyonu);
 
-// Replay tuşuna tıklayınca hızlı bir tur dön, sonra plak gibi dönmeye başla
 replayBtn.addEventListener('click', () => {
-  // Önce hızlı dönüş!
   replayBtn.classList.add('donuyor');
-  replayBtn.classList.remove('donuyor-surekli'); // Hızlı dönerken yavaş döngüyü kaldır
+  replayBtn.classList.remove('donuyor-surekli');
 
   audioPlayer.currentTime = 0;
   audioPlayer.play();
 
   setTimeout(() => {
     replayBtn.classList.remove('donuyor');
-    // Hızlı animasyon bittikten ve şarkı çalıyorsa plak gibi dönmeye başlasın
     if (!audioPlayer.paused) {
       replayBtn.classList.add('donuyor-surekli');
     }
-  }, 800); // hızlı animasyon süresiyle aynı olmalı
+  }, 800);
 });
 
-// Şarkı çalarken plak gibi dönmeye başlasın
 audioPlayer.addEventListener('play', () => {
   setTimeout(() => {
     if (!replayBtn.classList.contains('donuyor')) {
       replayBtn.classList.add('donuyor-surekli');
     }
-  }, 820); // Hızlı animasyon bittikten sonra başlat
+  }, 820);
 });
 
-// Şarkı durunca veya bitince plak gibi dönmeyi durdur
 audioPlayer.addEventListener('pause', () => {
   replayBtn.classList.remove('donuyor-surekli');
 });
@@ -397,25 +380,21 @@ audioPlayer.addEventListener('ended', () => {
   replayBtn.classList.remove('donuyor-surekli');
 });
 
-// Volume Kontrolü — Masaüstü: hover ile, Mobil: tıklama ile açılır
 const volumeBtn = document.getElementById('volumeBtn');
 const volumeSlider = document.getElementById('volumeSlider');
 const volumeSliderContainer = document.querySelector('.volume-slider-container');
 const volumeControl = document.querySelector('.volume-control');
 
-// Ses seviyesi ayarla
 volumeSlider.addEventListener('input', function () {
   audioPlayer.volume = this.value;
 });
 
-// Mobil mi kontrolü
 function isMobile() {
   return /Mobi|Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent);
 }
 
 let volumeTimeout;
 if (isMobile()) {
-  // MOBİLDE — tıklayınca aç/kapa
   let volumeOpen = false;
 
   volumeBtn.addEventListener('click', function (e) {
@@ -429,7 +408,6 @@ if (isMobile()) {
 
   });
 
-  // Dışarı tıklayınca kapat
   document.addEventListener('click', function () {
     volumeSliderContainer.classList.remove('active');
     volumeOpen = false;
@@ -440,7 +418,6 @@ if (isMobile()) {
   });
 
 } else {
-  // MASAÜSTÜNDE — sadece hover ile açılır
   volumeControl.addEventListener('mouseenter', () => {
     clearTimeout(volumeTimeout);
     volumeSliderContainer.classList.add('active');
@@ -450,7 +427,6 @@ if (isMobile()) {
       volumeSliderContainer.classList.remove('active');
     }, 1100);
   });
-  // Slider'a tekrar hover olursa açık kalsın
   volumeSliderContainer.addEventListener('mouseenter', () => {
     clearTimeout(volumeTimeout);
   });
