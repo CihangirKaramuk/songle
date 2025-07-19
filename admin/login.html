@@ -11,12 +11,15 @@
     <h2>Admin Panel Girişi</h2>
     
     <input type="text" id="adminUsername" placeholder="Kullanıcı adını gir">
-    <input type="password" id="adminPassword" placeholder="Şifreyi gir">
-    
+
+    <div class="password-wrapper">
+      <input type="password" id="adminPassword" placeholder="Şifreyi gir">
+      <span id="togglePassword" class="toggle-password" style="display:none;"></span>
+    </div>
+
     <button id="loginBtn">Giriş Yap</button>
     <p id="errorMsg" class="error-msg"></p>
   </div>
-
   <script src="admin-login.js"></script>
 </body>
 </html>

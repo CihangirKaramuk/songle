@@ -50,3 +50,34 @@ button:hover {
   color: #ff4d4d;
   margin-top: 15px;
 }
+
+.password-wrapper {
+  position: relative;
+  width: 100%;
+}
+.password-wrapper input[type="password"],
+.password-wrapper input[type="text"] {
+  padding-right: 45px;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  color: #aaa;
+  transition: opacity 0.19s, color 0.2s;
+  z-index: 2;
+}
+.toggle-password:hover {
+  color: #888;
+  transform: scale(1.13) rotate(-7deg);
+}
+

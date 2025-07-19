@@ -455,6 +455,7 @@ function islemKaydiSil(index, modalEl) {
     localStorage.setItem("islemKayitlari", JSON.stringify(islemKayitlari));
     guncelleIslemKaydiListesi();
     if (modalEl) modalEl.remove();
+    showDeleteToast('🗑️ İşlem kaydı silindi!');
   });
 }
 
@@ -517,6 +518,13 @@ window.addEventListener("DOMContentLoaded", function() {
         guncelleIslemKaydiListesi();
         const topluSilMenu = document.getElementById("topluSilMenu");
         if (topluSilMenu) topluSilMenu.style.display = "none";
+        if (tip === "son") {
+          showDeleteToast('🗑️ İşlem kaydı silindi!');
+        } else if (tip === "tum") {
+          showDeleteToast('🗑️ Tüm işlem kayıtları silindi!');
+        } else {
+          showDeleteToast('🗑️ İşlem kayıtları silindi!');
+        }
       });
     }
   });
