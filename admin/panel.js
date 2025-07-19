@@ -250,17 +250,10 @@ window.addEventListener("load", () => {
   });
 });
 
-  document.getElementById("btn-hayir").onclick = function() {
-    document.getElementById("modal-onay").style.display = "none";
-    silinecekIndex = null;
-  };
-
-  document.getElementById("modal-onay").onclick = function(e) {
-    if (e.target === this) {
-      this.style.display = "none";
-      silinecekIndex = null;
-    }
-  };
+document.getElementById("btn-hayir").onclick = function() {
+  document.getElementById("modal-onay").style.display = "none";
+  silinecekIndex = null;
+};
 
 document.getElementById("modal-onay").onclick = function(e) {
   if (e.target === this) {
@@ -300,18 +293,6 @@ document.getElementById("btn-evet").onclick = function() {
   }
   document.getElementById("modal-onay").style.display = "none";
   showDeleteToast('🗑️ Şarkı silindi!');
-};
-
-document.getElementById("btn-hayir").onclick = function() {
-  document.getElementById("modal-onay").style.display = "none";
-  silinecekIndex = null;
-};
-
-document.getElementById("modal-onay").onclick = function(e) {
-  if (e.target === this) {
-    this.style.display = "none";
-    silinecekIndex = null;
-  }
 };
 
 function showDeleteToast(msg) {
@@ -535,3 +516,122 @@ document.addEventListener("mousedown", function(e) {
     topluSilMenu.style.display = "none";
   }
 });
+
+window.addEventListener("DOMContentLoaded", function() {
+  // (Diğer kodlar)
+
+  // Deezer Ekle Toggle
+  const deezerFormToggle = document.getElementById("deezerFormToggle");
+  if (deezerFormToggle) {
+    deezerFormToggle.onclick = function() {
+      const form = document.getElementById("deezerForm");
+      form.style.display = form.style.display === "none" ? "block" : "none";
+    };
+  }
+
+  // Deezer Arama
+  const deezerAramaBtn = document.getElementById("deezerAramaBtn");
+  if (deezerAramaBtn) {
+    deezerAramaBtn.onclick = function() {
+      const query = document.getElementById("deezerAramaInput").value.trim();
+      const sonuclarUl = document.getElementById("deezerSonuclar");
+      sonuclarUl.innerHTML = '<li>Aranıyor...</li>';
+
+      if (!query) {
+        sonuclarUl.innerHTML = '<li>Lütfen arama terimi girin.</li>';
+        return;
+      }
+      // Eski scripti kaldır
+      const eskiScript = document.getElementById("deezerAramaScript");
+      if (eskiScript) eskiScript.remove();
+
+      // JSONP callback
+      window.deezerJsonpSonuc = function(obj) {
+        if (!obj.data || obj.data.length === 0) {
+          sonuclarUl.innerHTML = "<li>Sonuç bulunamadı.</li>";
+          return;
+        }
+        sonuclarUl.innerHTML = "";
+        obj.data.slice(0, 7).forEach(sarki => {
+          let li = document.createElement("li");
+          li.style.marginBottom = "11px";
+          li.style.background = "linear-gradient(145deg, #1e1e1e, #222226)";
+          li.style.padding = "8px 14px";
+          li.style.borderRadius = "7px";
+          li.style.display = "flex";
+          li.style.justifyContent = "space-between";
+          li.style.alignItems = "center";
+
+          let bilgi = document.createElement("div");
+          bilgi.innerHTML = `<b>${sarki.artist.name}</b> - ${sarki.title_short}`;
+
+          let ekleBtn = document.createElement("button");
+          ekleBtn.textContent = "Ekle";
+          ekleBtn.style.marginLeft = "18px";
+          ekleBtn.style.fontSize = "13px";
+          ekleBtn.style.padding = "6px 12px";
+          ekleBtn.style.borderRadius = "8px";
+          ekleBtn.style.background = "linear-gradient(to right, #7b1fa2, #9c27b0)";
+          ekleBtn.style.color = "white";
+          ekleBtn.style.cursor = "pointer";
+          // ------------- YENİ ENTEGRE BAŞLANGIÇ -------------
+          ekleBtn.onclick = function() {
+            window.secilenDeezerSarki = sarki;
+            document.getElementById("deezerKategoriModal").style.display = "flex";
+            document.getElementById("deezerKategoriSelect").value = "";
+            document.getElementById("deezerModalMsg").textContent = "Şarkı eklemek için kategori seç:";
+          };
+          // ------------- YENİ ENTEGRE BİTİŞ -------------
+          li.appendChild(bilgi);
+          li.appendChild(ekleBtn);
+          sonuclarUl.appendChild(li);
+        });
+      };
+
+      // Script etiketi ile Deezer JSONP çağrısı
+      const script = document.createElement("script");
+      script.id = "deezerAramaScript";
+      script.src = "https://api.deezer.com/search?q=" + encodeURIComponent(query) + "&output=jsonp&callback=deezerJsonpSonuc";
+      document.body.appendChild(script);
+    };
+  }
+});
+
+// Deezer kategori seç modalı işlevleri
+document.getElementById("deezerKategoriEvet").onclick = function() {
+  let kategori = document.getElementById("deezerKategoriSelect").value;
+  if (!["turkce", "yabanci", "dizi", "film"].includes(kategori)) {
+    document.getElementById("deezerModalMsg").textContent = "Lütfen bir kategori seç!";
+    return;
+  }
+  document.getElementById("deezerKategoriModal").style.display = "none";
+  document.getElementById("deezerModalMsg").textContent = "Şarkı eklemek için kategori seç:";
+
+  let sarki = window.secilenDeezerSarki;
+  let tamCevap = `${sarki.artist.name} - ${sarki.title_short}`;
+  let gosterim = `🎵 Şarkı çalıyor. (${tamCevap})`;
+  sarkiListesi.push({
+    kategori,
+    cevap: tamCevap,
+    sarki: gosterim,
+    audio: sarki.preview // 30sn'lik mp3
+  });
+  localStorage.setItem("sarkilar", JSON.stringify(sarkiListesi));
+  guncelleListe();
+  showSuccessToast('✅ Deezer\'dan şarkı başarıyla eklendi!');
+  islemKayitlari.push({
+    baslik: "Deezer'dan Şarkı Eklendi",
+    tarih: new Date().toLocaleString("tr-TR"),
+    detay: { "Sanatçı": sarki.artist.name, "Şarkı": sarki.title_short, "Kategori": kategori },
+    tur: "ekle"
+  });
+  localStorage.setItem("islemKayitlari", JSON.stringify(islemKayitlari));
+  guncelleIslemKaydiListesi();
+  window.secilenDeezerSarki = null;
+};
+
+document.getElementById("deezerKategoriHayir").onclick = function() {
+  document.getElementById("deezerKategoriModal").style.display = "none";
+  document.getElementById("deezerModalMsg").textContent = "Şarkı eklemek için kategori seç:";
+  window.secilenDeezerSarki = null;
+};
