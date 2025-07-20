@@ -89,6 +89,24 @@ function sarkiDuzenleManual(secilenSarki) {
   document.getElementById("duzenleSarki").value = sarkiAdi;
   document.getElementById("duzenleKategori").value = secilenSarki.kategori;
   document.getElementById("duzenleFormu").style.display = "block";
+
+    const duzenleAltKategoriSec = document.getElementById("duzenleAltKategoriSec");
+    duzenleAltKategoriSec.innerHTML = '<option value="">Alt Kategori Seç</option>';
+    const kat = secilenSarki.kategori;
+    if (altKategoriler[kat]) {
+      altKategoriler[kat].forEach(k => {
+        const val = k.toLowerCase().replace(" ", "");
+        const opt = document.createElement("option");
+        opt.value = val;
+        opt.textContent = k;
+        duzenleAltKategoriSec.appendChild(opt);
+      });
+      duzenleAltKategoriSec.style.display = "block";
+      // varsa eski altKategori otomatik seçili gelsin
+      if (secilenSarki.altKategori) duzenleAltKategoriSec.value = secilenSarki.altKategori;
+    } else {
+      duzenleAltKategoriSec.style.display = "none";
+    }
 }
 
 function sarkiDuzenle(index) {
@@ -107,6 +125,7 @@ document.getElementById("kaydetBtn").addEventListener("click", () => {
   const yeniSanatci = document.getElementById("duzenleSanatci").value.trim();
   const yeniSarki = document.getElementById("duzenleSarki").value.trim();
   const yeniKategori = document.getElementById("duzenleKategori").value;
+  const yeniAltKategori = document.getElementById("duzenleAltKategoriSec").value;
 
   if (!yeniSanatci || !yeniSarki || (yeniKategori !== "turkce" && yeniKategori !== "yabanci" && yeniKategori !== "dizi" && yeniKategori !== "film")) {
     alert("Lütfen geçerli tüm bilgileri girin.");
@@ -135,11 +154,12 @@ document.getElementById("kaydetBtn").addEventListener("click", () => {
   guncelleIslemKaydiListesi();
 
   sarkiListesi[duzenlenenIndex] = {
-    kategori: yeniKategori,
-    cevap: tamCevap,
-    sarki: gosterim,
-    audio: eskiAudio
-  };
+  kategori: yeniKategori,
+  altKategori: yeniAltKategori,    // <-- BU SATIRI EKLE!
+  cevap: tamCevap,
+  sarki: gosterim,
+  audio: eskiAudio
+};
   localStorage.setItem("sarkilar", JSON.stringify(sarkiListesi));
   guncelleListe();
 
@@ -757,3 +777,21 @@ if (deezerAramaInput) {
     }
   });
 }
+
+document.getElementById("duzenleKategori").addEventListener("change", function() {
+    const kat = this.value;
+    const duzenleAltKategoriSec = document.getElementById("duzenleAltKategoriSec");
+    duzenleAltKategoriSec.innerHTML = '<option value="">Alt Kategori Seç</option>';
+    if (altKategoriler[kat]) {
+      altKategoriler[kat].forEach(k => {
+        const val = k.toLowerCase().replace(" ", "");
+        const opt = document.createElement("option");
+        opt.value = val;
+        opt.textContent = k;
+        duzenleAltKategoriSec.appendChild(opt);
+      });
+      duzenleAltKategoriSec.style.display = "block";
+    } else {
+      duzenleAltKategoriSec.style.display = "none";
+    }
+});

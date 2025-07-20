@@ -40,8 +40,8 @@
             <option value="film">Film</option>
           </select>
           <select id="altKategori" style="display: none;">
-    <option value="">Alt Kategori Seç</option>
-  </select>
+            <option value="">Alt Kategori Seç</option>
+          </select>
           <input type="file" id="mp3File" accept="audio/mpeg" required />
           <button id="ekleBtn">Şarkıyı Ekle</button>
         </div>
@@ -66,8 +66,8 @@
             <option value="film">Film</option>
           </select>
           <select id="altKategoriFiltre" style="display:none;">
-  <option value="">Alt Kategori Seç</option>
-</select>
+            <option value="">Alt Kategori Seç</option>
+          </select>
           <input type="text" id="aramaInput" placeholder="Şarkı veya sanatçı ara..." />
           <button id="siralaBtn" style="width:100%;">🔼 A-Z Sırala</button>
         </div>
@@ -82,6 +82,9 @@
             <option value="yabanci">Yabancı</option>
             <option value="dizi">Dizi</option>
             <option value="film">Film</option>
+          </select>
+          <select id="duzenleAltKategoriSec" style="display:none;margin-top:15px;">
+            <option value="">Alt Kategori Seç</option>
           </select>
           <button id="kaydetBtn">Kaydet</button>
         </div>
@@ -125,7 +128,7 @@
   <div id="toast-delete" class="toast-delete"></div>
   <div id="toast-guncelle" class="toast-guncelle"></div>
 
-  <!-- Deezer Kategori Modalı (ENTEGRELİ) -->
+  <!-- Deezer Kategori Modalı -->
   <div id="deezerKategoriModal" class="modal-onay" style="display:none;">
     <div class="modal-icerik">
       <div id="deezerModalMsg">Şarkı eklemek için kategori seç:</div>
@@ -142,7 +145,7 @@
       </div>
     </div>
   </div>
-  <!-- /Deezer Kategori Modalı -->
+
   <script src="panel.js"></script>
 </body>
 </html>
