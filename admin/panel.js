@@ -573,15 +573,10 @@ window.addEventListener("DOMContentLoaded", function() {
           let bilgi = document.createElement("div");
           bilgi.innerHTML = `<b>${sarki.artist.name}</b> - ${sarki.title_short}`;
 
-          let ekleBtn = document.createElement("button");
-          ekleBtn.textContent = "Ekle";
-          ekleBtn.style.marginLeft = "18px";
-          ekleBtn.style.fontSize = "13px";
-          ekleBtn.style.padding = "6px 12px";
-          ekleBtn.style.borderRadius = "8px";
-          ekleBtn.style.background = "linear-gradient(to right, #7b1fa2, #9c27b0)";
-          ekleBtn.style.color = "white";
-          ekleBtn.style.cursor = "pointer";
+       let ekleBtn = document.createElement("button");
+ekleBtn.textContent = "Ekle";
+ekleBtn.className = "ekle-btn"; // Sadece bu satırı eklemen yeterli!
+
           // ------------- YENİ ENTEGRE BAŞLANGIÇ -------------
           ekleBtn.onclick = function() {
             window.secilenDeezerSarki = sarki;
