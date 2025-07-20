@@ -538,6 +538,55 @@ window.addEventListener("DOMContentLoaded", function() {
   }
 
   // Deezer Arama
+
+function deezerAramaYap() {
+  const query = document.getElementById("deezerAramaInput").value.trim();
+  const sonuclarUl = document.getElementById("deezerSonuclar");
+  sonuclarUl.innerHTML = '<li>Aranıyor...</li>';
+
+  if (!query) {
+    sonuclarUl.innerHTML = '<li>Lütfen arama terimi girin.</li>';
+    return;
+  }
+  // Eski scripti kaldır
+  const eskiScript = document.getElementById("deezerAramaScript");
+  if (eskiScript) eskiScript.remove();
+
+  // JSONP callback
+  window.deezerJsonpSonuc = function(obj) {
+    if (!obj.data || obj.data.length === 0) {
+      sonuclarUl.innerHTML = "<li>Sonuç bulunamadı.</li>";
+      return;
+    }
+    sonuclarUl.innerHTML = "";
+    obj.data.slice(0, 7).forEach(sarki => {
+      let li = document.createElement("li");
+      let bilgi = document.createElement("div");
+      bilgi.innerHTML = `<b>${sarki.artist.name}</b> - ${sarki.title_short}`;
+
+      let ekleBtn = document.createElement("button");
+      ekleBtn.textContent = "Ekle";
+      ekleBtn.className = "ekle-btn";
+      ekleBtn.onclick = function() {
+        window.secilenDeezerSarki = sarki;
+        document.getElementById("deezerKategoriModal").style.display = "flex";
+        document.getElementById("deezerKategoriSelect").value = "";
+        document.getElementById("deezerModalMsg").textContent = "Şarkı eklemek için kategori seç:";
+      };
+      li.appendChild(bilgi);
+      li.appendChild(ekleBtn);
+      sonuclarUl.appendChild(li);
+    });
+  };
+
+  // Script etiketi ile Deezer JSONP çağrısı
+  const script = document.createElement("script");
+  script.id = "deezerAramaScript";
+  script.src = "https://api.deezer.com/search?q=" + encodeURIComponent(query) + "&output=jsonp&callback=deezerJsonpSonuc";
+  document.body.appendChild(script);
+}
+
+
   const deezerAramaBtn = document.getElementById("deezerAramaBtn");
   if (deezerAramaBtn) {
     deezerAramaBtn.onclick = function() {
@@ -638,3 +687,17 @@ document.getElementById("deezerKategoriHayir").onclick = function() {
   document.getElementById("deezerModalMsg").textContent = "Şarkı eklemek için kategori seç:";
   window.secilenDeezerSarki = null;
 };
+
+
+// Deezer arama inputunda Enter'a basınca arama yap
+const deezerAramaInput = document.getElementById("deezerAramaInput");
+if (deezerAramaInput) {
+  deezerAramaInput.addEventListener("keydown", function(e) {
+    if (e.key === "Enter") {
+      const deezerAramaBtn = document.getElementById("deezerAramaBtn");
+      if (deezerAramaBtn) {
+        deezerAramaBtn.click();
+      }
+    }
+  });
+}
