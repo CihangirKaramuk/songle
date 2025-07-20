@@ -39,12 +39,14 @@ function showSuccessToast(msg) {
 function guncelleListe() {
   const arama = document.getElementById("aramaInput")?.value?.toLowerCase() || "";
   const kategori = document.getElementById("kategoriFiltre")?.value || "tum";
+  const altKategori = document.getElementById("altKategoriFiltre")?.value || "";
   const ul = document.getElementById("sarkiListesi");
   ul.innerHTML = "";
 
   let filtrelenmisListe = sarkiListesi
     .filter(sarki =>
-      (kategori === "tum" || sarki.kategori === kategori) &&
+      (kategori === "tum" || sarki.kategori === kategori || sarki.kategori.startsWith(kategori + "-")) &&
+      (!altKategori || sarki.kategori === altKategori) &&
       sarki.cevap.toLowerCase().includes(arama)
     );
 
@@ -252,6 +254,30 @@ window.addEventListener("load", () => {
 
   document.getElementById("aramaInput").addEventListener("input", guncelleListe);
   document.getElementById("kategoriFiltre").addEventListener("change", guncelleListe);
+  const kategoriFiltre = document.getElementById("kategoriFiltre");
+const altKategoriFiltre = document.getElementById("altKategoriFiltre");
+
+kategoriFiltre.addEventListener("change", function() {
+  const anaKategori = kategoriFiltre.value;
+  altKategoriFiltre.innerHTML = '<option value="">Alt Kategori Seç</option>';
+
+  if (altKategoriler[anaKategori]) {
+    altKategoriler[anaKategori].forEach(alt => {
+      const val = `${anaKategori}-${alt.toLowerCase().replace(' ', '')}`;
+      const option = document.createElement("option");
+      option.value = val;
+      option.textContent = alt;
+      altKategoriFiltre.appendChild(option);
+    });
+    altKategoriFiltre.style.display = "inline-block";
+  } else {
+    altKategoriFiltre.style.display = "none";
+  }
+  // Filtreyi güncelle
+  guncelleListe();
+});
+
+altKategoriFiltre.addEventListener("change", guncelleListe);
   document.getElementById("siralaBtn").addEventListener("click", () => {
     siralamaArtan = !siralamaArtan;
     document.getElementById("siralaBtn").textContent = siralamaArtan ? "🔼 A-Z Sırala" : "🔽 Z-A Sırala";
