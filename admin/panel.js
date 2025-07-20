@@ -4,6 +4,12 @@ let sarkiListesi = JSON.parse(localStorage.getItem("sarkilar")) || [];
 let duzenlenenIndex = null;
 let siralamaArtan = true;
 let silinecekIndex = null;
+let altKategoriler = {
+  turkce: ["Rock", "Pop", "Hip Hop", "Karışık"],
+  yabanci: ["Rock", "Pop", "Hip Hop", "Karışık"],
+  dizi: ["Türkçe", "Yabancı"],
+  film: ["Türkçe", "Yabancı"]
+};
 
 function showGuncelleToast(msg) {
   const toast = document.getElementById("toast-guncelle");
@@ -142,14 +148,17 @@ document.getElementById("kaydetBtn").addEventListener("click", () => {
 document.getElementById("ekleBtn").addEventListener("click", () => {
   const sarki = document.getElementById("sarkiAdi").value.trim();
   const sanatci = document.getElementById("sanatciAdi").value.trim();
-  const kategori = document.getElementById("kategori").value;
+  const anaKategori = document.getElementById("kategori").value;
+  const altKategori = document.getElementById("altKategori").value; // Yeni ekledik
   const mp3Input = document.getElementById("mp3File");
-
-  if (!sarki || !sanatci || (kategori !== "turkce" && kategori !== "yabanci" && kategori !== "dizi" && kategori !== "film") || !mp3Input.files[0]) {
+  
+  // 1. Tüm alanlar kontrolü (alt kategori dahil)
+  if (!sarki || !sanatci || !anaKategori || !altKategori || !mp3Input.files[0]) {
     alert("Lütfen tüm alanları doldurun ve bir MP3 dosyası yükleyin.");
     return;
   }
 
+  const kategori = altKategori;
   const file = mp3Input.files[0];
   const reader = new FileReader();
 
@@ -509,6 +518,27 @@ window.addEventListener("DOMContentLoaded", function() {
       });
     }
   });
+});
+
+document.getElementById("kategori").addEventListener("change", function() {
+  const secilenKategori = this.value;
+  const altKategoriSelect = document.getElementById("altKategori");
+  
+  // Reset ve gizle
+  altKategoriSelect.innerHTML = '<option value="">Alt Kategori Seç</option>';
+  altKategoriSelect.style.display = "none";
+  
+  // Kategori seçilmişse alt kategorileri doldur
+  if (secilenKategori && altKategoriler[secilenKategori]) {
+    altKategoriSelect.style.display = "block";
+    
+    altKategoriler[secilenKategori].forEach(altKategori => {
+      const option = document.createElement("option");
+      option.value = `${secilenKategori}-${altKategori.toLowerCase().replace(' ', '')}`;
+      option.textContent = altKategori;
+      altKategoriSelect.appendChild(option);
+    });
+  }
 });
 
 document.addEventListener("mousedown", function(e) {
