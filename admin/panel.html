@@ -39,8 +39,8 @@
             <option value="dizi">Dizi</option>
             <option value="film">Film</option>
           </select>
-          <select id="altKategori" style="display: none;">
-            <option value="">Alt Kategori Seç</option>
+          <select id="altKategori" style="display: none;" required>
+            <option value="">Alt Kategori Seç *</option>
           </select>
           <input type="file" id="mp3File" accept="audio/mpeg" required />
           <button id="ekleBtn">Şarkıyı Ekle</button>
@@ -110,6 +110,7 @@
             </div>
             <ul id="islemKaydiListesi"></ul>
           </div>
+          <button onclick="migrateKategoriler()" style="margin-top:15px;width:100%;">🔄 Kategorileri Düzelt</button>
         </div>
       </section>
     </div>
@@ -139,6 +140,11 @@
         <option value="dizi">Dizi</option>
         <option value="film">Film</option>
       </select>
+      <div id="deezerAltKategoriContainer" style="display:none;margin-top:15px;">
+        <select id="deezerAltKategoriSelect">
+          <option value="">Alt Kategori Seç</option>
+        </select>
+      </div>
       <div class="modal-btnlar" style="margin-top:22px;">
         <button id="deezerKategoriEvet" class="btn-evet">Ekle</button>
         <button id="deezerKategoriHayir" class="btn-hayir">Vazgeç</button>

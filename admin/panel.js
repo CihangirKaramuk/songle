@@ -11,6 +11,111 @@ let altKategoriler = {
   film: ["Türkçe", "Yabancı"]
 };
 
+// 1. DEEZER ENTEGRASYONU
+window.deezerJsonpSonuc = function(response) {
+  const sonuclarUl = document.getElementById("deezerSonuclar");
+  sonuclarUl.innerHTML = "";
+
+  if (!response.data || response.data.length === 0) {
+    sonuclarUl.innerHTML = "<li>Sonuç bulunamadı</li>";
+    return;
+  }
+
+  response.data.slice(0, 7).forEach(sarki => {
+    const li = document.createElement("li");
+    li.innerHTML = `
+      <div class="sarki-info">
+        <b>${sarki.artist.name}</b> - ${sarki.title_short}
+      </div>
+      <button class="ekle-btn" 
+              data-artist="${sarki.artist.name}" 
+              data-title="${sarki.title_short}" 
+              data-preview="${sarki.preview}">
+        Ekle
+      </button>
+    `;
+    sonuclarUl.appendChild(li);
+  });
+
+  document.querySelectorAll('.ekle-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      window.secilenDeezerSarki = {
+        artist: { name: this.getAttribute('data-artist') },
+        title_short: this.getAttribute('data-title'),
+        preview: this.getAttribute('data-preview')
+      };
+      document.getElementById("deezerKategoriModal").style.display = "flex";
+      
+      // Modal açıldığında seçimleri resetle
+      document.getElementById("deezerKategoriSelect").value = "";
+      document.getElementById("deezerAltKategoriSelect").innerHTML = '<option value="">Alt Kategori Seç</option>';
+      document.getElementById("deezerAltKategoriContainer").style.display = "none";
+    });
+  });
+};
+
+// 2. İŞLEM KAYDI YÖNETİMİ
+document.getElementById("islemTopluSilBtn").addEventListener("click", function(e) {
+  e.stopPropagation();
+  const menu = document.getElementById("topluSilMenu");
+  menu.style.display = menu.style.display === "block" ? "none" : "block";
+});
+
+document.querySelectorAll(".toplu-sil-btn").forEach(btn => {
+  btn.addEventListener("click", function(e) {
+    e.stopPropagation();
+    const tip = this.getAttribute("data-tip");
+    const simdi = new Date();
+    let silinecekler = [];
+    
+    switch(tip) {
+      case "son":
+        if (islemKayitlari.length > 0) silinecekler = [islemKayitlari.length - 1];
+        break;
+      case "saat":
+        silinecekler = islemKayitlari.map((kayit, index) => 
+          (simdi - new Date(kayit.tarih)) <= 3600000 ? index : -1
+        ).filter(i => i !== -1);
+        break;
+      case "gun":
+        const bugun = new Date().toDateString();
+        silinecekler = islemKayitlari.map((kayit, index) => 
+          new Date(kayit.tarih).toDateString() === bugun ? index : -1
+        ).filter(i => i !== -1);
+        break;
+      case "tum":
+        silinecekler = islemKayitlari.map((_, index) => index);
+        break;
+    }
+
+    if (silinecekler.length === 0) {
+      showDeleteToast("Silinecek işlem bulunamadı");
+      document.getElementById("topluSilMenu").style.display = "none";
+      return;
+    }
+
+    document.getElementById("modal-onay").style.display = "flex";
+    document.getElementById("modal-onay").style.zIndex = "1001";
+    document.getElementById("modal-msg").textContent = 
+      `${silinecekler.length} işlem kaydı silinecek. Emin misiniz?`;
+
+    const tempEvetBtn = function() {
+      silinecekler.sort((a, b) => b - a).forEach(index => {
+        islemKayitlari.splice(index, 1);
+      });
+      localStorage.setItem("islemKayitlari", JSON.stringify(islemKayitlari));
+      guncelleIslemKaydiListesi();
+      showDeleteToast(`${silinecekler.length} işlem kaydı silindi`);
+      document.getElementById("modal-onay").style.display = "none";
+      document.getElementById("topluSilMenu").style.display = "none";
+      document.getElementById("btn-evet").removeEventListener("click", tempEvetBtn);
+    };
+
+    document.getElementById("btn-evet").addEventListener("click", tempEvetBtn);
+  });
+});
+
+// 3. TOAST MESAJLARI
 function showGuncelleToast(msg) {
   const toast = document.getElementById("toast-guncelle");
   toast.innerHTML = `<span style="font-size:22px;line-height:1;vertical-align:middle;">✅</span> ${msg}`;
@@ -24,7 +129,6 @@ function showGuncelleToast(msg) {
 }
 
 function showSuccessToast(msg) {
-  if (!document.getElementById("ekle").classList.contains("active")) return;
   const toast = document.getElementById("toast-success");
   toast.textContent = msg;
   toast.classList.add("show");
@@ -36,6 +140,19 @@ function showSuccessToast(msg) {
   }, 3000);
 }
 
+function showDeleteToast(msg) {
+  const toast = document.getElementById("toast-delete");
+  toast.textContent = msg;
+  toast.classList.add("show");
+  toast.classList.remove("hide");
+  clearTimeout(window.toastDeleteTimeout);
+  window.toastDeleteTimeout = setTimeout(() => {
+    toast.classList.add("hide");
+    toast.classList.remove("show");
+  }, 3000);
+}
+
+// 4. ŞARKI LİSTESİ YÖNETİMİ
 function guncelleListe() {
   const arama = document.getElementById("aramaInput")?.value?.toLowerCase() || "";
   const kategori = document.getElementById("kategoriFiltre")?.value || "tum";
@@ -64,266 +181,143 @@ function guncelleListe() {
     li.innerHTML = `
       [${sarki.kategori}] ${sarki.cevap}
       <div class="btn-group">
-        <button class="duzenleBtn" onclick='sarkiDuzenleManual(${JSON.stringify(sarki)})'>✏️</button>
-        <button class="silBtn" onclick="sarkiSil(${realIndex})">🗑️</button>
+        <button class="duzenleBtn" data-index="${realIndex}">✏️</button>
+        <button class="silBtn" data-index="${realIndex}">🗑️</button>
         ${sarki.audio ? '<span class="audio-var">🎵</span>' : ''}
       </div>
     `;
     ul.appendChild(li);
   });
 
+  // Düzenle butonlarına event listener ekle
+  document.querySelectorAll('.duzenleBtn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const index = parseInt(this.getAttribute('data-index'));
+      sarkiDuzenleManual(sarkiListesi[index]);
+    });
+  });
+
+  // Sil butonlarına event listener ekle
+  document.querySelectorAll('.silBtn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const index = parseInt(this.getAttribute('data-index'));
+      sarkiSil(index);
+    });
+  });
+
   document.getElementById("duzenleFormu").style.display = "none";
 }
 
-function sarkiDuzenleManual(secilenSarki) {
-  const index = sarkiListesi.findIndex(s => s.cevap === secilenSarki.cevap && s.kategori === secilenSarki.kategori);
-  if (index === -1) {
-    alert("Şarkı bulunamadı.");
-    return;
-  }
-
-  duzenlenenIndex = index;
-
-  const [sanatci, sarkiAdi] = secilenSarki.cevap.split(" - ");
-  document.getElementById("duzenleSanatci").value = sanatci;
-  document.getElementById("duzenleSarki").value = sarkiAdi;
-  document.getElementById("duzenleKategori").value = secilenSarki.kategori;
-  document.getElementById("duzenleFormu").style.display = "block";
-
-    const duzenleAltKategoriSec = document.getElementById("duzenleAltKategoriSec");
-    duzenleAltKategoriSec.innerHTML = '<option value="">Alt Kategori Seç</option>';
-    const kat = secilenSarki.kategori;
-    if (altKategoriler[kat]) {
-      altKategoriler[kat].forEach(k => {
-        const val = k.toLowerCase().replace(" ", "");
-        const opt = document.createElement("option");
-        opt.value = val;
-        opt.textContent = k;
-        duzenleAltKategoriSec.appendChild(opt);
-      });
-      duzenleAltKategoriSec.style.display = "block";
-      // varsa eski altKategori otomatik seçili gelsin
-      if (secilenSarki.altKategori) duzenleAltKategoriSec.value = secilenSarki.altKategori;
-    } else {
-      duzenleAltKategoriSec.style.display = "none";
-    }
-}
-
-function sarkiDuzenle(index) {
-  const sarki = sarkiListesi[index];
-  const [sanatci, sarkiAdi] = sarki.cevap.split(" - ");
-
-  document.getElementById("duzenleSanatci").value = sanatci;
-  document.getElementById("duzenleSarki").value = sarkiAdi;
-  document.getElementById("duzenleKategori").value = sarki.kategori;
-  document.getElementById("duzenleFormu").style.display = "block";
-
-  duzenlenenIndex = index;
-}
-
+// 5. ŞARKI DÜZENLEME
 document.getElementById("kaydetBtn").addEventListener("click", () => {
   const yeniSanatci = document.getElementById("duzenleSanatci").value.trim();
   const yeniSarki = document.getElementById("duzenleSarki").value.trim();
   const yeniKategori = document.getElementById("duzenleKategori").value;
   const yeniAltKategori = document.getElementById("duzenleAltKategoriSec").value;
 
-  if (!yeniSanatci || !yeniSarki || (yeniKategori !== "turkce" && yeniKategori !== "yabanci" && yeniKategori !== "dizi" && yeniKategori !== "film")) {
+  if (!yeniSanatci || !yeniSarki || !yeniKategori) {
     alert("Lütfen geçerli tüm bilgileri girin.");
     return;
   }
 
-  const eskiSanatci = sarkiListesi[duzenlenenIndex].cevap.split(" - ")[0];
-  const eskiSarki = sarkiListesi[duzenlenenIndex].cevap.split(" - ")[1];
-  const eskiKategori = sarkiListesi[duzenlenenIndex].kategori;
-
-  let eskiAudio = sarkiListesi[duzenlenenIndex]?.audio || "";
-
+  const tamKategori = yeniAltKategori ? yeniAltKategori : yeniKategori;
   const tamCevap = `${yeniSanatci} - ${yeniSarki}`;
   const gosterim = `🎵 Şarkı çalıyor... (${tamCevap})`;
 
+  const eskiSarki = sarkiListesi[duzenlenenIndex];
   islemKayitlari.push({
     baslik: "Şarkı Düzenlendi",
     tarih: new Date().toLocaleString("tr-TR"),
     detay: {
-      oncekiBilgi: `${eskiSanatci} - ${eskiSarki} (${eskiKategori})`,
-      yeniBilgi: `${yeniSanatci} - ${yeniSarki} (${yeniKategori})`
+      oncekiBilgi: `${eskiSarki.cevap} (${eskiSarki.kategori})`,
+      yeniBilgi: `${tamCevap} (${tamKategori})`
     },
     tur: "duzenle"
   });
-  localStorage.setItem("islemKayitlari", JSON.stringify(islemKayitlari));
-  guncelleIslemKaydiListesi();
 
   sarkiListesi[duzenlenenIndex] = {
-  kategori: yeniKategori,
-  altKategori: yeniAltKategori,    // <-- BU SATIRI EKLE!
-  cevap: tamCevap,
-  sarki: gosterim,
-  audio: eskiAudio
-};
-  localStorage.setItem("sarkilar", JSON.stringify(sarkiListesi));
-  guncelleListe();
+    kategori: tamKategori,
+    cevap: tamCevap,
+    sarki: gosterim,
+    dosya: eskiSarki.dosya
+  };
 
-  document.getElementById("duzenleFormu").style.display = "none";
+  localStorage.setItem("sarkilar", JSON.stringify(sarkiListesi));
+  localStorage.setItem("islemKayitlari", JSON.stringify(islemKayitlari));
+  
+  guncelleListe();
+  guncelleIslemKaydiListesi();
   showGuncelleToast('Güncellendi');
+  document.getElementById("duzenleFormu").style.display = "none";
 });
 
+// 6. ŞARKI EKLEME
 document.getElementById("ekleBtn").addEventListener("click", () => {
   const sarki = document.getElementById("sarkiAdi").value.trim();
   const sanatci = document.getElementById("sanatciAdi").value.trim();
   const anaKategori = document.getElementById("kategori").value;
-  const altKategori = document.getElementById("altKategori").value; // Yeni ekledik
+  const altKategori = document.getElementById("altKategori").value;
   const mp3Input = document.getElementById("mp3File");
-  
-  // 1. Tüm alanlar kontrolü (alt kategori dahil)
-  if (!sarki || !sanatci || !anaKategori || !altKategori || !mp3Input.files[0]) {
-    alert("Lütfen tüm alanları doldurun ve bir MP3 dosyası yükleyin.");
+
+  if ((anaKategori === "turkce" || anaKategori === "yabanci") && !altKategori) {
+    alert("Lütfen alt kategori seçin!");
     return;
   }
 
-  const kategori = altKategori;
+  if (!sarki || !sanatci || !anaKategori || !mp3Input.files[0]) {
+    alert("Lütfen tüm alanları doldurun ve MP3 dosyası yükleyin!");
+    return;
+  }
+
+  const tamKategori = altKategori ? `${anaKategori}-${altKategori.toLowerCase().replace(' ', '')}` : anaKategori;
   const file = mp3Input.files[0];
   const reader = new FileReader();
 
-  reader.onload = function (e) {
+  reader.onload = function(e) {
     const audioData = e.target.result;
     const tamCevap = `${sanatci} - ${sarki}`;
     const gosterim = `🎵 Şarkı çalıyor. (${tamCevap})`;
 
-    sarkiListesi.push({ kategori, sarki: gosterim, cevap: tamCevap, dosya: audioData });
+    sarkiListesi.push({
+      kategori: tamKategori,
+      cevap: tamCevap,
+      sarki: gosterim,
+      dosya: audioData
+    });
+
     localStorage.setItem("sarkilar", JSON.stringify(sarkiListesi));
-
-    document.getElementById("sarkiAdi").value = "";
-    document.getElementById("sanatciAdi").value = "";
-    document.getElementById("kategori").value = "";
-    document.getElementById("mp3File").value = "";
-
     showSuccessToast('✅ Şarkı başarıyla eklendi!');
 
     islemKayitlari.push({
       baslik: "Şarkı Eklendi",
       tarih: new Date().toLocaleString("tr-TR"),
-      detay: { "Sanatçı": sanatci, "Şarkı": sarki, "Kategori": kategori },
+      detay: { "Sanatçı": sanatci, "Şarkı": sarki, "Kategori": tamKategori },
       tur: "ekle"
     });
     localStorage.setItem("islemKayitlari", JSON.stringify(islemKayitlari));
 
+    document.getElementById("sarkiAdi").value = "";
+    document.getElementById("sanatciAdi").value = "";
+    document.getElementById("kategori").value = "";
+    document.getElementById("altKategori").innerHTML = '<option value="">Alt Kategori Seç</option>';
+    document.getElementById("mp3File").value = "";
+    
     guncelleIslemKaydiListesi();
-
     guncelleListe();
   };
-
   reader.readAsDataURL(file);
 });
 
-function logout() {
-  localStorage.removeItem("adminGiris");
-  window.location.href = "login.html";
-}
-
-document.querySelectorAll(".menu-item").forEach(item => {
-  item.addEventListener("click", () => {
-    document.querySelectorAll(".menu-item").forEach(i => i.classList.remove("active"));
-    item.classList.add("active");
-    const section = item.dataset.section;
-    document.querySelectorAll(".panel-section").forEach(sec => {
-      sec.classList.remove("active");
-      if (sec.id === section) sec.classList.add("active");
-    });
-    document.getElementById("duzenleFormu").style.display = "none";
-    const islemKaydiPanel = document.getElementById("islemKaydiPanel");
-    if (islemKaydiPanel) islemKaydiPanel.style.display = "none";
-    const islemKaydiArrow = document.getElementById("islemKaydiArrow");
-    if (islemKaydiArrow) islemKaydiArrow.textContent = "▶";
-    
-    const topluSilMenu = document.getElementById("topluSilMenu");
-    if (topluSilMenu) topluSilMenu.style.display = "none";
-  });
-});
-
-(function () {
-  const theme = localStorage.getItem("panelTheme");
-  const body = document.getElementById("panelBody");
-
-  if (theme === "light") {
-    body.classList.add("light");
-  } else {
-    body.classList.remove("light");
-  }
-})();
-
-window.addEventListener("load", () => {
-  guncelleListe();
-
-  const toggle = document.getElementById("themeToggle");
-  const body = document.getElementById("panelBody");
-
-  toggle.checked = !body.classList.contains("light");
-  document.getElementById("temaLabel").textContent = toggle.checked ? "🌙 Dark" : "☀️ Light";
-
-  toggle.addEventListener("change", () => {
-    if (toggle.checked) {
-      body.classList.remove("light");
-      localStorage.setItem("panelTheme", "dark");
-      document.getElementById("temaLabel").textContent = "🌙 Dark";
-    } else {
-      body.classList.add("light");
-      localStorage.setItem("panelTheme", "light");
-      document.getElementById("temaLabel").textContent = "☀️ Light";
-    }
-  });
-
-  document.getElementById("aramaInput").addEventListener("input", guncelleListe);
-  document.getElementById("kategoriFiltre").addEventListener("change", guncelleListe);
-  const kategoriFiltre = document.getElementById("kategoriFiltre");
-const altKategoriFiltre = document.getElementById("altKategoriFiltre");
-
-kategoriFiltre.addEventListener("change", function() {
-  const anaKategori = kategoriFiltre.value;
-  altKategoriFiltre.innerHTML = '<option value="">Alt Kategori Seç</option>';
-
-  if (altKategoriler[anaKategori]) {
-    altKategoriler[anaKategori].forEach(alt => {
-      const val = `${anaKategori}-${alt.toLowerCase().replace(' ', '')}`;
-      const option = document.createElement("option");
-      option.value = val;
-      option.textContent = alt;
-      altKategoriFiltre.appendChild(option);
-    });
-    altKategoriFiltre.style.display = "inline-block";
-  } else {
-    altKategoriFiltre.style.display = "none";
-  }
-  // Filtreyi güncelle
-  guncelleListe();
-});
-
-altKategoriFiltre.addEventListener("change", guncelleListe);
-  document.getElementById("siralaBtn").addEventListener("click", () => {
-    siralamaArtan = !siralamaArtan;
-    document.getElementById("siralaBtn").textContent = siralamaArtan ? "🔼 A-Z Sırala" : "🔽 Z-A Sırala";
-    guncelleListe();
-  });
-});
-
-document.getElementById("btn-hayir").onclick = function() {
-  document.getElementById("modal-onay").style.display = "none";
-  silinecekIndex = null;
-};
-
-document.getElementById("modal-onay").onclick = function(e) {
-  if (e.target === this) {
-    this.style.display = "none";
-    silinecekIndex = null;
-  }
-};
-
+// 7. ŞARKI SİLME
 function sarkiSil(index) {
   if (!document.getElementById("liste").classList.contains("active")) return;
   silinecekIndex = index;
   document.getElementById("modal-onay").style.display = "flex";
+  document.getElementById("modal-onay").style.zIndex = "1001";
   document.getElementById("modal-msg").textContent = "Şarkıyı silmek istediğine emin misin?";
 }
 
+// 8. MODAL İŞLEMLERİ
 document.getElementById("btn-evet").onclick = function() {
   if (silinecekIndex !== null) {
     const silinenSarki = sarkiListesi[silinecekIndex];
@@ -331,52 +325,101 @@ document.getElementById("btn-evet").onclick = function() {
       baslik: "Şarkı Silindi",
       tarih: new Date().toLocaleString("tr-TR"),
       detay: {
-        "Sanatçı": silinenSarki?.cevap?.split(" - ")[0] || "-",
-        "Şarkı": silinenSarki?.cevap?.split(" - ")[1] || "-",
-        "Kategori": silinenSarki?.kategori || "-"
+        "Sanatçı": silinenSarki.cevap.split(" - ")[0] || "-",
+        "Şarkı": silinenSarki.cevap.split(" - ")[1] || "-",
+        "Kategori": silinenSarki.kategori || "-"
       },
       tur: "sil"
     });
-    localStorage.setItem("islemKayitlari", JSON.stringify(islemKayitlari));
-
-    guncelleIslemKaydiListesi();
 
     sarkiListesi.splice(silinecekIndex, 1);
     localStorage.setItem("sarkilar", JSON.stringify(sarkiListesi));
+    localStorage.setItem("islemKayitlari", JSON.stringify(islemKayitlari));
+    
     guncelleListe();
+    guncelleIslemKaydiListesi();
+    showDeleteToast('🗑️ Şarkı silindi!');
     silinecekIndex = null;
   }
   document.getElementById("modal-onay").style.display = "none";
-  showDeleteToast('🗑️ Şarkı silindi!');
+  document.getElementById("modal-onay").style.zIndex = "";
 };
 
-function showDeleteToast(msg) {
-  const toast = document.getElementById("toast-delete");
-  toast.textContent = msg;
-  toast.classList.add("show");
-  toast.classList.remove("hide");
-  clearTimeout(window.toastDeleteTimeout);
-  window.toastDeleteTimeout = setTimeout(() => {
-    toast.classList.add("hide");
-    toast.classList.remove("show");
-  }, 3000);
+document.getElementById("btn-hayir").onclick = function() {
+  document.getElementById("modal-onay").style.display = "none";
+  document.getElementById("modal-onay").style.zIndex = "";
+  silinecekIndex = null;
+};
+
+// 9. İŞLEM KAYDI DETAY
+function islemDetayGoster(index) {
+  const kayit = islemKayitlari[index];
+  
+  let detayHTML = `
+    <div class="modal-detay-container">
+      <div class="modal-detay-baslik">${kayit.baslik}</div>
+  `;
+
+  if (kayit.tur === "duzenle") {
+    detayHTML += `
+      <div class="modal-detay-grup">
+        <div class="modal-detay-altbaslik" style="color:#ff7675;">Önceki:</div>
+        <div class="modal-detay-icerik">${kayit.detay.oncekiBilgi || 'Bilgi yok'}</div>
+      </div>
+      <div class="modal-detay-grup">
+        <div class="modal-detay-altbaslik" style="color:#55efc4;">Sonraki:</div>
+        <div class="modal-detay-icerik">${kayit.detay.yeniBilgi || 'Bilgi yok'}</div>
+      </div>
+    `;
+  } else {
+    detayHTML += `
+      <div class="modal-detay-grup">
+        ${Object.entries(kayit.detay).map(([key, value]) => `
+          <div class="modal-detay-satir">
+            <span class="modal-detay-anahtar">${key}:</span>
+            <span class="modal-detay-deger">${value || 'Bilgi yok'}</span>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  detayHTML += `
+      <div class="modal-detay-footer">
+        <div class="modal-detay-tarih">${kayit.tarih}</div>
+        <button id="islemKaydiSilBtn" class="modal-detay-sil-btn">Sil</button>
+      </div>
+    </div>
+  `;
+
+  const modal = document.createElement("div");
+  modal.className = "modal-detay-arkaplan";
+  modal.style.zIndex = "1000";
+  modal.innerHTML = detayHTML;
+
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) document.body.removeChild(modal);
+  });
+
+  modal.querySelector("#islemKaydiSilBtn").addEventListener("click", () => {
+    document.getElementById("modal-onay").style.display = "flex";
+    document.getElementById("modal-onay").style.zIndex = "1002";
+    document.getElementById("modal-msg").textContent = "Bu işlem kaydını silmek istediğinize emin misiniz?";
+
+    document.getElementById("btn-evet").onclick = function() {
+      islemKayitlari.splice(index, 1);
+      localStorage.setItem("islemKayitlari", JSON.stringify(islemKayitlari));
+      guncelleIslemKaydiListesi();
+      showDeleteToast("İşlem kaydı silindi");
+      document.getElementById("modal-onay").style.display = "none";
+      document.body.removeChild(modal);
+    };
+  });
+
+  document.body.appendChild(modal);
 }
 
-const islemKaydiBtn = document.getElementById('islemKaydiBtn');
-const islemKaydiPanel = document.getElementById('islemKaydiPanel');
-const islemKaydiArrow = document.getElementById('islemKaydiArrow');
-
-islemKaydiBtn.onclick = function() {
-  if (islemKaydiPanel.style.display === "none") {
-    islemKaydiPanel.style.display = "block";
-    islemKaydiArrow.textContent = "▼";
-    guncelleIslemKaydiListesi();
-  } else {
-    islemKaydiPanel.style.display = "none";
-    islemKaydiArrow.textContent = "▶";
-  }
-};
-
+// 10. İŞLEM KAYDI LİSTESİ
 function guncelleIslemKaydiListesi() {
   const ul = document.getElementById("islemKaydiListesi");
   ul.innerHTML = "";
@@ -399,399 +442,299 @@ function guncelleIslemKaydiListesi() {
   });
 }
 
-function islemDetayGoster(index) {
-  const kayit = islemKayitlari[index];
-  let detay = `
-    <div style="
-      padding:32px 28px 22px 28px;
-      min-width:300px;
-      max-width:440px;
-      display:flex;
-      flex-direction:column;
-      gap:22px;
-      background:rgba(50,42,85,0.92);
-      border-radius:28px;
-      box-shadow:0 8px 36px 0 rgba(100,90,220,0.17);
-      backdrop-filter: blur(6px);
-      position:relative;
-    ">
-      <div style="font-size:24px;font-weight:800;letter-spacing:.2px;margin-bottom:-12px;">
-        ${kayit.baslik}
-      </div>
-      ${
-        kayit.tur === "duzenle"
-          ? (() => {
-              let onceki = kayit.detay.oncekiBilgi.match(/(.*) - (.*) \((.*)\)/);
-              let yeni = kayit.detay.yeniBilgi.match(/(.*) - (.*) \((.*)\)/);
-              return `
-                <div>
-                  <div style="font-weight:600;color:#cabff5;font-size:17px;">Önceki Bilgiler</div>
-                  <div style="margin-left:12px;font-size:15px;line-height:1.7;">
-                    <div><b>Sanatçı:</b> ${onceki ? onceki[1] : "-"}</div>
-                    <div><b>Şarkı:</b> ${onceki ? onceki[2] : "-"}</div>
-                    <div><b>Kategori:</b> ${onceki ? onceki[3] : "-"}</div>
-                  </div>
-                  <div style="border-top:1.2px solid #6059a3;margin:16px 0 10px 0;opacity:.5"></div>
-                  <div style="font-weight:600;color:#aee9ff;font-size:17px;">Yeni Bilgiler</div>
-                  <div style="margin-left:12px;font-size:15px;line-height:1.7;">
-                    <div><b>Sanatçı:</b> ${yeni ? yeni[1] : "-"}</div>
-                    <div><b>Şarkı:</b> ${yeni ? yeni[2] : "-"}</div>
-                    <div><b>Kategori:</b> ${yeni ? yeni[3] : "-"}</div>
-                  </div>
-                </div>
-              `;
-            })()
-          : `<div style="margin-left:6px;display:flex;flex-direction:column;gap:6px;font-size:16px;line-height:1.7;">
-                ${Object.entries(kayit.detay).map(([k, v]) =>
-                  `<div><b>${k}:</b> ${v}</div>`
-                ).join("")}
-             </div>`
-      }
-      <div style="color:#b5b6bb;margin-top:2px;font-size:15px;letter-spacing:.3px;">
-        <b>Tarih:</b> ${kayit.tarih}
-      </div>
-      <button id="islemKaydiSilBtn"
-        style="margin-top:16px;align-self:center;width:70%;padding:13px 0;border-radius:19px;font-size:18px;box-shadow:0 2px 12px 0 rgba(240,80,160,0.08);background:#e7487c;font-weight:600;color:#fff;border:none;cursor:pointer;transition:.2s;"
-        class="btn-evet">İşlem Kaydını Sil</button>
-    </div>
-  `;
-
-  let modal = document.createElement("div");
-  modal.id = "islemKaydiDetayModal";
-  modal.style.cssText = `
-    position:fixed;top:0;left:0;width:100vw;height:100vh;
-    background:rgba(32,28,42,0.48);z-index:1999;display:flex;
-    align-items:center;justify-content:center;
-    backdrop-filter: blur(2.5px);
-  `;
-  modal.innerHTML = `<div style="position:relative;">
-    <span style="
-      position:absolute;top:12px;right:24px;cursor:pointer;
-      font-size:27px;color:#fff;z-index:3;opacity:.76;transition:.2s;
-    " id="detayKapatBtn"
-    onmouseover="this.style.opacity=1"
-    onmouseout="this.style.opacity=0.76"
-    >&times;</span>
-    ${detay}
-  </div>`;
-
-  document.body.appendChild(modal);
-
-  document.getElementById("detayKapatBtn").onclick = () => modal.remove();
-  modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
-
-  document.getElementById("islemKaydiSilBtn").onclick = () => {
-    islemKaydiSil(index, modal);
-  };
-}
-
-function islemKaydiSil(index, modalEl) {
-  gosterEminMisiniz("İşlem kaydını silmek istediğine emin misin?", () => {
-    islemKayitlari.splice(index, 1);
-    localStorage.setItem("islemKayitlari", JSON.stringify(islemKayitlari));
-    guncelleIslemKaydiListesi();
-    if (modalEl) modalEl.remove();
-    showDeleteToast('🗑️ İşlem kaydı silindi!');
-  });
-}
-
-const topluSilBtn = document.getElementById("islemTopluSilBtn");
-const topluSilMenu = document.getElementById("topluSilMenu");
-topluSilBtn.onclick = (e) => {
-  e.stopPropagation();
-  topluSilMenu.style.display = (topluSilMenu.style.display === "block") ? "none" : "block";
-};
-
-topluSilMenu.onclick = (e) => e.stopPropagation();
-
-function gosterEminMisiniz(mesaj, evetCallback, hayirCallback) {
-  let eskiModal = document.getElementById('ozelEminModal');
-  if (eskiModal) eskiModal.remove();
-
-  let modal = document.createElement("div");
-  modal.id = "ozelEminModal";
-  modal.style.cssText = `
-    position:fixed;left:0;top:0;width:100vw;height:100vh;
-    background:rgba(24,21,42,0.45);z-index:2100;display:flex;
-    align-items:center;justify-content:center;
-  `;
-  modal.innerHTML = `
-    <div style="background:#242043;padding:34px 26px 20px 26px;border-radius:22px;max-width:95vw;min-width:220px;box-shadow:0 8px 36px 0 rgba(100,90,220,0.14);text-align:center;">
-      <div style="font-size:18px;margin-bottom:22px;">${mesaj}</div>
-      <div style="display:flex;gap:18px;justify-content:center;">
-        <button id="eminEvetBtn" class="btn-evet">Evet</button>
-        <button id="eminHayirBtn" class="btn-hayir">Hayır</button>
-      </div>
-    </div>
-  `;
-  document.body.appendChild(modal);
-
-  document.getElementById("eminEvetBtn").onclick = () => { modal.remove(); evetCallback && evetCallback(); };
-  document.getElementById("eminHayirBtn").onclick = () => { modal.remove(); hayirCallback && hayirCallback(); };
-  modal.onclick = (e) => { if (e.target === modal) { modal.remove(); hayirCallback && hayirCallback(); } };
-}
-
-window.addEventListener("DOMContentLoaded", function() {
-  document.querySelectorAll(".toplu-sil-btn").forEach(btn => {
-    btn.onclick = function() {
-      let tip = this.getAttribute("data-tip");
-      gosterEminMisiniz("Seçili işlemi silmek istediğine emin misin?", () => {
-        let simdi = Date.now();
-        if (tip === "son") {
-          islemKayitlari.pop();
-        } else if (tip === "saat") {
-          islemKayitlari = islemKayitlari.filter(x => {
-            let t = new Date(x.tarih).getTime();
-            return simdi - t > 3600 * 1000;
-          });
-        } else if (tip === "gun") {
-          let gun = new Date().toLocaleDateString("tr-TR");
-          islemKayitlari = islemKayitlari.filter(x => !x.tarih.startsWith(gun));
-        } else if (tip === "tum") {
-          islemKayitlari = [];
-        }
-        localStorage.setItem("islemKayitlari", JSON.stringify(islemKayitlari));
-        guncelleIslemKaydiListesi();
-        const topluSilMenu = document.getElementById("topluSilMenu");
-        if (topluSilMenu) topluSilMenu.style.display = "none";
-        if (tip === "son") {
-          showDeleteToast('🗑️ İşlem kaydı silindi!');
-        } else if (tip === "tum") {
-          showDeleteToast('🗑️ Tüm işlem kayıtları silindi!');
-        } else {
-          showDeleteToast('🗑️ İşlem kayıtları silindi!');
-        }
-      });
-    }
-  });
-});
-
-document.getElementById("kategori").addEventListener("change", function() {
-  const secilenKategori = this.value;
-  const altKategoriSelect = document.getElementById("altKategori");
+// 11. KATEGORİ FİLTRELEME
+document.getElementById("kategoriFiltre").addEventListener("change", function() {
+  const anaKategori = this.value;
+  const altKategoriFiltre = document.getElementById("altKategoriFiltre");
   
-  // Reset ve gizle
-  altKategoriSelect.innerHTML = '<option value="">Alt Kategori Seç</option>';
-  altKategoriSelect.style.display = "none";
-  
-  // Kategori seçilmişse alt kategorileri doldur
-  if (secilenKategori && altKategoriler[secilenKategori]) {
-    altKategoriSelect.style.display = "block";
-    
-    altKategoriler[secilenKategori].forEach(altKategori => {
+  altKategoriFiltre.innerHTML = '<option value="">Alt Kategori Seç</option>';
+  altKategoriFiltre.style.display = "none";
+
+  if (altKategoriler[anaKategori]) {
+    altKategoriFiltre.style.display = "inline-block";
+    altKategoriler[anaKategori].forEach(alt => {
       const option = document.createElement("option");
-      option.value = `${secilenKategori}-${altKategori.toLowerCase().replace(' ', '')}`;
-      option.textContent = altKategori;
-      altKategoriSelect.appendChild(option);
+      option.value = `${anaKategori}-${alt.toLowerCase().replace(' ', '')}`;
+      option.textContent = alt;
+      altKategoriFiltre.appendChild(option);
     });
   }
+  guncelleListe();
 });
 
-document.addEventListener("mousedown", function(e) {
-  if (document.getElementById("ozelEminModal")) return;
-  const topluSilMenu = document.getElementById("topluSilMenu");
-  const topluSilBtn = document.getElementById("islemTopluSilBtn");
-  if (
-    topluSilMenu &&
-    topluSilMenu.style.display === "block" &&
-    !topluSilMenu.contains(e.target) &&
-    !topluSilBtn.contains(e.target)
-  ) {
-    topluSilMenu.style.display = "none";
-  }
+// 12. A-Z / Z-A SIRALAMA
+document.getElementById("siralaBtn").addEventListener("click", () => {
+  siralamaArtan = !siralamaArtan;
+  document.getElementById("siralaBtn").textContent = siralamaArtan ? "🔼 A-Z Sırala" : "🔽 Z-A Sırala";
+  guncelleListe();
 });
 
-window.addEventListener("DOMContentLoaded", function() {
-  // (Diğer kodlar)
-
-  // Deezer Ekle Toggle
-  const deezerFormToggle = document.getElementById("deezerFormToggle");
-  if (deezerFormToggle) {
-    deezerFormToggle.onclick = function() {
-      const form = document.getElementById("deezerForm");
-      form.style.display = form.style.display === "none" ? "block" : "none";
-    };
-  }
-
-  // Deezer Arama
-
-function deezerAramaYap() {
+// 13. DEEZER ARAMA
+document.getElementById("deezerAramaBtn").addEventListener("click", function() {
   const query = document.getElementById("deezerAramaInput").value.trim();
   const sonuclarUl = document.getElementById("deezerSonuclar");
-  sonuclarUl.innerHTML = '<li>Aranıyor...</li>';
-
+  
   if (!query) {
-    sonuclarUl.innerHTML = '<li>Lütfen arama terimi girin.</li>';
+    sonuclarUl.innerHTML = "<li>Arama terimi girin</li>";
     return;
   }
-  // Eski scripti kaldır
+
+  sonuclarUl.innerHTML = "<li>Aranıyor...</li>";
+
   const eskiScript = document.getElementById("deezerAramaScript");
   if (eskiScript) eskiScript.remove();
 
-  // JSONP callback
-  window.deezerJsonpSonuc = function(obj) {
-    if (!obj.data || obj.data.length === 0) {
-      sonuclarUl.innerHTML = "<li>Sonuç bulunamadı.</li>";
-      return;
-    }
-    sonuclarUl.innerHTML = "";
-    obj.data.slice(0, 7).forEach(sarki => {
-      let li = document.createElement("li");
-      let bilgi = document.createElement("div");
-      bilgi.innerHTML = `<b>${sarki.artist.name}</b> - ${sarki.title_short}`;
-
-      let ekleBtn = document.createElement("button");
-      ekleBtn.textContent = "Ekle";
-      ekleBtn.className = "ekle-btn";
-      ekleBtn.onclick = function() {
-        window.secilenDeezerSarki = sarki;
-        document.getElementById("deezerKategoriModal").style.display = "flex";
-        document.getElementById("deezerKategoriSelect").value = "";
-        document.getElementById("deezerModalMsg").textContent = "Şarkı eklemek için kategori seç:";
-      };
-      li.appendChild(bilgi);
-      li.appendChild(ekleBtn);
-      sonuclarUl.appendChild(li);
-    });
-  };
-
-  // Script etiketi ile Deezer JSONP çağrısı
   const script = document.createElement("script");
   script.id = "deezerAramaScript";
-  script.src = "https://api.deezer.com/search?q=" + encodeURIComponent(query) + "&output=jsonp&callback=deezerJsonpSonuc";
+  script.src = `https://api.deezer.com/search?q=${encodeURIComponent(query)}&output=jsonp&callback=deezerJsonpSonuc`;
   document.body.appendChild(script);
-}
-
-
-  const deezerAramaBtn = document.getElementById("deezerAramaBtn");
-  if (deezerAramaBtn) {
-    deezerAramaBtn.onclick = function() {
-      const query = document.getElementById("deezerAramaInput").value.trim();
-      const sonuclarUl = document.getElementById("deezerSonuclar");
-      sonuclarUl.innerHTML = '<li>Aranıyor...</li>';
-
-      if (!query) {
-        sonuclarUl.innerHTML = '<li>Lütfen arama terimi girin.</li>';
-        return;
-      }
-      // Eski scripti kaldır
-      const eskiScript = document.getElementById("deezerAramaScript");
-      if (eskiScript) eskiScript.remove();
-
-      // JSONP callback
-      window.deezerJsonpSonuc = function(obj) {
-        if (!obj.data || obj.data.length === 0) {
-          sonuclarUl.innerHTML = "<li>Sonuç bulunamadı.</li>";
-          return;
-        }
-        sonuclarUl.innerHTML = "";
-        obj.data.slice(0, 7).forEach(sarki => {
-          let li = document.createElement("li");
-          li.style.marginBottom = "11px";
-          li.style.background = "linear-gradient(145deg, #1e1e1e, #222226)";
-          li.style.padding = "8px 14px";
-          li.style.borderRadius = "7px";
-          li.style.display = "flex";
-          li.style.justifyContent = "space-between";
-          li.style.alignItems = "center";
-
-          let bilgi = document.createElement("div");
-          bilgi.innerHTML = `<b>${sarki.artist.name}</b> - ${sarki.title_short}`;
-
-       let ekleBtn = document.createElement("button");
-ekleBtn.textContent = "Ekle";
-ekleBtn.className = "ekle-btn"; // Sadece bu satırı eklemen yeterli!
-
-          // ------------- YENİ ENTEGRE BAŞLANGIÇ -------------
-          ekleBtn.onclick = function() {
-            window.secilenDeezerSarki = sarki;
-            document.getElementById("deezerKategoriModal").style.display = "flex";
-            document.getElementById("deezerKategoriSelect").value = "";
-            document.getElementById("deezerModalMsg").textContent = "Şarkı eklemek için kategori seç:";
-          };
-          // ------------- YENİ ENTEGRE BİTİŞ -------------
-          li.appendChild(bilgi);
-          li.appendChild(ekleBtn);
-          sonuclarUl.appendChild(li);
-        });
-      };
-
-      // Script etiketi ile Deezer JSONP çağrısı
-      const script = document.createElement("script");
-      script.id = "deezerAramaScript";
-      script.src = "https://api.deezer.com/search?q=" + encodeURIComponent(query) + "&output=jsonp&callback=deezerJsonpSonuc";
-      document.body.appendChild(script);
-    };
-  }
 });
 
-// Deezer kategori seç modalı işlevleri
-document.getElementById("deezerKategoriEvet").onclick = function() {
-  let kategori = document.getElementById("deezerKategoriSelect").value;
-  if (!["turkce", "yabanci", "dizi", "film"].includes(kategori)) {
-    document.getElementById("deezerModalMsg").textContent = "Lütfen bir kategori seç!";
-    return;
+// 14. ŞARKI DÜZENLEME FONKSİYONU
+function sarkiDuzenleManual(sarki) {
+  document.getElementById("duzenleFormu").style.display = "block";
+  duzenlenenIndex = sarkiListesi.findIndex(s => 
+    s.cevap === sarki.cevap && s.kategori === sarki.kategori
+  );
+  
+  const [sanatci, sarkiAdi] = sarki.cevap.split(" - ");
+  document.getElementById("duzenleSanatci").value = sanatci || "";
+  document.getElementById("duzenleSarki").value = sarkiAdi || "";
+  
+  // Kategori ve alt kategori ayarları
+  const kategoriSelect = document.getElementById("duzenleKategori");
+  const altKategoriSelect = document.getElementById("duzenleAltKategoriSec");
+  
+  // Kategori seçimi
+  let anaKategori = sarki.kategori;
+  let altKategori = "";
+  
+  if (sarki.kategori.includes("-")) {
+    [anaKategori, altKategori] = sarki.kategori.split("-");
   }
-  document.getElementById("deezerKategoriModal").style.display = "none";
-  document.getElementById("deezerModalMsg").textContent = "Şarkı eklemek için kategori seç:";
-
-  let sarki = window.secilenDeezerSarki;
-  let tamCevap = `${sarki.artist.name} - ${sarki.title_short}`;
-  let gosterim = `🎵 Şarkı çalıyor. (${tamCevap})`;
-  sarkiListesi.push({
-    kategori,
-    cevap: tamCevap,
-    sarki: gosterim,
-    audio: sarki.preview // 30sn'lik mp3
-  });
-  localStorage.setItem("sarkilar", JSON.stringify(sarkiListesi));
-  guncelleListe();
-  showSuccessToast('✅ Deezer\'dan şarkı başarıyla eklendi!');
-  islemKayitlari.push({
-    baslik: "Deezer'dan Şarkı Eklendi",
-    tarih: new Date().toLocaleString("tr-TR"),
-    detay: { "Sanatçı": sarki.artist.name, "Şarkı": sarki.title_short, "Kategori": kategori },
-    tur: "ekle"
-  });
-  localStorage.setItem("islemKayitlari", JSON.stringify(islemKayitlari));
-  guncelleIslemKaydiListesi();
-  window.secilenDeezerSarki = null;
-};
-
-document.getElementById("deezerKategoriHayir").onclick = function() {
-  document.getElementById("deezerKategoriModal").style.display = "none";
-  document.getElementById("deezerModalMsg").textContent = "Şarkı eklemek için kategori seç:";
-  window.secilenDeezerSarki = null;
-};
-
-
-// Deezer arama inputunda Enter'a basınca arama yap
-const deezerAramaInput = document.getElementById("deezerAramaInput");
-if (deezerAramaInput) {
-  deezerAramaInput.addEventListener("keydown", function(e) {
-    if (e.key === "Enter") {
-      const deezerAramaBtn = document.getElementById("deezerAramaBtn");
-      if (deezerAramaBtn) {
-        deezerAramaBtn.click();
-      }
+  
+  kategoriSelect.value = anaKategori;
+  
+  // Alt kategori ayarları
+  altKategoriSelect.innerHTML = '<option value="">Alt Kategori Seç</option>';
+  altKategoriSelect.style.display = "none";
+  
+  if (altKategoriler[anaKategori]) {
+    altKategoriSelect.style.display = "block";
+    altKategoriler[anaKategori].forEach(kategori => {
+      const option = document.createElement("option");
+      option.value = `${anaKategori}-${kategori.toLowerCase().replace(' ', '')}`;
+      option.textContent = kategori;
+      altKategoriSelect.appendChild(option);
+    });
+    
+    if (altKategori) {
+      altKategoriSelect.value = sarki.kategori;
     }
-  });
+  }
+  
+  // Formu görünür yap ve sayfayı kaydır
+  document.getElementById("duzenleFormu").scrollIntoView({ behavior: 'smooth' });
 }
 
-document.getElementById("duzenleKategori").addEventListener("change", function() {
-    const kat = this.value;
-    const duzenleAltKategoriSec = document.getElementById("duzenleAltKategoriSec");
-    duzenleAltKategoriSec.innerHTML = '<option value="">Alt Kategori Seç</option>';
-    if (altKategoriler[kat]) {
-      altKategoriler[kat].forEach(k => {
-        const val = k.toLowerCase().replace(" ", "");
-        const opt = document.createElement("option");
-        opt.value = val;
-        opt.textContent = k;
-        duzenleAltKategoriSec.appendChild(opt);
-      });
-      duzenleAltKategoriSec.style.display = "block";
+// 15. MENÜ YÖNETİMİ
+document.querySelectorAll(".menu-item").forEach(item => {
+  item.addEventListener("click", () => {
+    document.querySelectorAll(".menu-item").forEach(i => i.classList.remove("active"));
+    item.classList.add("active");
+    const section = item.dataset.section;
+    document.querySelectorAll(".panel-section").forEach(sec => {
+      sec.classList.remove("active");
+      if (sec.id === section) sec.classList.add("active");
+    });
+    document.getElementById("duzenleFormu").style.display = "none";
+    document.getElementById("islemKaydiPanel").style.display = "none";
+    document.getElementById("islemKaydiArrow").textContent = "▶";
+    document.getElementById("topluSilMenu").style.display = "none";
+  });
+});
+
+// 16. İŞLEM KAYDI PANELİ
+const islemKaydiBtn = document.getElementById('islemKaydiBtn');
+const islemKaydiPanel = document.getElementById('islemKaydiPanel');
+const islemKaydiArrow = document.getElementById('islemKaydiArrow');
+
+islemKaydiBtn.onclick = function() {
+  if (islemKaydiPanel.style.display === "none") {
+    islemKaydiPanel.style.display = "block";
+    islemKaydiArrow.textContent = "▼";
+    guncelleIslemKaydiListesi();
+  } else {
+    islemKaydiPanel.style.display = "none";
+    islemKaydiArrow.textContent = "▶";
+  }
+};
+
+// 17. TEMA DEĞİŞTİRME
+(function () {
+  const theme = localStorage.getItem("panelTheme");
+  const body = document.getElementById("panelBody");
+  const toggle = document.getElementById("themeToggle");
+
+  if (theme === "light") {
+    body.classList.add("light");
+    toggle.checked = false;
+    document.getElementById("temaLabel").textContent = "☀️ Light";
+  } else {
+    body.classList.remove("light");
+    toggle.checked = true;
+    document.getElementById("temaLabel").textContent = "🌙 Dark";
+  }
+
+  toggle.addEventListener("change", () => {
+    if (toggle.checked) {
+      body.classList.remove("light");
+      localStorage.setItem("panelTheme", "dark");
+      document.getElementById("temaLabel").textContent = "🌙 Dark";
     } else {
-      duzenleAltKategoriSec.style.display = "none";
+      body.classList.add("light");
+      localStorage.setItem("panelTheme", "light");
+      document.getElementById("temaLabel").textContent = "☀️ Light";
     }
+  });
+})();
+
+// 18. KATEGORİ MİGRASYON FONKSİYONU
+function migrateKategoriler() {
+  const eskiKategoriler = ["turkce-rock", "turkce-pop", "turkce-hiphop", "turkce-karisik", 
+                          "yabanci-rock", "yabanci-pop", "yabanci-hiphop", "yabanci-karisik",
+                          "dizi-turkce", "dizi-yabanci", "film-turkce", "film-yabanci"];
+  
+  let degisenler = 0;
+  
+  sarkiListesi.forEach(sarki => {
+    if (!eskiKategoriler.includes(sarki.kategori)) {
+      // Eğer kategori eski formatlardan biri değilse, yeni formata çevir
+      if (sarki.kategori === "turkce") {
+        sarki.kategori = "turkce-karisik";
+        degisenler++;
+      } else if (sarki.kategori === "yabanci") {
+        sarki.kategori = "yabanci-karisik";
+        degisenler++;
+      }
+    }
+  });
+  
+  if (degisenler > 0) {
+    localStorage.setItem("sarkilar", JSON.stringify(sarkiListesi));
+    showSuccessToast(`${degisenler} şarkının kategorisi düzeltildi!`);
+    guncelleListe();
+  } else {
+    showSuccessToast("Düzeltilecek kategori bulunamadı!");
+  }
+}
+
+// 19. SAYFA YÜKLENİRKEN
+document.addEventListener("DOMContentLoaded", function() {
+  guncelleListe();
+  guncelleIslemKaydiListesi();
+  
+  // Deezer form toggle
+  document.getElementById("deezerFormToggle").addEventListener("click", function() {
+    const form = document.getElementById("deezerForm");
+    form.style.display = form.style.display === "none" ? "block" : "none";
+    this.textContent = form.style.display === "none" ? "🎧 Deezer'dan Şarkı Ekle" : "✖️ Kapat";
+  });
+
+  // Dışarı tıklayınca toplu silme menüsünü kapat
+  document.addEventListener("click", function() {
+    document.getElementById("topluSilMenu").style.display = "none";
+  });
+
+  // Kategori seçiminde alt kategoriyi göster
+  document.getElementById("kategori").addEventListener("change", function() {
+    const anaKategori = this.value;
+    const altKategoriSelect = document.getElementById("altKategori");
+    
+    altKategoriSelect.innerHTML = '<option value="">Alt Kategori Seç</option>';
+    altKategoriSelect.style.display = "none";
+
+    if (altKategoriler[anaKategori]) {
+      altKategoriSelect.style.display = "block";
+      altKategoriler[anaKategori].forEach(kategori => {
+        const option = document.createElement("option");
+        option.value = kategori.toLowerCase().replace(' ', '');
+        option.textContent = kategori;
+        altKategoriSelect.appendChild(option);
+      });
+    }
+  });
+
+  // Deezer kategori modal işlemleri
+  document.getElementById("deezerKategoriSelect").addEventListener("change", function() {
+    const anaKategori = this.value;
+    const altKategoriContainer = document.getElementById("deezerAltKategoriContainer");
+    const altKategoriSelect = document.getElementById("deezerAltKategoriSelect");
+    
+    altKategoriSelect.innerHTML = '<option value="">Alt Kategori Seç</option>';
+    altKategoriContainer.style.display = "none";
+
+    if (altKategoriler[anaKategori]) {
+      altKategoriContainer.style.display = "block";
+      altKategoriler[anaKategori].forEach(kategori => {
+        const option = document.createElement("option");
+        option.value = `${anaKategori}-${kategori.toLowerCase().replace(' ', '')}`;
+        option.textContent = kategori;
+        altKategoriSelect.appendChild(option);
+      });
+    }
+  });
+
+  // Deezer modal butonları
+  document.getElementById("deezerKategoriEvet").addEventListener("click", function() {
+    const anaKategori = document.getElementById("deezerKategoriSelect").value;
+    const altKategori = document.getElementById("deezerAltKategoriSelect").value;
+    
+    if (!anaKategori) {
+      alert("Lütfen kategori seçin!");
+      return;
+    }
+
+    if ((anaKategori === "turkce" || anaKategori === "yabanci") && !altKategori) {
+      alert("Lütfen alt kategori seçin!");
+      return;
+    }
+
+    const tamKategori = altKategori || anaKategori;
+    const sarki = window.secilenDeezerSarki;
+    const tamCevap = `${sarki.artist.name} - ${sarki.title_short}`;
+    const gosterim = `🎵 Şarkı çalıyor. (${tamCevap})`;
+
+    sarkiListesi.push({
+      kategori: tamKategori,
+      cevap: tamCevap,
+      sarki: gosterim,
+      dosya: sarki.preview
+    });
+
+    localStorage.setItem("sarkilar", JSON.stringify(sarkiListesi));
+    showSuccessToast('✅ Deezer şarkısı başarıyla eklendi!');
+
+    islemKayitlari.push({
+      baslik: "Deezer Şarkısı Eklendi",
+      tarih: new Date().toLocaleString("tr-TR"),
+      detay: { "Sanatçı": sarki.artist.name, "Şarkı": sarki.title_short, "Kategori": tamKategori },
+      tur: "ekle"
+    });
+    localStorage.setItem("islemKayitlari", JSON.stringify(islemKayitlari));
+
+    document.getElementById("deezerKategoriModal").style.display = "none";
+    guncelleIslemKaydiListesi();
+    guncelleListe();
+  });
+
+  document.getElementById("deezerKategoriHayir").addEventListener("click", function() {
+    document.getElementById("deezerKategoriModal").style.display = "none";
+  });
 });
+
+// 20. ÇIKIŞ FONKSİYONU
+function logout() {
+  localStorage.removeItem("adminGiris");
+  window.location.href = "login.html";
+}

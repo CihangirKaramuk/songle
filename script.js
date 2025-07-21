@@ -87,6 +87,7 @@ document.getElementById('filmYabanciCard').addEventListener('click', function() 
   this.classList.add('selected');
   document.getElementById('filmTurkceCard').classList.remove('selected');
 });
+
 document.getElementById('turkceRockCard').addEventListener('click', function() {
     selectedTurkceAltKategori = "rock";
     altKategoriCardSec('turkceAltKategoriler', this);
@@ -138,66 +139,49 @@ document.querySelector(".start-btn").addEventListener("click", function () {
   const secilenKategori = dropdownSelected.textContent;
   const kategoriKey = dropdownSelected.getAttribute("data-value");
 
-if (kategoriKey === "turkce") {
-  if (!selectedTurkceAltKategori) {
+  // Alt kategori kontrolü (Türkçe/Yabancı için zorunlu)
+  if (kategoriKey === "turkce" && !selectedTurkceAltKategori) {
     alert("Lütfen Türkçe için bir alt kategori seçin!");
     return;
   }
-}
-if (kategoriKey === "yabanci") {
-  if (!selectedYabanciAltKategori) {
+  if (kategoriKey === "yabanci" && !selectedYabanciAltKategori) {
     alert("Lütfen Yabancı için bir alt kategori seçin!");
     return;
   }
-}
-
-  if (kategoriKey === "dizi") {
-    if (!selectedDiziAltKategori) {
-      alert("Lütfen dizi için Türkçe veya Yabancı seçin!");
-      return;
-    }
+  if (kategoriKey === "dizi" && !selectedDiziAltKategori) {
+    alert("Lütfen dizi için Türkçe veya Yabancı seçin!");
+    return;
   }
-
-  if (kategoriKey === "film") {
-    if (!selectedFilmAltKategori) {
-      alert("Lütfen film için Türkçe veya Yabancı seçin!");
-      return;
-    }
-  }
-
-  if (
-    (!kategoriKey || secilenKategori === "Kategori Seç") &&
-    kategoriKey !== "dizi" && kategoriKey !== "film"
-  ) {
-    alert("Lütfen bir kategori seç!");
+  if (kategoriKey === "film" && !selectedFilmAltKategori) {
+    alert("Lütfen film için Türkçe veya Yabancı seçin!");
     return;
   }
 
+  // Oyun için kategori key oluştur
+  let oyunKategoriKey;
+  if (kategoriKey === "turkce") {
+    oyunKategoriKey = `turkce-${selectedTurkceAltKategori}`; // "turkce-rock"
+  } 
+  else if (kategoriKey === "yabanci") {
+    oyunKategoriKey = `yabanci-${selectedYabanciAltKategori}`; // "yabanci-pop"
+  }
+  else if (kategoriKey === "dizi") {
+    oyunKategoriKey = selectedDiziAltKategori; // "dizi-turkce"
+  }
+  else if (kategoriKey === "film") {
+    oyunKategoriKey = selectedFilmAltKategori; // "film-yabanci"
+  }
+
+  // Şarkıları filtrele
   sarkiListesi = JSON.parse(localStorage.getItem("sarkilar")) || [];
-
-let oyunKategoriKey = kategoriKey;
-if (kategoriKey === "turkce") {
-  oyunKategoriKey = selectedTurkceAltKategori;
-}
-if (kategoriKey === "yabanci") {
-  oyunKategoriKey = selectedYabanciAltKategori;
-}
-if (kategoriKey === "dizi") {
-  oyunKategoriKey = selectedDiziAltKategori;
-}
-if (kategoriKey === "film") {
-  oyunKategoriKey = selectedFilmAltKategori;
-}
-
   soruListesi = sarkiListesi.filter(sarki => sarki.kategori === oyunKategoriKey);
 
-  if (!soruListesi || soruListesi.length === 0) {
+  if (soruListesi.length === 0) {
     alert("Bu kategoride henüz şarkı yok!");
     return;
   }
 
   kullanilanSarkilar = [];
-
   soruIndex = rastgeleSoruIndex();
   guncelleSoru();
   baslatSayac();
@@ -237,11 +221,8 @@ function rastgeleSoruIndex() {
 function cevapDogruMu(tahmin, cevap) {
   tahmin = tahmin.toLowerCase();
   cevap = cevap.toLowerCase();
-
   const sarkiAdi = cevap.split(" - ")[1]?.trim();
-  if (!sarkiAdi) return false;
-
-  return tahmin.includes(sarkiAdi);
+  return sarkiAdi && tahmin.includes(sarkiAdi);
 }
 
 document.querySelector(".tahmin-gonder").addEventListener("click", function () {
@@ -257,7 +238,6 @@ document.querySelector(".tahmin-gonder").addEventListener("click", function () {
       guncelleSoru();
       baslatSayac();
     }, 1500);
-
   } else {
     document.body.classList.add("error");
     input.classList.add("shake");
@@ -400,12 +380,7 @@ if (isMobile()) {
   volumeBtn.addEventListener('click', function (e) {
     e.stopPropagation();
     volumeOpen = !volumeOpen;
-    if (volumeOpen) {
-  volumeSliderContainer.classList.add('active');
-} else {
-  volumeSliderContainer.classList.remove('active');
-}
-
+    volumeSliderContainer.classList.toggle('active', volumeOpen);
   });
 
   document.addEventListener('click', function () {
@@ -416,7 +391,6 @@ if (isMobile()) {
   volumeSliderContainer.addEventListener('click', function (e) {
     e.stopPropagation();
   });
-
 } else {
   volumeControl.addEventListener('mouseenter', () => {
     clearTimeout(volumeTimeout);
