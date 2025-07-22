@@ -160,12 +160,19 @@ function guncelleListe() {
   const ul = document.getElementById("sarkiListesi");
   ul.innerHTML = "";
 
-  let filtrelenmisListe = sarkiListesi
-    .filter(sarki =>
-      (kategori === "tum" || sarki.kategori === kategori || sarki.kategori.startsWith(kategori + "-")) &&
-      (!altKategori || sarki.kategori === altKategori) &&
-      sarki.cevap.toLowerCase().includes(arama)
-    );
+  let filtrelenmisListe = sarkiListesi.filter(sarki => {
+  const kategoriEslesme =
+    kategori === "tum" ||
+    sarki.kategori === kategori ||
+    sarki.kategori.startsWith(kategori + "-");
+
+  const altKategoriEslesme =
+    !altKategori || sarki.kategori === altKategori;
+
+  return kategoriEslesme && altKategoriEslesme && sarki.cevap.toLowerCase().includes(arama);
+  
+  });
+
 
   filtrelenmisListe.sort((a, b) => {
     const sanatciA = a.cevap.toLowerCase();
@@ -462,6 +469,10 @@ document.getElementById("kategoriFiltre").addEventListener("change", function() 
   guncelleListe();
 });
 
+document.getElementById("altKategoriFiltre").addEventListener("change", function() {
+  guncelleListe();
+});
+
 // 12. A-Z / Z-A SIRALAMA
 document.getElementById("siralaBtn").addEventListener("click", () => {
   siralamaArtan = !siralamaArtan;
@@ -649,7 +660,13 @@ function migrateKategoriler() {
 document.addEventListener("DOMContentLoaded", function() {
   guncelleListe();
   guncelleIslemKaydiListesi();
-  
+
+  // Sayfa yüklenince kategori filtreleme dropdown'larını sıfırla
+  document.getElementById("kategoriFiltre").value = "tum";
+  const altKategoriFiltre = document.getElementById("altKategoriFiltre");
+  altKategoriFiltre.innerHTML = '<option value="">Alt Kategori Seç</option>';
+  altKategoriFiltre.style.display = "none";
+
   // Deezer form toggle
   document.getElementById("deezerFormToggle").addEventListener("click", function() {
     const form = document.getElementById("deezerForm");
