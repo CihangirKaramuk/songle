@@ -117,6 +117,37 @@
   </div>
 
   <div id="toast-success" class="toast-success"></div>
+  <div id="sarkiDuzenleModal" class="modal-onay" style="display:none;">
+  <div class="modal-icerik" style="position:relative; max-width:600px; width:90%;">
+    <span id="kapatPopup" style="position:absolute;top:8px;right:12px;font-size:22px;cursor:pointer;">❌</span>
+    <h2 style="margin-bottom:15px;">Şarkıyı Düzenle</h2>
+
+    <input type="text" id="popupSanatci" placeholder="Sanatçı Adı">
+    <input type="text" id="popupSarki" placeholder="Şarkı Adı">
+
+    <select id="popupKategori">
+      <option value="">Kategori Seç</option>
+      <option value="turkce">Türkçe</option>
+      <option value="yabanci">Yabancı</option>
+      <option value="dizi">Dizi</option>
+      <option value="film">Film</option>
+    </select>
+
+    <select id="popupAltKategori">
+      <option value="">Alt Kategori Seç</option>
+      <option value="pop">Pop</option>
+      <option value="rock">Rock</option>
+      <option value="rap">Rap</option>
+    </select>
+
+    <div class="duzenle-btn-grup">
+      <button id="popupKaydet" class="btn-kaydet">Kaydet</button>
+      <button id="popupSil" class="btn-sil">🗑️</button>
+    </div>
+
+  </div>
+</div>
+
   <div id="modal-onay" class="modal-onay" style="display:none">
     <div class="modal-icerik">
       <div id="modal-msg">Emin misin?</div>

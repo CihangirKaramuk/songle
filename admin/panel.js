@@ -185,14 +185,38 @@ function guncelleListe() {
       s.cevap === sarki.cevap && s.kategori === sarki.kategori
     );
     const li = document.createElement("li");
+    li.dataset.index = realIndex;
+    let sanatci = "";
+    let sarkiAdi = sarki.cevap;
+
+    if (sarki.cevap.includes(" - ")) {
+      const parcalar = sarki.cevap.split(" - ");
+      sanatci = parcalar[0];
+      sarkiAdi = parcalar[1];
+    }
+
+    let kategori = sarki.kategori || "-";
+    let anaKategori = kategori;
+    let altKategori = "-";
+
+    if (kategori.includes("-")) {
+      const parcalar = kategori.split("-");
+      anaKategori = parcalar[0];
+      altKategori = parcalar[1];
+    }
+
     li.innerHTML = `
-      [${sarki.kategori}] ${sarki.cevap}
-      <div class="btn-group">
-        <button class="duzenleBtn" data-index="${realIndex}">✏️</button>
-        <button class="silBtn" data-index="${realIndex}">🗑️</button>
-        ${sarki.audio ? '<span class="audio-var">🎵</span>' : ''}
+      <div class="sarki-row" data-index="${realIndex}">
+        <span class="sarki-text">
+          <b>Sanatçı Adı:</b> ${sanatci} | 
+          <b>Şarkı Adı:</b> ${sarkiAdi} | 
+          <b>Kategori:</b> ${anaKategori} | 
+          <b>Alt Kategori:</b> ${altKategori}
+        </span>
       </div>
     `;
+
+
     ul.appendChild(li);
   });
 
@@ -213,6 +237,9 @@ function guncelleListe() {
   });
 
   document.getElementById("duzenleFormu").style.display = "none";
+
+  // Her şarkı satırına tıklanınca özel popup aç
+
 }
 
 // 5. ŞARKI DÜZENLEME
@@ -325,7 +352,17 @@ function sarkiSil(index) {
 }
 
 // 8. MODAL İŞLEMLERİ
-document.getElementById("btn-evet").onclick = function() {
+document.getElementById("btn-evet").addEventListener("click", function () {
+  if (seciliIndex !== null) {
+    sarkiListesi.splice(seciliIndex, 1);
+    guncelleListe();
+    document.getElementById("modal-onay").style.display = "none";
+    document.getElementById("sarkiDuzenleModal").style.display = "none";
+    seciliIndex = null;
+    return; // işlem kayıtlarına geçmeden çık
+  }
+
+  // Aşağısı işlem kaydı silme için
   if (silinecekIndex !== null) {
     const silinenSarki = sarkiListesi[silinecekIndex];
     islemKayitlari.push({
@@ -348,9 +385,10 @@ document.getElementById("btn-evet").onclick = function() {
     showDeleteToast('🗑️ Şarkı silindi!');
     silinecekIndex = null;
   }
+
   document.getElementById("modal-onay").style.display = "none";
   document.getElementById("modal-onay").style.zIndex = "";
-};
+});
 
 document.getElementById("btn-hayir").onclick = function() {
   document.getElementById("modal-onay").style.display = "none";
@@ -439,6 +477,7 @@ function guncelleIslemKaydiListesi() {
   islemKayitlari.slice().reverse().forEach((kayit, i) => {
     const index = islemKayitlari.length - 1 - i;
     const li = document.createElement("li");
+    li.dataset.index = index;
     li.className = "islem-kaydi-item";
     li.innerHTML = `
       <span>${kayit.baslik}</span>
@@ -796,3 +835,101 @@ document.addEventListener("DOMContentLoaded", function () {
     formToggleBtn.textContent = isVisible ? "🎼 Yeni Şarkı Ekle" : "✖️ Kapat";
   });
 });
+
+// Tüm dış kliklerde popup ve modal kontrolü
+document.addEventListener("click", function (e) {
+  const modal = document.getElementById("modal-onay");
+  const popup = document.querySelector(".popup-menu");
+
+  // Eğer modal açık ve tıklanan yer modal değilse: sadece modal'ı kapat
+  if (modal.style.display === "flex" && !modal.contains(e.target)) {
+    modal.style.display = "none";
+    modal.style.zIndex = "";
+    silinecekIndex = null;
+    return;
+  }
+
+  // Modal kapalıysa popup'ı da kapat
+  if (!modal || modal.style.display !== "flex") {
+    if (popup && !popup.contains(e.target)) popup.remove();
+  }
+});
+
+let seciliIndex = null;
+
+// Boşluğa tıklayınca popup kapanır
+document.getElementById("sarkiDuzenleModal").addEventListener("click", function(e) {
+  if (e.target === this) this.style.display = "none";
+});
+
+// Çarpı ile kapat
+document.getElementById("kapatPopup").addEventListener("click", function() {
+  document.getElementById("sarkiDuzenleModal").style.display = "none";
+});
+
+// Kaydet
+document.getElementById("popupKaydet").addEventListener("click", function() {
+  const yeniSanatci = document.getElementById("popupSanatci").value;
+  const yeniSarki = document.getElementById("popupSarki").value;
+  const kategori = document.getElementById("popupKategori").value;
+  const altKategori = document.getElementById("popupAltKategori").value;
+  const yeniKategori = altKategori ? `${kategori}-${altKategori}` : kategori;
+
+  sarkiListesi[seciliIndex].sanatci = yeniSanatci;
+  sarkiListesi[seciliIndex].cevap = yeniSarki;
+  sarkiListesi[seciliIndex].kategori = yeniKategori;
+
+  guncelleListe();
+  document.getElementById("sarkiDuzenleModal").style.display = "none";
+});
+
+// Sil butonu → sadece "emin misin?" aç
+document.getElementById("popupSil").addEventListener("click", function(e) {
+  e.stopPropagation();
+  document.getElementById("modal-onay").style.display = "flex";
+  document.getElementById("modal-msg").textContent = "Bu şarkıyı silmek istediğine emin misin?";
+});
+
+// Emin misin boşlukla kapanır, popup kalır
+document.getElementById("modal-onay").addEventListener("click", function (e) {
+  if (e.target === this) {
+    this.style.display = "none";
+  }
+});
+
+document.getElementById("kapatPopup").addEventListener("click", function () {
+  document.getElementById("sarkiDuzenleModal").style.display = "none";
+});
+
+document.getElementById("sarkiDuzenleModal").addEventListener("click", function (e) {
+  if (e.target === this) this.style.display = "none";
+});
+
+document.addEventListener("dblclick", function (e) {
+  const li = e.target.closest("li");
+  if (!li || !li.dataset.index) return;
+
+  const index = li.dataset.index;
+  const sarki = sarkiListesi[index];
+  seciliIndex = index;
+
+  // Sanatçı ve Şarkı adını ayır
+  let sanatci = "";
+  let sarkiAdi = sarki.cevap;
+  if (sarki.cevap.includes(" - ")) {
+    const parcalar = sarki.cevap.split(" - ");
+    sanatci = parcalar[0];
+    sarkiAdi = parcalar[1];
+  }
+
+  document.getElementById("popupSanatci").value = sanatci;
+  document.getElementById("popupSarki").value = sarkiAdi;
+
+  const [kat, altKat] = (sarki.kategori || "").split("-");
+  document.getElementById("popupKategori").value = kat || "";
+  document.getElementById("popupAltKategori").value = altKat || "";
+  document.getElementById("popupAltKategori").style.display = "block";
+
+  document.getElementById("sarkiDuzenleModal").style.display = "flex";
+});
+
