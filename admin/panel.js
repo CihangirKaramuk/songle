@@ -547,10 +547,26 @@ document.querySelectorAll(".menu-item").forEach(item => {
       sec.classList.remove("active");
       if (sec.id === section) sec.classList.add("active");
     });
+    
     document.getElementById("duzenleFormu").style.display = "none";
     document.getElementById("islemKaydiPanel").style.display = "none";
     document.getElementById("islemKaydiArrow").textContent = "▶";
     document.getElementById("topluSilMenu").style.display = "none";
+
+    // 🔥 Formları otomatik kapat
+    const manualForm = document.getElementById("manualForm");
+    const deezerForm = document.getElementById("deezerForm");
+    const formToggleBtn = document.getElementById("formToggleBtn");
+
+    if (manualForm) {
+      manualForm.style.display = "none";
+      formToggleBtn.textContent = "🎼 Yeni Şarkı Ekle";
+    }
+    if (deezerForm) {
+      deezerForm.style.display = "none";
+      document.getElementById("deezerFormToggle").textContent = "🎧 Deezer'dan Şarkı Ekle";
+    }
+
   });
 });
 
