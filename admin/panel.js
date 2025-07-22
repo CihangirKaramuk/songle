@@ -737,6 +737,13 @@ document.addEventListener("DOMContentLoaded", function() {
   document.getElementById("deezerKategoriHayir").addEventListener("click", function() {
     document.getElementById("deezerKategoriModal").style.display = "none";
   });
+
+  document.getElementById("deezerKategoriModal").addEventListener("click", function (e) {
+  if (e.target === this) {
+    this.style.display = "none";
+  }
+});
+
 });
 
 // 20. ÇIKIŞ FONKSİYONU
