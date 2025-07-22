@@ -738,3 +738,15 @@ function logout() {
   localStorage.removeItem("adminGiris");
   window.location.href = "login.html";
 }
+
+// Yeni Şarkı Ekle formunu aç-kapat
+document.addEventListener("DOMContentLoaded", function () {
+  const formToggleBtn = document.getElementById("formToggleBtn");
+  const manualForm = document.getElementById("manualForm");
+
+  formToggleBtn.addEventListener("click", () => {
+    const isVisible = manualForm.style.display === "block";
+    manualForm.style.display = isVisible ? "none" : "block";
+    formToggleBtn.textContent = isVisible ? "🎼 Yeni Şarkı Ekle" : "✖️ Kapat";
+  });
+});
