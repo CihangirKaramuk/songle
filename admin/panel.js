@@ -641,6 +641,12 @@ document.addEventListener("DOMContentLoaded", function() {
     this.textContent = form.style.display === "none" ? "🎧 Deezer'dan Şarkı Ekle" : "✖️ Kapat";
   });
 
+  document.getElementById("deezerAramaInput").addEventListener("keydown", function(e) {
+    if (e.key === "Enter") {
+      document.getElementById("deezerAramaBtn").click();
+    }
+  });
+
   // Dışarı tıklayınca toplu silme menüsünü kapat
   document.addEventListener("click", function() {
     document.getElementById("topluSilMenu").style.display = "none";
