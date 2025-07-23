@@ -738,9 +738,9 @@ document.getElementById("popupKaydet").addEventListener("click", function () {
   const kategori = document.getElementById("popupKategori").value;
   const altKategori = document.getElementById("popupAltKategori").value;
 
-  if (!sanatci || !sarkiAdi) {
-    alert("Sanatçı ve Şarkı adı boş olamaz!");
-    return;
+  if (!sanatci || !sarkiAdi || !kategori || !altKategori) {
+  showUyariModal("Tüm alanları doldurunuz!");
+  return;
   }
 
   const cevap = sanatci + " - " + sarkiAdi;
@@ -807,3 +807,12 @@ document.addEventListener("dblclick", function (e) {
   document.getElementById("sarkiDuzenleModal").style.display = "flex";
 });
 
+function showUyariModal(mesaj) {
+  document.getElementById("uyariModalMesaj").innerText = mesaj;
+  document.getElementById("uyariModal").style.display = "flex";
+}
+
+// Kapatma butonuna tıklandığında modalı kapat:
+document.getElementById("uyariModalKapat").onclick = function() {
+  document.getElementById("uyariModal").style.display = "none";
+};
