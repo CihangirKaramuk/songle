@@ -728,17 +728,30 @@ document.getElementById("kapatPopup").addEventListener("click", function() {
   document.getElementById("sarkiDuzenleModal").style.display = "none";
 });
 
-document.getElementById("popupKaydet").addEventListener("click", function() {
-  const yeniSanatci = document.getElementById("popupSanatci").value;
-  const yeniSarki = document.getElementById("popupSarki").value;
+document.getElementById("popupKaydet").addEventListener("click", function () {
+  const sanatci = document.getElementById("popupSanatci").value.trim();
+  const sarkiAdi = document.getElementById("popupSarki").value.trim();
   const kategori = document.getElementById("popupKategori").value;
   const altKategori = document.getElementById("popupAltKategori").value;
-  const yeniKategori = altKategori ? `${kategori}-${altKategori}` : kategori;
 
-  sarkiListesi[seciliIndex].sanatci = yeniSanatci;
-  sarkiListesi[seciliIndex].cevap = yeniSarki;
-  sarkiListesi[seciliIndex].kategori = yeniKategori;
+  if (!sanatci || !sarkiAdi) {
+    alert("Sanatçı ve Şarkı adı boş olamaz!");
+    return;
+  }
 
+  const cevap = sanatci + " - " + sarkiAdi;
+  const kategoriFull = altKategori ? kategori + "-" + altKategori : kategori;
+
+  // Kaydı güncelle (veya ekle)
+  sarkiListesi[seciliIndex] = {
+    kategori: kategoriFull,
+    cevap: cevap,
+    sarki: `🎵 Şarkı çalıyor... (${cevap})`,
+    dosya: sarkiListesi[seciliIndex].dosya // veya eskiSarki.dosya
+  };
+
+  // Kaydedip güncelle
+  localStorage.setItem("sarkilar", JSON.stringify(sarkiListesi));
   guncelleListe();
   document.getElementById("sarkiDuzenleModal").style.display = "none";
 });
