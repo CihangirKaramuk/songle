@@ -11,6 +11,10 @@ let altKategoriler = {
   film: ["Türkçe", "Yabancı"]
 };
 
+document.getElementById("popupKategori").addEventListener("change", function () {
+  document.getElementById("popupAltKategori").value = "";
+});
+
 window.deezerJsonpSonuc = function(response) {
   const sonuclarUl = document.getElementById("deezerSonuclar");
   sonuclarUl.innerHTML = "";
