@@ -11,7 +11,6 @@ let altKategoriler = {
   film: ["Türkçe", "Yabancı"]
 };
 
-// 1. DEEZER ENTEGRASYONU
 window.deezerJsonpSonuc = function(response) {
   const sonuclarUl = document.getElementById("deezerSonuclar");
   sonuclarUl.innerHTML = "";
@@ -45,8 +44,6 @@ window.deezerJsonpSonuc = function(response) {
         preview: this.getAttribute('data-preview')
       };
       document.getElementById("deezerKategoriModal").style.display = "flex";
-      
-      // Modal açıldığında seçimleri resetle
       document.getElementById("deezerKategoriSelect").value = "";
       document.getElementById("deezerAltKategoriSelect").innerHTML = '<option value="">Alt Kategori Seç</option>';
       document.getElementById("deezerAltKategoriContainer").style.display = "none";
@@ -54,7 +51,6 @@ window.deezerJsonpSonuc = function(response) {
   });
 };
 
-// 2. İŞLEM KAYDI YÖNETİMİ
 document.getElementById("islemTopluSilBtn").addEventListener("click", function(e) {
   e.stopPropagation();
   const menu = document.getElementById("topluSilMenu");
@@ -115,7 +111,6 @@ document.querySelectorAll(".toplu-sil-btn").forEach(btn => {
   });
 });
 
-// 3. TOAST MESAJLARI
 function showGuncelleToast(msg) {
   const toast = document.getElementById("toast-guncelle");
   toast.innerHTML = `<span style="font-size:22px;line-height:1;vertical-align:middle;">✅</span> ${msg}`;
@@ -152,7 +147,6 @@ function showDeleteToast(msg) {
   }, 3000);
 }
 
-// 4. ŞARKI LİSTESİ YÖNETİMİ
 function guncelleListe() {
   const arama = document.getElementById("aramaInput")?.value?.toLowerCase() || "";
   const kategori = document.getElementById("kategoriFiltre")?.value || "tum";
@@ -220,15 +214,6 @@ function guncelleListe() {
     ul.appendChild(li);
   });
 
-  // Düzenle butonlarına event listener ekle
-  document.querySelectorAll('.duzenleBtn').forEach(btn => {
-    btn.addEventListener('click', function() {
-      const index = parseInt(this.getAttribute('data-index'));
-      sarkiDuzenleManual(sarkiListesi[index]);
-    });
-  });
-
-  // Sil butonlarına event listener ekle
   document.querySelectorAll('.silBtn').forEach(btn => {
     btn.addEventListener('click', function() {
       const index = parseInt(this.getAttribute('data-index'));
@@ -236,56 +221,8 @@ function guncelleListe() {
     });
   });
 
-  document.getElementById("duzenleFormu").style.display = "none";
-
-  // Her şarkı satırına tıklanınca özel popup aç
-
 }
 
-// 5. ŞARKI DÜZENLEME
-document.getElementById("kaydetBtn").addEventListener("click", () => {
-  const yeniSanatci = document.getElementById("duzenleSanatci").value.trim();
-  const yeniSarki = document.getElementById("duzenleSarki").value.trim();
-  const yeniKategori = document.getElementById("duzenleKategori").value;
-  const yeniAltKategori = document.getElementById("duzenleAltKategoriSec").value;
-
-  if (!yeniSanatci || !yeniSarki || !yeniKategori) {
-    alert("Lütfen geçerli tüm bilgileri girin.");
-    return;
-  }
-
-  const tamKategori = yeniAltKategori ? yeniAltKategori : yeniKategori;
-  const tamCevap = `${yeniSanatci} - ${yeniSarki}`;
-  const gosterim = `🎵 Şarkı çalıyor... (${tamCevap})`;
-
-  const eskiSarki = sarkiListesi[duzenlenenIndex];
-  islemKayitlari.push({
-    baslik: "Şarkı Düzenlendi",
-    tarih: new Date().toLocaleString("tr-TR"),
-    detay: {
-      oncekiBilgi: `${eskiSarki.cevap} (${eskiSarki.kategori})`,
-      yeniBilgi: `${tamCevap} (${tamKategori})`
-    },
-    tur: "duzenle"
-  });
-
-  sarkiListesi[duzenlenenIndex] = {
-    kategori: tamKategori,
-    cevap: tamCevap,
-    sarki: gosterim,
-    dosya: eskiSarki.dosya
-  };
-
-  localStorage.setItem("sarkilar", JSON.stringify(sarkiListesi));
-  localStorage.setItem("islemKayitlari", JSON.stringify(islemKayitlari));
-  
-  guncelleListe();
-  guncelleIslemKaydiListesi();
-  showGuncelleToast('Güncellendi');
-  document.getElementById("duzenleFormu").style.display = "none";
-});
-
-// 6. ŞARKI EKLEME
 document.getElementById("ekleBtn").addEventListener("click", () => {
   const sarki = document.getElementById("sarkiAdi").value.trim();
   const sanatci = document.getElementById("sanatciAdi").value.trim();
@@ -342,7 +279,6 @@ document.getElementById("ekleBtn").addEventListener("click", () => {
   reader.readAsDataURL(file);
 });
 
-// 7. ŞARKI SİLME
 function sarkiSil(index) {
   if (!document.getElementById("liste").classList.contains("active")) return;
   silinecekIndex = index;
@@ -351,7 +287,6 @@ function sarkiSil(index) {
   document.getElementById("modal-msg").textContent = "Şarkıyı silmek istediğine emin misin?";
 }
 
-// 8. MODAL İŞLEMLERİ
 document.getElementById("btn-evet").addEventListener("click", function () {
   if (seciliIndex !== null) {
     sarkiListesi.splice(seciliIndex, 1);
@@ -359,10 +294,9 @@ document.getElementById("btn-evet").addEventListener("click", function () {
     document.getElementById("modal-onay").style.display = "none";
     document.getElementById("sarkiDuzenleModal").style.display = "none";
     seciliIndex = null;
-    return; // işlem kayıtlarına geçmeden çık
+    return;
   }
 
-  // Aşağısı işlem kaydı silme için
   if (silinecekIndex !== null) {
     const silinenSarki = sarkiListesi[silinecekIndex];
     islemKayitlari.push({
@@ -396,7 +330,6 @@ document.getElementById("btn-hayir").onclick = function() {
   silinecekIndex = null;
 };
 
-// 9. İŞLEM KAYDI DETAY
 function islemDetayGoster(index) {
   const kayit = islemKayitlari[index];
   
@@ -464,7 +397,6 @@ function islemDetayGoster(index) {
   document.body.appendChild(modal);
 }
 
-// 10. İŞLEM KAYDI LİSTESİ
 function guncelleIslemKaydiListesi() {
   const ul = document.getElementById("islemKaydiListesi");
   ul.innerHTML = "";
@@ -488,7 +420,6 @@ function guncelleIslemKaydiListesi() {
   });
 }
 
-// 11. KATEGORİ FİLTRELEME
 document.getElementById("kategoriFiltre").addEventListener("change", function() {
   const anaKategori = this.value;
   const altKategoriFiltre = document.getElementById("altKategoriFiltre");
@@ -512,14 +443,12 @@ document.getElementById("altKategoriFiltre").addEventListener("change", function
   guncelleListe();
 });
 
-// 12. A-Z / Z-A SIRALAMA
 document.getElementById("siralaBtn").addEventListener("click", () => {
   siralamaArtan = !siralamaArtan;
   document.getElementById("siralaBtn").textContent = siralamaArtan ? "🔼 A-Z Sırala" : "🔽 Z-A Sırala";
   guncelleListe();
 });
 
-// 13. DEEZER ARAMA
 document.getElementById("deezerAramaBtn").addEventListener("click", function() {
   const query = document.getElementById("deezerAramaInput").value.trim();
   const sonuclarUl = document.getElementById("deezerSonuclar");
@@ -540,54 +469,6 @@ document.getElementById("deezerAramaBtn").addEventListener("click", function() {
   document.body.appendChild(script);
 });
 
-// 14. ŞARKI DÜZENLEME FONKSİYONU
-function sarkiDuzenleManual(sarki) {
-  document.getElementById("duzenleFormu").style.display = "block";
-  duzenlenenIndex = sarkiListesi.findIndex(s => 
-    s.cevap === sarki.cevap && s.kategori === sarki.kategori
-  );
-  
-  const [sanatci, sarkiAdi] = sarki.cevap.split(" - ");
-  document.getElementById("duzenleSanatci").value = sanatci || "";
-  document.getElementById("duzenleSarki").value = sarkiAdi || "";
-  
-  // Kategori ve alt kategori ayarları
-  const kategoriSelect = document.getElementById("duzenleKategori");
-  const altKategoriSelect = document.getElementById("duzenleAltKategoriSec");
-  
-  // Kategori seçimi
-  let anaKategori = sarki.kategori;
-  let altKategori = "";
-  
-  if (sarki.kategori.includes("-")) {
-    [anaKategori, altKategori] = sarki.kategori.split("-");
-  }
-  
-  kategoriSelect.value = anaKategori;
-  
-  // Alt kategori ayarları
-  altKategoriSelect.innerHTML = '<option value="">Alt Kategori Seç</option>';
-  altKategoriSelect.style.display = "none";
-  
-  if (altKategoriler[anaKategori]) {
-    altKategoriSelect.style.display = "block";
-    altKategoriler[anaKategori].forEach(kategori => {
-      const option = document.createElement("option");
-      option.value = `${anaKategori}-${kategori.toLowerCase().replace(' ', '')}`;
-      option.textContent = kategori;
-      altKategoriSelect.appendChild(option);
-    });
-    
-    if (altKategori) {
-      altKategoriSelect.value = sarki.kategori;
-    }
-  }
-  
-  // Formu görünür yap ve sayfayı kaydır
-  document.getElementById("duzenleFormu").scrollIntoView({ behavior: 'smooth' });
-}
-
-// 15. MENÜ YÖNETİMİ
 document.querySelectorAll(".menu-item").forEach(item => {
   item.addEventListener("click", () => {
     document.querySelectorAll(".menu-item").forEach(i => i.classList.remove("active"));
@@ -598,12 +479,10 @@ document.querySelectorAll(".menu-item").forEach(item => {
       if (sec.id === section) sec.classList.add("active");
     });
     
-    document.getElementById("duzenleFormu").style.display = "none";
     document.getElementById("islemKaydiPanel").style.display = "none";
     document.getElementById("islemKaydiArrow").textContent = "▶";
     document.getElementById("topluSilMenu").style.display = "none";
 
-    // 🔥 Formları otomatik kapat
     const manualForm = document.getElementById("manualForm");
     const deezerForm = document.getElementById("deezerForm");
     const formToggleBtn = document.getElementById("formToggleBtn");
@@ -620,7 +499,6 @@ document.querySelectorAll(".menu-item").forEach(item => {
   });
 });
 
-// 16. İŞLEM KAYDI PANELİ
 const islemKaydiBtn = document.getElementById('islemKaydiBtn');
 const islemKaydiPanel = document.getElementById('islemKaydiPanel');
 const islemKaydiArrow = document.getElementById('islemKaydiArrow');
@@ -636,7 +514,6 @@ islemKaydiBtn.onclick = function() {
   }
 };
 
-// 17. TEMA DEĞİŞTİRME
 (function () {
   const theme = localStorage.getItem("panelTheme");
   const body = document.getElementById("panelBody");
@@ -665,7 +542,6 @@ islemKaydiBtn.onclick = function() {
   });
 })();
 
-// 18. KATEGORİ MİGRASYON FONKSİYONU
 function migrateKategoriler() {
   const eskiKategoriler = ["turkce-rock", "turkce-pop", "turkce-hiphop", "turkce-karisik", 
                           "yabanci-rock", "yabanci-pop", "yabanci-hiphop", "yabanci-karisik",
@@ -675,7 +551,6 @@ function migrateKategoriler() {
   
   sarkiListesi.forEach(sarki => {
     if (!eskiKategoriler.includes(sarki.kategori)) {
-      // Eğer kategori eski formatlardan biri değilse, yeni formata çevir
       if (sarki.kategori === "turkce") {
         sarki.kategori = "turkce-karisik";
         degisenler++;
@@ -695,18 +570,15 @@ function migrateKategoriler() {
   }
 }
 
-// 19. SAYFA YÜKLENİRKEN
 document.addEventListener("DOMContentLoaded", function() {
   guncelleListe();
   guncelleIslemKaydiListesi();
 
-  // Sayfa yüklenince kategori filtreleme dropdown'larını sıfırla
   document.getElementById("kategoriFiltre").value = "tum";
   const altKategoriFiltre = document.getElementById("altKategoriFiltre");
   altKategoriFiltre.innerHTML = '<option value="">Alt Kategori Seç</option>';
   altKategoriFiltre.style.display = "none";
 
-  // Deezer form toggle
   document.getElementById("deezerFormToggle").addEventListener("click", function() {
     const form = document.getElementById("deezerForm");
     form.style.display = form.style.display === "none" ? "block" : "none";
@@ -719,12 +591,10 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   });
 
-  // Dışarı tıklayınca toplu silme menüsünü kapat
   document.addEventListener("click", function() {
     document.getElementById("topluSilMenu").style.display = "none";
   });
 
-  // Kategori seçiminde alt kategoriyi göster
   document.getElementById("kategori").addEventListener("change", function() {
     const anaKategori = this.value;
     const altKategoriSelect = document.getElementById("altKategori");
@@ -743,7 +613,6 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   });
 
-  // Deezer kategori modal işlemleri
   document.getElementById("deezerKategoriSelect").addEventListener("change", function() {
     const anaKategori = this.value;
     const altKategoriContainer = document.getElementById("deezerAltKategoriContainer");
@@ -763,7 +632,6 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   });
 
-  // Deezer modal butonları
   document.getElementById("deezerKategoriEvet").addEventListener("click", function() {
     const anaKategori = document.getElementById("deezerKategoriSelect").value;
     const altKategori = document.getElementById("deezerAltKategoriSelect").value;
@@ -818,13 +686,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
 });
 
-// 20. ÇIKIŞ FONKSİYONU
 function logout() {
   localStorage.removeItem("adminGiris");
   window.location.href = "login.html";
 }
 
-// Yeni Şarkı Ekle formunu aç-kapat
 document.addEventListener("DOMContentLoaded", function () {
   const formToggleBtn = document.getElementById("formToggleBtn");
   const manualForm = document.getElementById("manualForm");
@@ -836,12 +702,10 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
-// Tüm dış kliklerde popup ve modal kontrolü
 document.addEventListener("click", function (e) {
   const modal = document.getElementById("modal-onay");
   const popup = document.querySelector(".popup-menu");
 
-  // Eğer modal açık ve tıklanan yer modal değilse: sadece modal'ı kapat
   if (modal.style.display === "flex" && !modal.contains(e.target)) {
     modal.style.display = "none";
     modal.style.zIndex = "";
@@ -849,7 +713,6 @@ document.addEventListener("click", function (e) {
     return;
   }
 
-  // Modal kapalıysa popup'ı da kapat
   if (!modal || modal.style.display !== "flex") {
     if (popup && !popup.contains(e.target)) popup.remove();
   }
@@ -857,17 +720,14 @@ document.addEventListener("click", function (e) {
 
 let seciliIndex = null;
 
-// Boşluğa tıklayınca popup kapanır
 document.getElementById("sarkiDuzenleModal").addEventListener("click", function(e) {
   if (e.target === this) this.style.display = "none";
 });
 
-// Çarpı ile kapat
 document.getElementById("kapatPopup").addEventListener("click", function() {
   document.getElementById("sarkiDuzenleModal").style.display = "none";
 });
 
-// Kaydet
 document.getElementById("popupKaydet").addEventListener("click", function() {
   const yeniSanatci = document.getElementById("popupSanatci").value;
   const yeniSarki = document.getElementById("popupSarki").value;
@@ -883,14 +743,12 @@ document.getElementById("popupKaydet").addEventListener("click", function() {
   document.getElementById("sarkiDuzenleModal").style.display = "none";
 });
 
-// Sil butonu → sadece "emin misin?" aç
 document.getElementById("popupSil").addEventListener("click", function(e) {
   e.stopPropagation();
   document.getElementById("modal-onay").style.display = "flex";
   document.getElementById("modal-msg").textContent = "Bu şarkıyı silmek istediğine emin misin?";
 });
 
-// Emin misin boşlukla kapanır, popup kalır
 document.getElementById("modal-onay").addEventListener("click", function (e) {
   if (e.target === this) {
     this.style.display = "none";
@@ -913,7 +771,6 @@ document.addEventListener("dblclick", function (e) {
   const sarki = sarkiListesi[index];
   seciliIndex = index;
 
-  // Sanatçı ve Şarkı adını ayır
   let sanatci = "";
   let sarkiAdi = sarki.cevap;
   if (sarki.cevap.includes(" - ")) {

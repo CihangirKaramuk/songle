@@ -72,22 +72,6 @@
           <button id="siralaBtn" style="width:100%;">🔼 A-Z Sırala</button>
         </div>
         <ul id="sarkiListesi"></ul>
-        <div class="duzenle-formu" id="duzenleFormu" style="display: none;max-width:400px;">
-          <h2>Şarkı Düzenle</h2>
-          <input type="text" id="duzenleSanatci" placeholder="Yeni Sanatçı Adı" />
-          <input type="text" id="duzenleSarki" placeholder="Yeni Şarkı Adı" />
-          <select id="duzenleKategori">
-            <option value="">Kategori Seç</option>
-            <option value="turkce">Türkçe</option>
-            <option value="yabanci">Yabancı</option>
-            <option value="dizi">Dizi</option>
-            <option value="film">Film</option>
-          </select>
-          <select id="duzenleAltKategoriSec" style="display:none;margin-top:15px;">
-            <option value="">Alt Kategori Seç</option>
-          </select>
-          <button id="kaydetBtn">Kaydet</button>
-        </div>
       </section>
 
       <section id="ayarlar" class="panel-section">
@@ -118,13 +102,11 @@
 
   <div id="toast-success" class="toast-success"></div>
   <div id="sarkiDuzenleModal" class="modal-onay" style="display:none;">
-  <div class="modal-icerik" style="position:relative; max-width:600px; width:90%;">
-    <span id="kapatPopup" style="position:absolute;top:8px;right:12px;font-size:22px;cursor:pointer;">❌</span>
-    <h2 style="margin-bottom:15px;">Şarkıyı Düzenle</h2>
-
-    <input type="text" id="popupSanatci" placeholder="Sanatçı Adı">
-    <input type="text" id="popupSarki" placeholder="Şarkı Adı">
-
+  <div class="modal-icerik" style="position:relative; max-width:400px; width:95%;">
+    <span id="kapatPopup" style="position:absolute;top:8px;right:12px;font-size:32px;cursor:pointer;color:#ff4d7d;">✕</span>
+    <h2 style="margin-bottom:18px; text-align:center; font-size:2rem;">Şarkıyı Düzenle</h2>
+    <input type="text" id="popupSanatci" placeholder="Sanatçı Adı" autocomplete="off">
+    <input type="text" id="popupSarki" placeholder="Şarkı Adı" autocomplete="off">
     <select id="popupKategori">
       <option value="">Kategori Seç</option>
       <option value="turkce">Türkçe</option>
@@ -132,21 +114,19 @@
       <option value="dizi">Dizi</option>
       <option value="film">Film</option>
     </select>
-
     <select id="popupAltKategori">
       <option value="">Alt Kategori Seç</option>
       <option value="pop">Pop</option>
       <option value="rock">Rock</option>
       <option value="rap">Rap</option>
     </select>
-
     <div class="duzenle-btn-grup">
       <button id="popupKaydet" class="btn-kaydet">Kaydet</button>
       <button id="popupSil" class="btn-sil">🗑️</button>
     </div>
-
   </div>
-</div>
+  </div>
+
 
   <div id="modal-onay" class="modal-onay" style="display:none">
     <div class="modal-icerik">

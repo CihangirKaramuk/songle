@@ -311,14 +311,17 @@ body.light .toast-success {
 .modal-onay .modal-icerik {
   background: #242043;
   color: #fff;
-  padding: 36px 36px 28px 36px;
-  border-radius: 22px;
+  padding: 24px 24px 20px 24px;
+  border-radius: 20px;
   box-shadow: 0 8px 36px 0 rgba(100,90,220,0.14);
-  min-width: 240px;
-  max-width: 90vw;
-  text-align: center;
-  animation: modalPop 0.25s cubic-bezier(.7,0,.3,1);
+  max-width: 380px;   /* ✅ daha dar */
+  width: 100%;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
 }
+
 @keyframes modalPop {
   0% { transform: scale(0.9); opacity: 0; }
   100% { transform: scale(1); opacity: 1; }
@@ -917,36 +920,112 @@ body.light .islem-kaydi-panel {
   background: #a29bfe;
 }
 
-#sarkiDuzenleModal {
-  width: 400px;
-  max-width: 90%;
+#sarkiDuzenleModal input,
+#sarkiDuzenleModal select {
+  font-size: 14px;
+  padding: 10px 14px;
+  margin-bottom: 16px;
 }
 
-.duzenle-btn-grup {
+#sarkiDuzenleModal .modal-icerik {
+  background: #242043;
+  color: #fff;
+  padding: 32px 24px 26px 24px;
+  border-radius: 24px;
+  max-width: 400px;
+  width: 95%;
+  text-align: center;
   display: flex;
-  gap: 8px;
-  margin-top: 16px;
+  flex-direction: column;
+  align-items: stretch;
+  box-shadow: 0 8px 40px 0 rgba(100,90,220,0.19);
 }
 
-.btn-kaydet {
-  flex: 4;
-  background-color: #e91e63;
-  color: white;
-  padding: 10px;
+#sarkiDuzenleModal input,
+#sarkiDuzenleModal select {
+  background: #191830;
+  color: #ececec;
   border: none;
-  border-radius: 8px;
-  font-weight: bold;
+  border-radius: 10px;
+  padding: 14px 16px;
   font-size: 15px;
-  cursor: pointer;
+  margin-bottom: 16px;
+  outline: none;
+  transition: border 0.22s;
 }
 
-.btn-sil {
-  flex: 1;
-  background-color: #7e57c2;
-  color: white;
-  padding: 10px;
-  border: none;
-  border-radius: 8px;
-  font-size: 18px;
-  cursor: pointer;
+#sarkiDuzenleModal input:focus,
+#sarkiDuzenleModal select:focus {
+  border: 1.5px solid #a259c7;
+  background: #232043;
+}
+
+#sarkiDuzenleModal input::placeholder {
+  color: #787da5;
+  opacity: 1;
+}
+
+#sarkiDuzenleModal h2 {
+  color: #fff;
+  font-size: 1.6rem;
+  margin-bottom: 22px;
+  letter-spacing: 0.4px;
+}
+
+#sarkiDuzenleModal .duzenle-btn-grup {
+  display: flex !important;
+  align-items: stretch !important;
+  justify-content: stretch !important;
+  gap: 12px !important;
+  margin-top: 16px !important;
+  margin-bottom: 0 !important;
+  /* Buton grubunu daha yukarı almak için */
+  position: relative !important;
+  top: -15px !important;
+}
+
+#sarkiDuzenleModal .duzenle-btn-grup button#popupKaydet {
+  flex: 1 1 auto !important;
+  height: 44px !important;
+  font-size: 16px !important;
+  border-radius: 9px !important;
+  font-weight: bold !important;
+  background-color: #a259c7 !important;
+  color: white !important;
+  border: none !important;
+  cursor: pointer !important;
+  transition: background 0.18s !important;
+  text-align: center !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+#sarkiDuzenleModal .duzenle-btn-grup button#popupKaydet:hover {
+  background: #b48aff !important;
+}
+
+#sarkiDuzenleModal .duzenle-btn-grup button#popupSil {
+  width: 44px !important;
+  height: 44px !important;
+  min-width: 44px !important;
+  min-height: 44px !important;
+  max-width: 44px !important;
+  max-height: 44px !important;
+  padding: 0 !important;
+  background: #e53935 !important;
+  color: #fff !important;
+  font-size: 23px !important;
+  border-radius: 10px !important;
+  border: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: none !important;
+  margin-left: 0 !important;
+  margin-bottom: 0 !important;
+  transition: background 0.18s !important;
+  box-sizing: border-box !important;
+}
+#sarkiDuzenleModal .duzenle-btn-grup button#popupSil:hover {
+  background: #b71c1c !important;
 }
