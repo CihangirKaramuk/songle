@@ -816,3 +816,10 @@ function showUyariModal(mesaj) {
 document.getElementById("uyariModalKapat").onclick = function() {
   document.getElementById("uyariModal").style.display = "none";
 };
+
+document.getElementById("uyariModal").addEventListener("click", function(e) {
+  // Sadece arka plan tıklanırsa kapat
+  if (e.target === this) {
+    this.style.display = "none";
+  }
+});
