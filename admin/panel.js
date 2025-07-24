@@ -398,7 +398,6 @@ function islemDetayGoster(index) {
     };
   });
 
-  document.body.appendChild(modal);
 }
 
 function guncelleIslemKaydiListesi() {
@@ -724,9 +723,29 @@ document.addEventListener("click", function (e) {
 
 let seciliIndex = null;
 
-document.getElementById("sarkiDuzenleModal").addEventListener("click", function(e) {
-  if (e.target === this) this.style.display = "none";
-});
+const duzenleModal = document.getElementById('sarkiDuzenleModal');
+let modalDownTarget = null;
+
+if (duzenleModal) {
+  duzenleModal.addEventListener('mousedown', function(e) {
+    if (e.target === duzenleModal && e.button === 0) {
+      modalDownTarget = e.target;
+    } else {
+      modalDownTarget = null;
+    }
+  });
+
+  duzenleModal.addEventListener('mouseup', function(e) {
+    if (
+      modalDownTarget === duzenleModal &&
+      e.target === duzenleModal &&
+      e.button === 0
+    ) {
+      this.style.display = "none";
+    }
+    modalDownTarget = null;
+  });
+}
 
 document.getElementById("kapatPopup").addEventListener("click", function() {
   document.getElementById("sarkiDuzenleModal").style.display = "none";
@@ -776,10 +795,6 @@ document.getElementById("kapatPopup").addEventListener("click", function () {
   document.getElementById("sarkiDuzenleModal").style.display = "none";
 });
 
-document.getElementById("sarkiDuzenleModal").addEventListener("click", function (e) {
-  if (e.target === this) this.style.display = "none";
-});
-
 document.addEventListener("dblclick", function (e) {
   const li = e.target.closest("li");
   if (!li || !li.dataset.index) return;
@@ -817,9 +832,30 @@ document.getElementById("uyariModalKapat").onclick = function() {
   document.getElementById("uyariModal").style.display = "none";
 };
 
-document.getElementById("uyariModal").addEventListener("click", function(e) {
-  // Sadece arka plan tıklanırsa kapat
-  if (e.target === this) {
-    this.style.display = "none";
-  }
+const uyariModal = document.getElementById("uyariModal");
+const uyariModalContent = uyariModal.querySelector('.modal-icerik');
+
+// Sadece Tamam butonu
+document.getElementById("uyariModalKapat").onclick = function() {
+  uyariModal.style.display = "none";
+};
+
+// Modal kutusuna tıklanırsa asla kapanmasın!
+uyariModalContent.addEventListener("mousedown", function(e) {
+  e.stopPropagation();
 });
+uyariModalContent.addEventListener("mouseup", function(e) {
+  e.stopPropagation();
+});
+
+// Sadece arka plana basıp bırakınca modal kapansın!
+uyariModal.addEventListener("mousedown", function(e) {
+  this._modalBackgroundClicked = (e.target === uyariModal);
+});
+uyariModal.addEventListener("mouseup", function(e) {
+  if (this._modalBackgroundClicked && e.target === uyariModal) {
+    uyariModal.style.display = 'none';
+  }
+  this._modalBackgroundClicked = false;
+});
+
