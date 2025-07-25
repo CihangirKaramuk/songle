@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Songle Admin Panel (API)</title>
+  <link rel="stylesheet" href="panel-style.css" />
+  <style>
+    /* Toast mesajları için stil */
+    .toast {
+      visibility: hidden;
+      min-width: 250px;
+      background-color: #333;
+      color: #fff;
+      text-align: center;
+      border-radius: 4px;
+      padding: 16px;
+      position: fixed;
+      z-index: 1000;
+      right: 30px;
+      top: 30px;
+      font-size: 17px;
+      opacity: 0;
+      transition: opacity 0.3s, visibility 0.3s;
+    }
+    
+    .toast.show {
+      visibility: visible;
+      opacity: 1;
+    }
+    
+    /* Şarkı listesi için stil */
+    .sarki-item {
+      background: #2a2a4a;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .sarki-bilgi {
+      flex: 1;
+    }
+    
+    .sarki-ad {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    
+    .sarki-kategori {
+      font-size: 0.8em;
+      color: #a0a0d0;
+    }
+    
+    .sarki-actions button {
+      margin-left: 10px;
+      padding: 5px 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    
+    .btn-edit {
+      background-color: #4CAF50;
+      color: white;
+    }
+    
+    .btn-delete {
+      background-color: #f44336;
+      color: white;
+    }
+  </style>
+</head>
+<body id="panelBody">
+  <div class="admin-panel">
+    <div class="sidebar">
+      <div class="logo">Songle 🎧</div>
+      <ul class="menu">
+        <li class="menu-item active" data-section="ekle">🎵 Şarkı Ekle</li>
+        <li class="menu-item" data-section="sarkiListesi">📋 Şarkı Listesi</li>
+        <li class="menu-item" data-section="kategoriler">📋 Kategoriler</li>
+        <li class="menu-item" id="logoutBtn">📋 Çıkış Yap</li>
+      </ul>
+    </div>
+
+    <div class="main-content">
+      <!-- Toast mesajları -->
+      <div id="guncelleToast" class="toast">
+        <span id="guncelleToastMsg">Güncelleniyor...</span>
+      </div>
+      <div id="successToast" class="toast" style="background-color: #4CAF50;">
+        <span id="successToastMsg">Başarılı!</span>
+      </div>
+      <div id="deleteToast" class="toast" style="background-color: #f44336;">
+        <span id="deleteToastMsg">Silindi!</span>
+      </div>
+
+      <section id="ekle" class="panel-section active">
+        <h1>Yeni Şarkı Ekle</h1>
+        <div class="ekle-formu" style="max-width:400px;">
+          <input type="text" id="sanatciAdi" placeholder="Sanatçı Adı" />
+          <input type="text" id="sarkiAdi" placeholder="Şarkı Adı" />
+          <select id="kategori">
+            <option value="">Kategori Seç</option>
+            <option value="turkce">Türkçe</option>
+            <option value="yabanci">Yabancı</option>
+            <option value="dizi">Dizi</option>
+            <option value="film">Film</option>
+          </select>
+          <select id="altKategori" style="display: none;">
+            <option value="">Alt Kategori Seç *</option>
+          </select>
+          <div class="deezer-search" style="display: flex; gap: 10px; margin-bottom: 15px;">
+            <button type="button" id="deezerAraBtn" style="flex: 1;">Deezer'dan Ara</button>
+            <button type="button" id="dosyaYukleBtn" style="flex: 1;">Dosya Yükle</button>
+          </div>
+          <input type="file" id="mp3File" accept="audio/mpeg" style="display: none; visibility: hidden; opacity: 0;" />
+
+          <div id="deezerSonuclar" style="display: none; max-height: 200px; overflow-y: auto; border: 1px solid #444; border-radius: 4px; margin-bottom: 15px; background: #2a2a4a;">
+            <!-- Deezer sonuçları buraya eklenecek -->
+          </div>
+          <button id="ekleBtn">Şarkıyı Ekle</button>
+        </div>
+      </section>
+
+      <section id="sarkiListesi" class="panel-section">
+        <h1>Eklenen Şarkılar</h1>
+        <div id="liste">
+          <!-- Şarkılar buraya eklenecek -->
+        </div>
+      </section>
+
+      <section id="kategoriler" class="panel-section">
+        <h1>Kategoriler</h1>
+        <div id="getKategoriler">
+          <!-- Kategoriler buraya eklenecek -->
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- API servisini ve panel kodunu yükle -->
+  <script type="module" src="../apiService.js"></script>
+  <script type="module" src="api-panel.js"></script>
+  
+  <script>
+    // Menü geçişleri
+    document.querySelectorAll('.menu-item').forEach(item => {
+      item.addEventListener('click', function() {
+        // Tüm menü öğelerinden active sınıfını kaldır
+        document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
+        // Tüm bölümleri gizle
+        document.querySelectorAll('.panel-section').forEach(section => section.classList.remove('active'));
+        
+        // Tıklanan menü öğesine active sınıfını ekle
+        this.classList.add('active');
+        // İlgili bölümü göster
+        const sectionId = this.getAttribute('data-section');
+        document.getElementById(sectionId).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

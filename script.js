@@ -1,4 +1,6 @@
-let sarkiListesi = JSON.parse(localStorage.getItem("sarkilar")) || [];
+import apiService from './apiService.js';
+
+let sarkiListesi = [];
 let soruListesi = [];
 let kullanilanSarkilar = [];
 let soruIndex = 0;
@@ -6,10 +8,68 @@ let selectedDiziAltKategori = "";
 let selectedFilmAltKategori = "";
 let selectedTurkceAltKategori = "";
 let selectedYabanciAltKategori = "";
-
 const dropdownSelected = document.querySelector(".dropdown-selected");
 const dropdownOptions = document.querySelector(".dropdown-options");
 const options = document.querySelectorAll(".option");
+
+// Initialize the app by fetching songs
+async function initializeApp() {
+  try {
+    sarkiListesi = await apiService.getSongs();
+    console.log('Songs loaded successfully:', sarkiListesi.length);
+  } catch (error) {
+    console.error('Failed to load songs:', error);
+    // Show error to user if needed
+    alert('Şarkılar yüklenirken bir hata oluştu. Lütfen sayfayı yenileyin.');
+  }
+}
+
+// Initialize the app when the script loads
+initializeApp();
+
+// Sayfa yüklendiğinde rastgele kategori seç
+function rastgeleKategoriSec() {
+  if (options.length > 0) {
+    // Rastgele bir ana kategori seç
+    const rastgeleIndex = Math.floor(Math.random() * options.length);
+    const secilenKategori = options[rastgeleIndex];
+    secilenKategori.click();
+    
+    // Alt kategoriler yüklendikten sonra rastgele bir alt kategori seç
+    setTimeout(() => {
+      let altKategoriler = [];
+      
+      // Seçilen kategoriye göre uygun alt kategorileri belirle
+      switch(secilenKategori.getAttribute('data-value')) {
+        case 'dizi':
+          altKategoriler = document.querySelectorAll('.dizi-alt-kategori-card');
+          break;
+        case 'film':
+          altKategoriler = document.querySelectorAll('.film-alt-kategori-card');
+          break;
+        case 'turkce':
+          altKategoriler = document.querySelectorAll('#turkceAltKategoriler .alt-kategori-card');
+          break;
+        case 'yabanci':
+          altKategoriler = document.querySelectorAll('#yabanciAltKategoriler .alt-kategori-card');
+          break;
+      }
+      
+      // Eğer alt kategori varsa rastgele birini seç
+      if (altKategoriler && altKategoriler.length > 0) {
+        const rastgeleAltKategoriIndex = Math.floor(Math.random() * altKategoriler.length);
+        altKategoriler[rastgeleAltKategoriIndex].click();
+      }
+    }, 100);
+  }
+}
+
+// Sayfa yüklendiğinde rastgele kategori seç
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', rastgeleKategoriSec);
+} else {
+  rastgeleKategoriSec();
+}
 
 dropdownSelected.addEventListener("click", () => {
   dropdownOptions.style.display =
@@ -129,13 +189,13 @@ function altKategoriCardSec(altKategoriDivId, secilenCard) {
   secilenCard.classList.add('selected');
 }
 
-document.addEventListener("click", (e) => {
+document.addEventListener("click", async (e) => {
   if (!e.target.closest(".custom-dropdown")) {
     dropdownOptions.style.display = "none";
   }
 });
 
-document.querySelector(".start-btn").addEventListener("click", function () {
+document.querySelector(".start-btn").addEventListener("click", async function () {
   const secilenKategori = dropdownSelected.textContent;
   const kategoriKey = dropdownSelected.getAttribute("data-value");
 
@@ -173,11 +233,17 @@ document.querySelector(".start-btn").addEventListener("click", function () {
   }
 
   // Şarkıları filtrele
-  sarkiListesi = JSON.parse(localStorage.getItem("sarkilar")) || [];
-  soruListesi = sarkiListesi.filter(sarki => sarki.kategori === oyunKategoriKey);
+  try {
+    sarkiListesi = await apiService.getSongs();
+    soruListesi = sarkiListesi.filter(sarki => sarki.kategori === oyunKategoriKey);
 
-  if (soruListesi.length === 0) {
-    alert("Bu kategoride henüz şarkı yok!");
+    if (soruListesi.length === 0) {
+      alert("Bu kategoride henüz şarkı yok!");
+      return;
+    }
+  } catch (error) {
+    console.error('Error fetching songs:', error);
+    alert('Şarkılar yüklenirken bir hata oluştu. Lütfen sayfayı yenileyin.');
     return;
   }
 
@@ -219,15 +285,63 @@ function rastgeleSoruIndex() {
 }
 
 function cevapDogruMu(tahmin, cevap) {
-  tahmin = tahmin.toLowerCase();
-  cevap = cevap.toLowerCase();
-  const sarkiAdi = cevap.split(" - ")[1]?.trim();
-  return sarkiAdi && tahmin.includes(sarkiAdi);
+  // Her iki stringi de küçük harfe çevir ve fazla boşlukları temizle
+  tahmin = tahmin.toLowerCase().trim();
+  cevap = cevap.toLowerCase().trim();
+  
+  if (!cevap) {
+    return false; // Geçersiz format
+  }
+  
+  // Basit karşılaştırma: tam eşleşme
+  if (tahmin === cevap) {
+    return true;
+  }
+  
+  // Daha esnek karşılaştırma için benzerlik hesapla
+  return benzerlikHesapla(tahmin, cevap) > 0.7; // %70 benzerlik eşiği
 }
+
+function benzerlikHesapla(str1, str2) {
+  // Basit Levenshtein distance tabanlı benzerlik
+  const matrix = [];
+  const len1 = str1.length;
+  const len2 = str2.length;
+  
+  // Matrix'i başlat
+  for (let i = 0; i <= len1; i++) {
+    matrix[i] = [i];
+  }
+  for (let j = 0; j <= len2; j++) {
+    matrix[0][j] = j;
+  }
+  
+  // Matrix'i doldur
+  for (let i = 1; i <= len1; i++) {
+    for (let j = 1; j <= len2; j++) {
+      if (str1[i-1] === str2[j-1]) {
+        matrix[i][j] = matrix[i-1][j-1];
+      } else {
+        matrix[i][j] = Math.min(
+          matrix[i-1][j-1] + 1, // değiştir
+          matrix[i][j-1] + 1,   // ekle
+          matrix[i-1][j] + 1    // sil
+        );
+      }
+    }
+  }
+  
+  // Benzerlik oranını hesapla (0-1 arası)
+  const maxLen = Math.max(len1, len2);
+  return maxLen === 0 ? 1 : (maxLen - matrix[len1][len2]) / maxLen;
+}
+
 
 document.querySelector(".tahmin-gonder").addEventListener("click", function () {
   const input = document.querySelector(".tahmin-input");
   const tahmin = input.value.trim();
+
+  console.log(tahmin, soruListesi[soruIndex].cevap);
 
   if (cevapDogruMu(tahmin, soruListesi[soruIndex].cevap)) {
     confetti();

@@ -1,5 +1,4 @@
-const correctUsername = "admin";
-const correctPassword = "admin";
+import apiService from "../apiService.js";
 
 document.getElementById("loginBtn").addEventListener("click", girisKontrol);
 document.addEventListener("keydown", function (e) {
@@ -12,12 +11,19 @@ function girisKontrol() {
   const usernameInput = document.getElementById("adminUsername").value.trim();
   const passwordInput = document.getElementById("adminPassword").value;
 
-  if (usernameInput === correctUsername && passwordInput === correctPassword) {
-    localStorage.setItem("adminGiris", "ok");
-    window.location.href = "panel.html";
-  } else {
-    document.getElementById("errorMsg").textContent = "Kullanıcı adı veya şifre yanlış!";
-  }
+  apiService.login(usernameInput, passwordInput)
+    .then(response => {
+      if (response.success && response.is_admin === true) {
+        localStorage.setItem("adminGiris", "ok");
+        window.location.href = "api-panel.html";
+      } else {
+        document.getElementById("errorMsg").textContent = "Kullanıcı adı veya şifre yanlış!";
+      }
+    })
+    .catch(error => {
+      console.error("Error logging in:", error);
+      document.getElementById("errorMsg").textContent = "Bir hata oluştu!";
+    });
 }
 
 const passwordInput = document.getElementById("adminPassword");
