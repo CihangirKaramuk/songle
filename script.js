@@ -382,7 +382,12 @@ function guncelleSoru() {
   document.querySelector(".sarki-kutusu").textContent = soru.sarki;
   document.querySelector(".tahmin-input").value = "";
   document.getElementById("zamanGoster").textContent = "Kalan Süre: 30";
-  document.getElementById('audio-player').src = soru.dosya;
+  // Önceki çalmayı durdur ve yeni şarkıyı yükle
+  audioPlayer.pause();
+  audioPlayer.currentTime = 0;
+  audioPlayer.src = soru.dosya;
+  audioPlayer.load();
+  audioPlayer.play().catch(()=>{});
 
   // Albüm kapağını güncelle
   if (albumCover) {
@@ -407,6 +412,8 @@ let kalanSure = 30;
 let sayacInterval;
 
 function baslatSayac() {
+  // Önceki interval'ı temizle, hızlanmayı önle
+  clearInterval(sayacInterval);
   kalanSure = 30;
   document.getElementById("zamanGoster").textContent = `Kalan Süre: ${kalanSure}`;
 
@@ -416,16 +423,32 @@ function baslatSayac() {
 
     if (kalanSure <= 0) {
       clearInterval(sayacInterval);
-      alert("Süre doldu! Yeni soruya geçiliyor...");
-      soruIndex = rastgeleSoruIndex();
-      guncelleSoru();
-      baslatSayac();
+      // controls kapat
+    guessInput.disabled = true;
+    guessBtn.disabled = true;
+    replayBtn.disabled = true;
+
+    timeUpEl.classList.add('show');
+
+      setTimeout(() => {
+        timeUpEl.classList.remove('show');
+        // controls aç
+        guessInput.disabled = false;
+        guessBtn.disabled = false;
+        replayBtn.disabled = false;
+        soruIndex = rastgeleSoruIndex();
+        guncelleSoru();
+        baslatSayac();
+      }, 2000);
     }
   }, 1000);
 }
 
 const audioPlayer = document.getElementById('audio-player');
 const albumCover = document.getElementById('album-cover');
+const guessInput = document.querySelector('.tahmin-input');
+const guessBtn = document.querySelector('.tahmin-gonder');
+const timeUpEl = document.getElementById('time-up');
 const progressBar = document.getElementById('progressBar');
 const progressGlow = document.getElementById('progressGlow');
 const musicNote = document.getElementById('musicNote');
