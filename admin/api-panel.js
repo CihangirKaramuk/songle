@@ -44,7 +44,8 @@ window.deezerJsonpSonuc = function(response) {
       secilenDeezerSarki = {
         artist: sarki.artist.name,
         title: sarki.title_short,
-        preview: sarki.preview
+        preview: sarki.preview,
+        cover: sarki.album?.cover_medium || sarki.album?.cover_big || sarki.album?.cover
       };
       document.getElementById("sanatciAdi").value = sarki.artist.name;
       document.getElementById("sarkiAdi").value = sarki.title_short;
@@ -254,7 +255,8 @@ document.getElementById("ekleBtn").addEventListener("click", async () => {
       kategori: tamKategori,
       cevap: sarki,
       sarki: "🎵 Şarkı çalıyor. (" + sarki + ")",
-      dosya: dosyaYolu
+      dosya: dosyaYolu,
+      kapak: (secilenDeezerSarki && secilenDeezerSarki.cover) ? secilenDeezerSarki.cover : null
     };
 
     await apiService.addSong(newSong);

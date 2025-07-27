@@ -136,12 +136,22 @@ body {
 }
 
 .sarki-kutusu {
+  /* song status box */
   background-color: rgba(255, 255, 255, 0.1);
   padding: 20px;
   border-radius: 20px;
   margin: 16px 0 12px 0;
   font-size: 18px;
   color: #fff;
+}
+
+.album-cover {
+  width: 240px;
+  height: 240px;
+  border-radius: 12px;
+  object-fit: cover;
+  display: block;
+  margin: 12px auto;
 }
 
 .tahmin-input {

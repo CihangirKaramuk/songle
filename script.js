@@ -384,6 +384,16 @@ function guncelleSoru() {
   document.getElementById("zamanGoster").textContent = "Kalan Süre: 30";
   document.getElementById('audio-player').src = soru.dosya;
 
+  // Albüm kapağını güncelle
+  if (albumCover) {
+    if (soru.kapak) {
+      albumCover.src = soru.kapak;
+      albumCover.style.display = 'block';
+    } else {
+      albumCover.style.display = 'none';
+    }
+  }
+
   if(window.progressBar) progressBar.style.width = '0%';
   if(window.progressGlow) progressGlow.style.left = '0px';
   if(window.durdurCalmaAnimasyonu) durdurCalmaAnimasyonu();
@@ -415,6 +425,7 @@ function baslatSayac() {
 }
 
 const audioPlayer = document.getElementById('audio-player');
+const albumCover = document.getElementById('album-cover');
 const progressBar = document.getElementById('progressBar');
 const progressGlow = document.getElementById('progressGlow');
 const musicNote = document.getElementById('musicNote');
