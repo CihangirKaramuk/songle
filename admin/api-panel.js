@@ -276,10 +276,8 @@ document.getElementById("ekleBtn").addEventListener("click", async () => {
 });
 
 // Şarkı silme işlemi
-async function sarkiSil(index) {
-  if (!confirm("Bu şarkıyı silmek istediğinize emin misiniz?")) {
-    return;
-  }
+async function performDeleteSong(index) {
+
 
   try {
     const songId = sarkiListesi[index].id;
@@ -500,6 +498,37 @@ document.addEventListener("DOMContentLoaded", async function() {
       });
     }
   });
+});
+
+// Delete confirmation modal elements
+const deleteConfirmModal = document.getElementById('deleteConfirmModal');
+const deleteConfirmBtn   = document.getElementById('deleteConfirmBtn');
+const deleteCancelBtn    = document.getElementById('deleteCancelBtn');
+
+function sarkiSil(index) {
+  silinecekIndex = index;
+  deleteConfirmModal.style.display = 'flex';
+}
+
+deleteConfirmBtn.addEventListener('click', async () => {
+  if (silinecekIndex !== null) {
+    await performDeleteSong(silinecekIndex);
+    silinecekIndex = null;
+    await guncelleListe();
+  }
+  deleteConfirmModal.style.display = 'none';
+});
+
+deleteCancelBtn.addEventListener('click', () => {
+  silinecekIndex = null;
+  deleteConfirmModal.style.display = 'none';
+});
+
+deleteConfirmModal.addEventListener('click', (e) => {
+  if (e.target === deleteConfirmModal) {
+    silinecekIndex = null;
+    deleteConfirmModal.style.display = 'none';
+  }
 });
 
 // Global scope'a fonksiyonları ekle
