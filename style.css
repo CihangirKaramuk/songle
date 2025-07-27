@@ -160,6 +160,7 @@ body {
   object-fit: cover;
   display: block;
   margin: 12px auto;
+  transition: filter 0.3s linear;
 }
 
 /* ---- Süre Doldu Bildirimi ---- */
