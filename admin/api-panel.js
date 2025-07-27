@@ -356,10 +356,52 @@ document.getElementById('mp3File').addEventListener('change', (e) => {
 });
 
 // Deezer arama butonuna tıklama olayı ekle
+// Deezer arama modal öğeleri
+const deezerModal = document.getElementById('deezerSearchModal');
+const deezerSearchInput = document.getElementById('deezerSearchInput');
+const deezerSearchGo   = document.getElementById('deezerSearchGo');
+const deezerSearchCancel = document.getElementById('deezerSearchCancel');
+
+function openDeezerModal() {
+  deezerSearchInput.value = '';
+  deezerModal.style.display = 'flex';
+  // input'u odakla
+  setTimeout(() => deezerSearchInput.focus(), 0);
+}
+
+function closeDeezerModal() {
+  deezerModal.style.display = 'none';
+}
+
+// Deezer arama butonuna tıklama olayı ekle
 document.getElementById('deezerAraBtn').addEventListener('click', () => {
-  const sarkiAdi = prompt('Aramak istediğiniz şarkı adını girin:');
-  if (sarkiAdi) {
-    deezerAra(sarkiAdi);
+  openDeezerModal();
+});
+
+deezerSearchCancel.addEventListener('click', closeDeezerModal);
+
+deezerSearchGo.addEventListener('click', () => {
+  const query = deezerSearchInput.value.trim();
+  if (query) {
+    closeDeezerModal();
+    deezerAra(query);
+  } else {
+    deezerSearchInput.focus();
+  }
+});
+
+// Enter tuşuna basıldığında da arama yap
+deezerSearchInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    deezerSearchGo.click();
+  }
+});
+
+// Modal dışına tıklanınca kapat
+deezerModal.addEventListener('click', (e) => {
+  if (e.target === deezerModal) {
+    closeDeezerModal();
   }
 });
 
