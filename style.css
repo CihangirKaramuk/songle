@@ -137,12 +137,20 @@ body {
 
 .sarki-kutusu {
   /* song status box */
+  /* song status box */
   background-color: rgba(255, 255, 255, 0.1);
   padding: 20px;
   border-radius: 20px;
   margin: 16px 0 12px 0;
   font-size: 18px;
   color: #fff;
+}
+
+.sarki-kutusu.blurred {
+  filter: blur(6px);
+  pointer-events: none;
+  user-select: none;
+  transition: none;
 }
 
 .album-cover {

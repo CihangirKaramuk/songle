@@ -344,6 +344,8 @@ document.querySelector(".tahmin-gonder").addEventListener("click", function () {
   console.log(tahmin, soruListesi[soruIndex].cevap);
 
   if (cevapDogruMu(tahmin, soruListesi[soruIndex].cevap)) {
+    // Blur kaldır
+    sarkiKutusu.classList.remove('blurred');
     confetti();
     clearInterval(sayacInterval);
 
@@ -379,7 +381,9 @@ document.addEventListener("keydown", function (e) {
 
 function guncelleSoru() {
   const soru = soruListesi[soruIndex];
-  document.querySelector(".sarki-kutusu").textContent = soru.sarki;
+  // Blur while playing (apply before updating text to avoid flicker)
+  sarkiKutusu.classList.add('blurred');
+  sarkiKutusu.textContent = soru.sarki;
   document.querySelector(".tahmin-input").value = "";
   document.getElementById("zamanGoster").textContent = "Kalan Süre: 30";
   // Önceki çalmayı durdur ve yeni şarkıyı yükle
@@ -423,7 +427,9 @@ function baslatSayac() {
 
     if (kalanSure <= 0) {
       clearInterval(sayacInterval);
-      // controls kapat
+      // Blur kaldır
+    sarkiKutusu.classList.remove('blurred');
+        // controls kapat
     guessInput.disabled = true;
     guessBtn.disabled = true;
     replayBtn.disabled = true;
@@ -446,6 +452,7 @@ function baslatSayac() {
 
 const audioPlayer = document.getElementById('audio-player');
 const albumCover = document.getElementById('album-cover');
+const sarkiKutusu = document.querySelector('.sarki-kutusu');
 const guessInput = document.querySelector('.tahmin-input');
 const guessBtn = document.querySelector('.tahmin-gonder');
 const timeUpEl = document.getElementById('time-up');
