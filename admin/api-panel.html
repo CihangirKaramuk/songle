@@ -124,7 +124,57 @@
       border-radius: 4px;
       cursor: pointer;
     }
-  </style>
+
+    /* Deezer sonuç listesi */
+    #deezerResultsList {
+      max-height: 300px;
+      overflow-y: auto;
+      margin-top: 10px;
+      text-align: left;
+    }
+
+    #deezerResultsList > div {
+      padding: 10px;
+      border-bottom: 1px solid #444;
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      column-gap: 8px;
+    }
+
+    #deezerResultsList > div:hover {
+      background: #2a2a4a;
+    }
+
+    #deezerResultsList .ekle-btn {
+      background: #4CAF50;
+      color: #fff;
+      border: none;
+      padding: 5px 12px;
+      border-radius: 14px;
+      cursor: pointer;
+      margin: 0 auto;
+    }
+    /* Özel kaydırma çubuğu (#deezerResultsList) */
+  #deezerResultsList {
+    scrollbar-width: thin;               /* Firefox */
+    scrollbar-color: #4CAF50 #333;       /* thumb track */
+  }
+  #deezerResultsList::-webkit-scrollbar {
+    width: 6px;                          /* Chrome/Safari */
+  }
+  #deezerResultsList::-webkit-scrollbar-track {
+    background: #333;
+    border-radius: 3px;
+  }
+  #deezerResultsList::-webkit-scrollbar-thumb {
+    background: #4CAF50;
+    border-radius: 3px;
+  }
+  #deezerResultsList::-webkit-scrollbar-thumb:hover {
+    background: #66BB6A;
+  }
+</style>
 </head>
 <body id="panelBody">
   <div class="admin-panel">
@@ -203,6 +253,15 @@
         <button id="deezerSearchGo">Ara</button>
         <button id="deezerSearchCancel">İptal</button>
       </div>
+    </div>
+  </div>
+
+  <!-- Deezer Results Modal -->
+  <div id="deezerResultsModal" class="modal-overlay">
+    <div class="modal-content" style="width: 400px; max-height: 80%; display: flex; flex-direction: column;">
+      <h2>Arama Sonuçları</h2>
+      <div id="deezerResultsList" style="flex:1; overflow-y:auto;"></div>
+      <button id="deezerResultsClose" style="margin-top: 15px;">Kapat</button>
     </div>
   </div>
 

@@ -10,9 +10,9 @@ let secilenDeezerSarki = null;
 
 // Global function for Deezer JSONP callback
 window.deezerJsonpSonuc = function(response) {
-  const sonuclarUl = document.getElementById("deezerSonuclar");
+  const sonuclarUl = deezerResultsList;
   sonuclarUl.innerHTML = "";
-  sonuclarUl.style.display = "block";
+  deezerResultsModal.style.display = 'flex';
 
   if (!response.data || response.data.length === 0) {
     sonuclarUl.innerHTML = "<div style='padding: 10px; color: #ccc;'>Sonuç bulunamadı</div>";
@@ -30,11 +30,11 @@ window.deezerJsonpSonuc = function(response) {
     div.style.alignItems = "center";
     
     div.innerHTML = `
-      <div style="flex: 1;">
+      <img src="${sarki.album?.cover_small || sarki.artist?.picture_small}" alt="" style="width:40px;height:40px;border-radius:4px;object-fit:cover;margin-right:8px;"><div style="flex:1; margin-right: 12px;">
         <div style="font-weight: bold; color: #fff;">${sarki.artist.name}</div>
         <div style="font-size: 0.9em; color: #aaa;">${sarki.title_short}</div>
       </div>
-      <button class="ekle-btn" style="background: #4CAF50; color: white; border: none; border-radius: 4px; padding: 5px 10px; cursor: pointer;">
+      <button class="ekle-btn" style="background: #4CAF50; color: #fff; border: none; border-radius: 10px; padding: 4px 0; width: 40px; font-size: 0.8em; cursor: pointer; text-align: center;">
         Seç
       </button>
     `;
@@ -69,7 +69,7 @@ window.deezerJsonpSonuc = function(response) {
           showGuncelleToast("Şarkı indirilirken hata oluştu!");
         });
       
-      sonuclarUl.style.display = "none";
+      deezerResultsModal.style.display = 'none';
     });
     
     sonuclarUl.appendChild(div);
@@ -78,9 +78,9 @@ window.deezerJsonpSonuc = function(response) {
 
 // Deezer'dan şarkı arama fonksiyonu
 async function deezerAra(sorgu) {
-  const sonuclarUl = document.getElementById("deezerSonuclar");
+  const sonuclarUl = deezerResultsList;
   sonuclarUl.innerHTML = "<div style='padding: 10px; color: #ccc;'>Aranıyor...</div>";
-  sonuclarUl.style.display = "block";
+  deezerResultsModal.style.display = 'flex';
   
   // Önceki script etiketini kaldır (eğer varsa)
   const eskiScript = document.getElementById('deezerScript');
@@ -361,6 +361,22 @@ const deezerModal = document.getElementById('deezerSearchModal');
 const deezerSearchInput = document.getElementById('deezerSearchInput');
 const deezerSearchGo   = document.getElementById('deezerSearchGo');
 const deezerSearchCancel = document.getElementById('deezerSearchCancel');
+
+// Deezer sonuç modal öğeleri
+const deezerResultsModal = document.getElementById('deezerResultsModal');
+const deezerResultsList  = document.getElementById('deezerResultsList');
+const deezerResultsClose = document.getElementById('deezerResultsClose');
+
+deezerResultsClose.addEventListener('click', () => {
+  deezerResultsModal.style.display = 'none';
+});
+
+// Modal dışına tıklanınca kapat (sonuçlar)
+deezerResultsModal.addEventListener('click', (e) => {
+  if (e.target === deezerResultsModal) {
+    deezerResultsModal.style.display = 'none';
+  }
+});
 
 function openDeezerModal() {
   deezerSearchInput.value = '';
