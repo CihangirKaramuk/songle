@@ -377,6 +377,40 @@ function logout() {
 
 document.getElementById("logoutBtn").addEventListener("click", logout);
 
+// Form reset function
+function resetForm() {
+  document.getElementById("sanatciAdi").value = "";
+  document.getElementById("sarkiAdi").value = "";
+  document.getElementById("kategori").value = "";
+  document.getElementById("altKategori").innerHTML = '<option value="">Alt Kategori Seç *</option>';
+  document.getElementById("altKategori").style.display = "none";
+  document.getElementById("mp3File").value = "";
+}
+
+// Listen for section changes
+const panelSections = document.querySelectorAll('.panel-section');
+const observer = new MutationObserver(mutations => {
+  mutations.forEach(mutation => {
+    if (mutation.attributeName === 'class') {
+      resetForm();
+    }
+  });
+});
+
+panelSections.forEach(section => {
+  observer.observe(section, { attributes: true });
+});
+
+// Add event listeners to menu items
+const menuItems = document.querySelectorAll('.menu-item');
+menuItems.forEach(item => {
+  item.addEventListener('click', () => {
+    if (!item.classList.contains('active')) {
+      resetForm();
+    }
+  });
+});
+
 // Sayfa yüklendiğinde listeyi güncelle
 document.addEventListener("DOMContentLoaded", async function() {
   await checkLogin();
