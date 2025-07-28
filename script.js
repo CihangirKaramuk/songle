@@ -238,7 +238,7 @@ document.querySelector(".start-btn").addEventListener("click", async function ()
     soruListesi = sarkiListesi.filter(sarki => sarki.kategori === oyunKategoriKey);
 
     if (soruListesi.length === 0) {
-      alert("Bu kategoride henüz şarkı yok!");
+      showNoSongsOverlay();
       return;
     }
   } catch (error) {
@@ -470,12 +470,23 @@ const sarkiKutusu = document.querySelector('.sarki-kutusu');
 const guessInput = document.querySelector('.tahmin-input');
 const guessBtn = document.querySelector('.tahmin-gonder');
 const timeUpEl = document.getElementById('time-up');
+const noSongsEl = document.getElementById('no-songs');
 const progressBar = document.getElementById('progressBar');
 const progressGlow = document.getElementById('progressGlow');
 const musicNote = document.getElementById('musicNote');
 const replayBtn = document.getElementById('replayBtn');
 
 let progressInterval = null;
+
+// --- Şarkı bulunamadı bildirimi yardımcı fonksiyonu ---
+function showNoSongsOverlay() {
+  if (!noSongsEl) return;
+  noSongsEl.classList.add('show');
+  setTimeout(() => {
+    noSongsEl.classList.remove('show');
+  }, 2400);
+}
+
 
 function baslatCalmaAnimasyonu() {
   if (musicNote) musicNote.classList.add('sallaniyor');
