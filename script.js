@@ -385,7 +385,9 @@ function guncelleSoru() {
   // Blur while playing (apply before updating text to avoid flicker)
   sarkiKutusu.classList.add('blurred');
   sarkiKutusu.textContent = soru.sarki;
-  document.querySelector(".tahmin-input").value = "";
+  const tahminInputEl = document.querySelector(".tahmin-input");
+  tahminInputEl.value = "";
+  tahminInputEl.focus();
   document.getElementById("zamanGoster").textContent = "Kalan Süre: 30";
   // Önceki çalmayı durdur ve yeni şarkıyı yükle
   audioPlayer.pause();
