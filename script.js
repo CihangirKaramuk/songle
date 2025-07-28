@@ -397,9 +397,10 @@ function guncelleSoru() {
   // Albüm kapağını güncelle
   if (albumCover) {
     if (soru.kapak) {
+      // Önce bulanıklığı uygula, sonra görseli güncelle ve göster
+      albumCover.style.filter = `blur(${INITIAL_COVER_BLUR}px)`;
       albumCover.src = soru.kapak;
       albumCover.style.display = 'block';
-      albumCover.style.filter = `blur(${INITIAL_COVER_BLUR}px)`;
     } else {
       albumCover.style.display = 'none';
     }
