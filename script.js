@@ -20,7 +20,7 @@ async function initializeApp() {
   } catch (error) {
     console.error('Failed to load songs:', error);
     // Show error to user if needed
-    alert('Şarkılar yüklenirken bir hata oluştu. Lütfen sayfayı yenileyin.');
+    showAlertOverlay('Şarkılar yüklenirken bir hata oluştu. Lütfen sayfayı yenileyin.');
   }
 }
 
@@ -199,21 +199,27 @@ document.querySelector(".start-btn").addEventListener("click", async function ()
   const secilenKategori = dropdownSelected.textContent;
   const kategoriKey = dropdownSelected.getAttribute("data-value");
 
+  // Ana kategori seçili mi?
+  if (!kategoriKey) {
+    showAlertOverlay("Lütfen bir kategori seçin!");
+    return;
+  }
+
   // Alt kategori kontrolü (Türkçe/Yabancı için zorunlu)
   if (kategoriKey === "turkce" && !selectedTurkceAltKategori) {
-    alert("Lütfen Türkçe için bir alt kategori seçin!");
+    showAlertOverlay("Türkçe için bir alt kategori seçin!");
     return;
   }
   if (kategoriKey === "yabanci" && !selectedYabanciAltKategori) {
-    alert("Lütfen Yabancı için bir alt kategori seçin!");
+    showAlertOverlay("Yabancı için bir alt kategori seçin!");
     return;
   }
   if (kategoriKey === "dizi" && !selectedDiziAltKategori) {
-    alert("Lütfen dizi için Türkçe veya Yabancı seçin!");
+    showAlertOverlay("Dizi için bir alt kategori seçin!");
     return;
   }
   if (kategoriKey === "film" && !selectedFilmAltKategori) {
-    alert("Lütfen film için Türkçe veya Yabancı seçin!");
+    showAlertOverlay("Film için bir alt kategori seçin!");
     return;
   }
 
@@ -243,7 +249,7 @@ document.querySelector(".start-btn").addEventListener("click", async function ()
     }
   } catch (error) {
     console.error('Error fetching songs:', error);
-    alert('Şarkılar yüklenirken bir hata oluştu. Lütfen sayfayı yenileyin.');
+    showAlertOverlay('Şarkılar yüklenirken bir hata oluştu. Lütfen sayfayı yenileyin.');
     return;
   }
 
@@ -471,6 +477,7 @@ const guessInput = document.querySelector('.tahmin-input');
 const guessBtn = document.querySelector('.tahmin-gonder');
 const timeUpEl = document.getElementById('time-up');
 const noSongsEl = document.getElementById('no-songs');
+const alertBoxEl = document.getElementById('alert-box');
 const progressBar = document.getElementById('progressBar');
 const progressGlow = document.getElementById('progressGlow');
 const musicNote = document.getElementById('musicNote');
@@ -482,9 +489,23 @@ let progressInterval = null;
 function showNoSongsOverlay() {
   if (!noSongsEl) return;
   noSongsEl.classList.add('show');
+  document.body.classList.add('disabled');
   setTimeout(() => {
     noSongsEl.classList.remove('show');
-  }, 2400);
+    document.body.classList.remove('disabled');
+  }, 2000);
+}
+
+// --- Genel uyarı bildirimi yardımcı fonksiyonu ---
+function showAlertOverlay(message) {
+  if (!alertBoxEl) return;
+  alertBoxEl.textContent = message;
+  alertBoxEl.classList.add('show');
+  document.body.classList.add('disabled');
+  setTimeout(() => {
+    alertBoxEl.classList.remove('show');
+    document.body.classList.remove('disabled');
+  }, 2000);
 }
 
 
