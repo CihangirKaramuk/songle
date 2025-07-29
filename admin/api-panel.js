@@ -33,6 +33,21 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
+// ------- Şarkı Listesi Arama Özelliği -------
+document.addEventListener('DOMContentLoaded', () => {
+  const searchInput = document.getElementById('aramaInput');
+  if (!searchInput) return;
+
+  searchInput.addEventListener('input', () => {
+    const term = searchInput.value.trim().toLowerCase();
+    document.querySelectorAll('#liste .sarki-item').forEach(item => {
+      const text = item.textContent.toLowerCase();
+      // display:flex yerine boş bırak → CSS orijinal hali korur
+      item.style.display = text.includes(term) ? 'flex' : 'none';
+    });
+  });
+});
+
 // Global function for Deezer JSONP callback
 window.deezerJsonpSonuc = function(response) {
   const sonuclarUl = deezerResultsList;
