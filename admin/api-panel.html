@@ -239,7 +239,19 @@
 
       <section id="sarkiListesi" class="panel-section">
         <h1>Eklenen Şarkılar</h1>
-          <input type="text" id="aramaInput" placeholder="Şarkı Ara..." style="max-width:400px; margin-bottom:15px;">
+          <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:15px; max-width:600px;">
+            <input type="text" id="aramaInput" placeholder="Şarkı Ara..." style="flex:1; min-width:160px;">
+            <select id="filterKategori" style="flex:1; min-width:140px;">
+              <option value="">Kategori Seç</option>
+              <option value="turkce">Türkçe</option>
+              <option value="yabanci">Yabancı</option>
+              <option value="dizi">Dizi</option>
+              <option value="film">Film</option>
+            </select>
+            <select id="filterAltKategori" style="flex:1; min-width:140px; display:none;">
+              <option value="">Alt Kategori Seç</option>
+            </select>
+          </div>
         <div id="liste">
           <!-- Şarkılar buraya eklenecek -->
         </div>

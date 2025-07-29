@@ -33,19 +33,58 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-// ------- Şarkı Listesi Arama Özelliği -------
+// ------- Şarkı Listesi Arama & Kategori Filtre Özelliği -------
 document.addEventListener('DOMContentLoaded', () => {
-  const searchInput = document.getElementById('aramaInput');
-  if (!searchInput) return;
+  const searchInput   = document.getElementById('aramaInput');
+  const katSelect     = document.getElementById('filterKategori');
+  const altSelect     = document.getElementById('filterAltKategori');
 
-  searchInput.addEventListener('input', () => {
-    const term = searchInput.value.trim().toLowerCase();
+  if (!searchInput && !katSelect) return;
+
+  // Kategori değişince alt kategori seçeneklerini doldur
+  if (katSelect) {
+    katSelect.addEventListener('change', () => {
+      if (!altSelect) return;
+      altSelect.innerHTML = '<option value="">Alt Kategori Seç</option>';
+      const secKat = katSelect.value;
+      if (secKat && altKategoriler[secKat]) {
+        altSelect.style.display = 'inline-block';
+        altKategoriler[secKat].forEach(k => {
+          const option = document.createElement('option');
+          option.value = k.toLowerCase().replace(' ', '');
+          option.textContent = k;
+          altSelect.appendChild(option);
+        });
+      } else {
+        altSelect.style.display = 'none';
+      }
+      applyFilters();
+    });
+  }
+
+  // Alt kategori ve arama input değişimlerini dinle
+  if (altSelect) {
+    altSelect.addEventListener('change', applyFilters);
+  }
+  if (searchInput) {
+    searchInput.addEventListener('input', applyFilters);
+  }
+
+  function applyFilters() {
+    const term = searchInput ? searchInput.value.trim().toLowerCase() : '';
+    const kat  = katSelect ? katSelect.value : '';
+    const alt  = altSelect ? altSelect.value : '';
+
     document.querySelectorAll('#liste .sarki-item').forEach(item => {
       const text = item.textContent.toLowerCase();
-      // display:flex yerine boş bırak → CSS orijinal hali korur
-      item.style.display = text.includes(term) ? 'flex' : 'none';
+      const itemKat = item.dataset.kategori || '';
+      const itemAlt = item.dataset.alt || '';
+      const matchesTerm = term ? text.includes(term) : true;
+      const matchesKat  = kat ? itemKat === kat : true;
+      const matchesAlt  = alt ? itemAlt === alt : true;
+      item.style.display = (matchesTerm && matchesKat && matchesAlt) ? 'flex' : 'none';
     });
-  });
+  }
 });
 
 // Global function for Deezer JSONP callback
@@ -280,6 +319,12 @@ async function guncelleListe() {
           <button class="btn btn-delete" onclick="sarkiSil(${index})">Sil</button>
         </div>
       `;
+      // Kategori verilerini dataset olarak ekle
+      const kategoriStr = sarki.kategori || '';
+      const [anaKat, altKat] = kategoriStr.split('-');
+      sarkiDiv.dataset.kategori = anaKat || '';
+      sarkiDiv.dataset.alt = altKat || '';
+
       listeDiv.appendChild(sarkiDiv);
     });
   } catch (error) {
