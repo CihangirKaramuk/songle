@@ -73,6 +73,31 @@
       color: white;
     }
 
+    .page-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: auto;
+      min-width: 30px;
+      padding: 6px 10px;
+      margin: 2px;
+      font-size: 14px;
+      background: #2a2a4a;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .page-btn:hover { background: #444; }
+    .page-btn.active { background: #6c5ce7; color:#fff; }
+    .page-btn:disabled, .page-btn[disabled] {
+      opacity: 0.5;
+      cursor: default;
+    }
+    body.light .page-btn { background: #e0e0e0; color: #111; }
+    body.light .page-btn.active { background:#9c27b0; color:#fff; }
+
     /* Modal overlay */
     .modal-overlay {
       position: fixed;
@@ -255,6 +280,8 @@
         <div id="liste">
           <!-- Şarkılar buraya eklenecek -->
         </div>
+        <!-- Pagination controls -->
+        <div id="pagination" style="margin-top:20px; display:flex; gap:6px; flex-wrap:wrap;"></div>
       </section>
 
       <section id="kategoriler" class="panel-section">

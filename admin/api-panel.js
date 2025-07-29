@@ -38,6 +38,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const searchInput   = document.getElementById('aramaInput');
   const katSelect     = document.getElementById('filterKategori');
   const altSelect     = document.getElementById('filterAltKategori');
+  const paginationDiv = document.getElementById('pagination');
+  const ITEMS_PER_PAGE = 10;
+  let currentPage = 1;
 
   if (!searchInput && !katSelect) return;
 
@@ -71,20 +74,88 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function applyFilters() {
+    // Expose for other scripts
+    window.applySongFilters = applyFilters;
     const term = searchInput ? searchInput.value.trim().toLowerCase() : '';
     const kat  = katSelect ? katSelect.value : '';
     const alt  = altSelect ? altSelect.value : '';
 
-    document.querySelectorAll('#liste .sarki-item').forEach(item => {
+    const allItems = Array.from(document.querySelectorAll('#liste .sarki-item'));
+    const filtered = [];
+
+    allItems.forEach(item => {
       const text = item.textContent.toLowerCase();
       const itemKat = item.dataset.kategori || '';
       const itemAlt = item.dataset.alt || '';
       const matchesTerm = term ? text.includes(term) : true;
       const matchesKat  = kat ? itemKat === kat : true;
       const matchesAlt  = alt ? itemAlt === alt : true;
-      item.style.display = (matchesTerm && matchesKat && matchesAlt) ? 'flex' : 'none';
+      if (matchesTerm && matchesKat && matchesAlt) {
+        filtered.push(item);
+      }
+      // tüm öğeleri gizle
+      item.style.display = 'none';
     });
+
+    const totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
+    if (currentPage > totalPages) currentPage = totalPages;
+
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const endIndex   = startIndex + ITEMS_PER_PAGE;
+    filtered.slice(startIndex, endIndex).forEach(item => item.style.display = 'flex');
+
+    buildPagination(totalPages);
   }
+
+  // ------- Pagination UI Builder -------
+  function buildPagination(totalPages) {
+    paginationDiv.innerHTML = '';
+    if (totalPages <= 1) return;
+
+    // Previous button
+    const prevBtn = document.createElement('button');
+    prevBtn.textContent = '‹';
+    prevBtn.className = 'page-btn prev-btn';
+    prevBtn.disabled = currentPage === 1;
+    prevBtn.addEventListener('click', () => {
+      if (currentPage > 1) {
+        currentPage--;
+        applyFilters();
+      }
+    });
+    paginationDiv.appendChild(prevBtn);
+
+    // Page numbers
+    for (let i = 1; i <= totalPages; i++) {
+      const pageBtn = document.createElement('button');
+      pageBtn.textContent = i;
+      pageBtn.className = 'page-btn';
+      if (i === currentPage) pageBtn.classList.add('active');
+      pageBtn.addEventListener('click', () => {
+        if (i !== currentPage) {
+          currentPage = i;
+          applyFilters();
+        }
+      });
+      paginationDiv.appendChild(pageBtn);
+    }
+
+    // Next button
+    const nextBtn = document.createElement('button');
+    nextBtn.textContent = '›';
+    nextBtn.className = 'page-btn next-btn';
+    nextBtn.disabled = currentPage === totalPages;
+    nextBtn.addEventListener('click', () => {
+      if (currentPage < totalPages) {
+        currentPage++;
+        applyFilters();
+      }
+    });
+    paginationDiv.appendChild(nextBtn);
+  }
+
+  // Apply initial filters on page load
+  applyFilters();
 });
 
 // Global function for Deezer JSONP callback
@@ -327,6 +398,11 @@ async function guncelleListe() {
 
       listeDiv.appendChild(sarkiDiv);
     });
+
+    // Build pagination based on latest list
+    if (window.applySongFilters) {
+      window.applySongFilters();
+    }
   } catch (error) {
     console.error('Error updating song list:', error);
     showGuncelleToast('Şarkı listesi güncellenirken hata oluştu');
