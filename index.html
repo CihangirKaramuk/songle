@@ -54,9 +54,13 @@
     <div id="zamanGoster" class="zaman-sayaci">Kalan Süre: 30</div>
 
     <!-- Albüm kapağı görüntüsü -->
-    <img id="album-cover" class="album-cover" src="" alt="Albüm Kapağı" style="display:none;" />
+    <div class="album-cover-wrapper" style="display:none;">
+      <img id="album-cover" class="album-cover" src="" alt="Albüm Kapağı" draggable="false" />
+    </div>
 
-    <div class="sarki-kutusu"></div>
+    <div class="sarki-kutusu-wrapper">
+      <div class="sarki-kutusu"></div>
+    </div>
 
     <!-- Süre doldu bildirimi -->
     <div id="time-up" class="time-up">Süre doldu! Yeni soruya geçiliyor...</div>

@@ -408,9 +408,9 @@ function guncelleSoru() {
       // Önce bulanıklığı uygula, sonra görseli güncelle ve göster
       albumCover.style.filter = `blur(${INITIAL_COVER_BLUR}px)`;
       albumCover.src = soru.kapak;
-      albumCover.style.display = 'block';
+      if (albumCoverWrapper) albumCoverWrapper.style.display = 'inline-block';
     } else {
-      albumCover.style.display = 'none';
+      if (albumCoverWrapper) albumCoverWrapper.style.display = 'none';
     }
   }
 
@@ -437,7 +437,7 @@ function baslatSayac() {
     document.getElementById("zamanGoster").textContent = `Kalan Süre: ${kalanSure}`;
 
     // Albüm kapağı blur seviyesini kalan süreye göre güncelle
-    if (albumCover && albumCover.style.display !== 'none') {
+    if (albumCoverWrapper && albumCoverWrapper.style.display !== 'none') {
       const blurPx = (kalanSure / 30) * INITIAL_COVER_BLUR;
       albumCover.style.filter = `blur(${blurPx}px)`;
     }
@@ -471,6 +471,12 @@ function baslatSayac() {
 
 const audioPlayer = document.getElementById('audio-player');
 const albumCover = document.getElementById('album-cover');
+const albumCoverWrapper = document.querySelector('.album-cover-wrapper');
+// Sağ tık ve sürükleme engelle
+if (albumCover) {
+  albumCover.addEventListener('contextmenu', e => e.preventDefault());
+  albumCover.addEventListener('dragstart', e => e.preventDefault());
+}
 const INITIAL_COVER_BLUR = 20; // px
 const sarkiKutusu = document.querySelector('.sarki-kutusu');
 const guessInput = document.querySelector('.tahmin-input');
