@@ -159,6 +159,67 @@ function showDeleteToast(msg) {
   }, 3000);
 }
 
+// --------- Merkez Uyarı Fonksiyonu ---------
+function showCenterAlert(msg) {
+  let overlay = document.getElementById('formAlertModal');
+  if (!overlay) {
+    // Stil ekle (yalnızca ilk sefer)
+    const style = document.createElement('style');
+    style.textContent = `
+      .center-alert-content {
+        background: linear-gradient(135deg, #6c5ce7 0%, #a259c7 100%);
+        color: #ffffff;
+        padding: 28px 32px 24px 32px;
+        border-radius: 22px;
+        width: 340px;
+        max-width: 90%;
+        text-align: center;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.25), inset 0 0 14px rgba(255,255,255,0.06);
+        animation: modalPop 0.35s cubic-bezier(.22,.82,.46,1.02);
+      }
+      .center-alert-content button {
+        margin-top: 20px;
+        padding: 10px 26px;
+        border-radius: 28px;
+        border: none;
+        background: #ffffff;
+        color: #6c5ce7;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.25s, color 0.25s;
+      }
+      .center-alert-content button:hover {
+        background: #6c5ce7;
+        color: #ffffff;
+      }
+    `;
+    document.head.appendChild(style);
+
+    overlay = document.createElement('div');
+    overlay.id = 'formAlertModal';
+    overlay.className = 'modal-overlay';
+    overlay.style.display = 'none';
+    overlay.innerHTML = `
+      <div class="center-alert-content">
+        <h3 style="margin-top:0; font-size:22px; letter-spacing:.3px;">Uyarı</h3>
+        <p id="formAlertMessage" style="margin:14px 0 0 0; font-size:17px; line-height:1.45;"></p>
+        <button id="formAlertOkBtn">Tamam</button>
+      </div>`;
+    document.body.appendChild(overlay);
+
+    // Dış alana tıklanınca veya butona basınca kapat
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) overlay.style.display = 'none';
+    });
+    overlay.querySelector('#formAlertOkBtn').addEventListener('click', () => {
+      overlay.style.display = 'none';
+    });
+  }
+  overlay.querySelector('#formAlertMessage').textContent = msg;
+  overlay.style.display = 'flex';
+}
+
 // Şarkı listesini güncelle
 async function guncelleListe() {
   try {
@@ -217,12 +278,12 @@ document.getElementById("ekleBtn").addEventListener("click", async () => {
 
   // Dosya kontrolü
   if (!mp3File && !deezerFilePath) {
-    alert("Lütfen bir şarkı dosyası yükleyin veya Deezer'dan şarkı seçin!");
+    showCenterAlert("Lütfen bir şarkı dosyası yükleyin veya Deezer'dan şarkı seçin!");
     return;
   }
 
   if (!sarki || !kategori) {
-    alert("Lütfen tüm alanları doldurun!");
+    showCenterAlert("Lütfen tüm alanları doldurun!");
     return;
   }
 
