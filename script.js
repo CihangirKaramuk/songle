@@ -195,7 +195,34 @@ document.addEventListener("click", async (e) => {
   }
 });
 
+// --- Security measures to prevent element inspection ---
+function preventInspection() {
+  // Disable right click
+  document.addEventListener('contextmenu', e => e.preventDefault());
+  
+  // Disable keyboard shortcuts
+  document.addEventListener('keydown', e => {
+    // F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C, Ctrl+U
+    if (e.key === 'F12' || 
+        (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) ||
+        (e.ctrlKey && e.key === 'u')) {
+      e.preventDefault();
+      showAlertOverlay('Bu işlem oyun sırasında devre dışı bırakılmıştır');
+    }
+  });
+  
+  // Prevent opening devtools (via alt menu or other methods)
+  Object.defineProperty(document, 'devtools', {
+    get: () => {
+      showAlertOverlay('Geliştirici araçları oyun sırasında devre dışı bırakılmıştır');
+      return {};
+    },
+    set: () => {}
+  });
+}
+
 document.querySelector(".start-btn").addEventListener("click", async function () {
+  preventInspection();
   const secilenKategori = dropdownSelected.textContent;
   const kategoriKey = dropdownSelected.getAttribute("data-value");
 
@@ -617,3 +644,32 @@ if (isMobile()) {
     }, 1100);
   });
 }
+
+// Add user-select none to song box to prevent text selection
+const style = document.createElement('style');
+style.innerHTML = `
+  .sarki-kutusu {
+    /* song status box */
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    width: 240px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border-radius: 20px;
+    overflow: hidden;
+    margin: 0;
+    font-size: 18px;
+    color: #fff;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+  }
+`;
+document.head.appendChild(style);
