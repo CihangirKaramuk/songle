@@ -476,7 +476,7 @@ document.getElementById("ekleBtn").addEventListener("click", async () => {
     const newSong = {
       kategori: tamKategori,
       cevap: sarki,
-      sarki: "🎵 (" + sarki + ")",
+      sarki: "🎵 " + sarki + "",
       dosya: dosyaYolu,
       kapak: (secilenDeezerSarki && secilenDeezerSarki.cover) ? secilenDeezerSarki.cover : null
     };
