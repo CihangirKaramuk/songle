@@ -32,47 +32,77 @@
     /* Şarkı listesi için stil */
     .sarki-item {
       background: #2a2a4a;
+      border-radius: 10px;
       padding: 15px;
       margin-bottom: 10px;
-      border-radius: 8px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .sarki-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
     
     .sarki-bilgi {
       flex: 1;
+      min-width: 0;
     }
     
     .sarki-ad {
+      font-size: 16px;
+      font-weight: 500;
+      color: #fff;
       display: block;
-      font-weight: bold;
-      margin-bottom: 5px;
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     
     .sarki-kategori {
-      font-size: 0.8em;
-      color: #a0a0d0;
+      font-size: 13px;
+      color: #a0a0c0;
+      background: rgba(0,0,0,0.2);
+      padding: 2px 8px;
+      border-radius: 10px;
+      display: inline-block;
+    }
+    
+    .sarki-actions {
+      display: flex;
+      gap: 8px;
+      margin-left: 15px;
     }
     
     .sarki-actions button {
-      margin-left: 10px;
-      padding: 5px 10px;
+      padding: 6px 12px;
+      font-size: 13px;
+      border-radius: 6px;
       border: none;
-      border-radius: 4px;
       cursor: pointer;
+      transition: all 0.2s ease;
+      min-width: 60px;
     }
     
     .btn-edit {
-      background-color: #4CAF50;
+      background: #4CAF50;
       color: white;
     }
     
     .btn-delete {
-      background-color: #f44336;
+      background: #f44336;
       color: white;
     }
-
+    
+    .sarki-actions button:hover {
+      opacity: 0.9;
+      transform: scale(1.05);
+    }
+    
     .page-btn {
       display: inline-flex;
       align-items: center;
