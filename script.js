@@ -16,7 +16,6 @@ const options = document.querySelectorAll(".option");
 async function initializeApp() {
   try {
     sarkiListesi = await apiService.getSongs();
-    console.log('Songs loaded successfully:', sarkiListesi.length);
   } catch (error) {
     console.error('Failed to load songs:', error);
     // Show error to user if needed
@@ -196,33 +195,7 @@ document.addEventListener("click", async (e) => {
 });
 
 // --- Security measures to prevent element inspection ---
-function preventInspection() {
-  // Disable right click
-  document.addEventListener('contextmenu', e => e.preventDefault());
-  
-  // Disable keyboard shortcuts
-  document.addEventListener('keydown', e => {
-    // F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C, Ctrl+U
-    if (e.key === 'F12' || 
-        (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) ||
-        (e.ctrlKey && e.key === 'u')) {
-      e.preventDefault();
-      showAlertOverlay('Bu işlem oyun sırasında devre dışı bırakılmıştır');
-    }
-  });
-  
-  // Prevent opening devtools (via alt menu or other methods)
-  Object.defineProperty(document, 'devtools', {
-    get: () => {
-      showAlertOverlay('Geliştirici araçları oyun sırasında devre dışı bırakılmıştır');
-      return {};
-    },
-    set: () => {}
-  });
-}
-
 document.querySelector(".start-btn").addEventListener("click", async function () {
-  preventInspection();
   const secilenKategori = dropdownSelected.textContent;
   const kategoriKey = dropdownSelected.getAttribute("data-value");
 
@@ -373,8 +346,6 @@ function benzerlikHesapla(str1, str2) {
 document.querySelector(".tahmin-gonder").addEventListener("click", function () {
   const input = document.querySelector(".tahmin-input");
   const tahmin = input.value.trim();
-
-  console.log(tahmin, soruListesi[soruIndex].cevap);
 
   if (cevapDogruMu(tahmin, soruListesi[soruIndex].cevap)) {
     albumCover.style.filter = 'blur(0px)';

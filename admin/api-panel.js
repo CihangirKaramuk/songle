@@ -7,6 +7,25 @@ let siralamaArtan = true;
 let seciliIndex = null;
 let silinecekIndex = null;
 let secilenDeezerSarki = null;
+let currentPage = 1;
+
+// Store dialog elements in variables at the start
+const dialogElements = {
+  confirmDialog: null,
+  songCount: null,
+  confirmMessage: null,
+  confirmDelete: null,
+  confirmCancel: null
+};
+
+// Initialize dialog elements when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+  dialogElements.confirmDialog = document.getElementById('confirmDialog');
+  dialogElements.songCount = document.getElementById('songCount');
+  dialogElements.confirmMessage = document.getElementById('confirmMessage');
+  dialogElements.confirmDelete = document.getElementById('confirmDelete');
+  dialogElements.confirmCancel = document.getElementById('confirmCancel');
+});
 
 // ----- Tema (Dark/Light) Toggle Ayarları -----
 document.addEventListener('DOMContentLoaded', () => {
@@ -40,7 +59,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const altSelect     = document.getElementById('filterAltKategori');
   const paginationDiv = document.getElementById('pagination');
   const ITEMS_PER_PAGE = 10;
-  let currentPage = 1;
 
   if (!searchInput && !katSelect) return;
 
@@ -130,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
         <div class="sarki-actions">
           <button class="btn btn-edit" onclick="sarkiDuzenle(${sarkiListesi.indexOf(sarki)})">Düzenle</button>
-          <button class="btn btn-delete" onclick="sarkiSil(${sarkiListesi.indexOf(sarki)})">Sil</button>
+          <button class="btn btn-delete" onclick="sarkiSil(${sarki.id})">Sil</button>
         </div>
       `;
       // Kategori verilerini dataset olarak ekle
@@ -437,7 +455,7 @@ async function guncelleListe(page = 1) {
         </div>
         <div class="sarki-actions">
           <button class="btn btn-edit" onclick="sarkiDuzenle(${index})">Düzenle</button>
-          <button class="btn btn-delete" onclick="sarkiSil(${index})">Sil</button>
+          <button class="btn btn-delete" onclick="sarkiSil(${sarki.id})">Sil</button>
         </div>
       `;
       // Kategori verilerini dataset olarak ekle
@@ -569,40 +587,88 @@ document.getElementById("ekleBtn").addEventListener("click", async () => {
 });
 
 // Şarkı silme işlemi
-async function performDeleteSong(index) {
-
-
+async function sarkiSil(sarkiId) {
+  const confirmed = await silSarki(sarkiId);
+  if (!confirmed) return;
+  
   try {
+    const index = sarkiListesi.findIndex(song => song.id == sarkiId);
     const songId = sarkiListesi[index].id;
     // Burada API'den silme işlemi yapılacak
     await apiService.deleteSong(songId);
     // dosyayı sil
     const dosyaYolu = sarkiListesi[index].dosya;
+    const kapakYolu = sarkiListesi[index].kapak;
     
     showSuccessToast('Şarkı başarıyla silindi');
-    await guncelleListe();
     
     // dosyayı sil
     const response = await fetch("delete_file.php", {
       method: 'POST',
       body: JSON.stringify({ filePath: dosyaYolu }),
     });
+
+    // dosyayı sil
+    const response2 = await fetch("delete_file.php", {
+      method: 'POST',
+      body: JSON.stringify({ filePath: kapakYolu }),
+    });
+
+    await guncelleListe();
     
-    if (!response.success) {
-      throw new Error('Dosya silinirken bir hata oluştu');
+    // If last item on page was deleted, go to previous page
+    const listeDiv = document.getElementById("liste");
+    if (listeDiv.children.length === 0 && currentPage > 1) {
+      currentPage--;
+      await guncelleListe(currentPage);
     }
-    
-    showSuccessToast('Dosya başarıyla silindi');
   } catch (error) {
-    console.error('Error deleting song:', error);
-    showGuncelleToast('Şarkı silinirken bir hata oluştu');
+    console.error('Silme hatası:', error);
+    showGuncelleToast('Silme işlemi sırasında hata oluştu');
   }
+}
+
+async function silSarki(sarkiId) {
+  if (!dialogElements.confirmDialog || !dialogElements.songCount || !dialogElements.confirmMessage) {
+    console.error('Dialog elements not initialized');
+    return false;
+  }
+  
+  // Show custom confirmation dialog
+  dialogElements.songCount.textContent = 1;
+  dialogElements.confirmMessage.textContent = 'Seçilen şarkı silinecek. Emin misiniz?';
+  dialogElements.confirmDialog.style.display = 'flex';
+  
+  // Wait for user confirmation
+  return new Promise((resolve) => {
+    const handleConfirm = () => {
+      dialogElements.confirmDelete.removeEventListener('click', handleConfirm);
+      dialogElements.confirmCancel.removeEventListener('click', handleCancel);
+      dialogElements.confirmDialog.style.display = 'none';
+      resolve(true);
+    };
+    
+    const handleCancel = () => {
+      dialogElements.confirmDelete.removeEventListener('click', handleConfirm);
+      dialogElements.confirmCancel.removeEventListener('click', handleCancel);
+      dialogElements.confirmDialog.style.display = 'none';
+      resolve(false);
+    };
+    
+    dialogElements.confirmDelete.addEventListener('click', handleConfirm);
+    dialogElements.confirmCancel.addEventListener('click', handleCancel);
+  });
 }
 
 // Batch delete functionality
 const batchControls = document.getElementById('batchControls');
 const selectedCount = document.getElementById('selectedCount');
 const btnBatchDelete = document.getElementById('btnBatchDelete');
+const confirmDialog = document.getElementById('confirmDialog');
+const confirmMessage = document.getElementById('confirmMessage');
+const songCount = document.getElementById('songCount');
+const confirmCancel = document.getElementById('confirmCancel');
+const confirmDelete = document.getElementById('confirmDelete');
 
 // Toggle batch controls when checkboxes are clicked
 document.addEventListener('click', (e) => {
@@ -622,14 +688,38 @@ btnBatchDelete.addEventListener('click', async () => {
   const checkboxes = document.querySelectorAll('.song-checkbox:checked');
   if (checkboxes.length === 0) return;
   
-  if (!confirm(`${checkboxes.length} şarkıyı silmek istediğinize emin misiniz?`)) {
-    return;
-  }
+  // Show custom confirmation dialog
+  songCount.textContent = checkboxes.length;
+  confirmDialog.style.display = 'flex';
+});
+
+// Confirm delete
+confirmDelete.addEventListener('click', async () => {
+  const checkboxes = document.querySelectorAll('.song-checkbox:checked');
+  confirmDialog.style.display = 'none';
   
   try {
     const deletePromises = [];
     checkboxes.forEach(checkbox => {
       const songId = checkbox.dataset.id;
+      const index = sarkiListesi.findIndex(song => song.id == songId);
+    // dosyayı sil
+    const dosyaYolu = sarkiListesi[index].dosya;
+    const kapakYolu = sarkiListesi[index].kapak;
+    
+    showSuccessToast('Şarkı başarıyla silindi');
+    
+    // dosyayı sil
+    const response = fetch("delete_file.php", {
+      method: 'POST',
+      body: JSON.stringify({ filePath: dosyaYolu }),
+    });
+
+    // dosyayı sil
+    const response2 = fetch("delete_file.php", {
+      method: 'POST',
+      body: JSON.stringify({ filePath: kapakYolu }),
+    });
       deletePromises.push(apiService.deleteSong(songId));
     });
     
@@ -640,6 +730,18 @@ btnBatchDelete.addEventListener('click', async () => {
   } catch (error) {
     console.error('Batch delete error:', error);
     showGuncelleToast('Silme işlemi sırasında hata oluştu');
+  }
+});
+
+// Cancel delete
+confirmCancel.addEventListener('click', () => {
+  confirmDialog.style.display = 'none';
+});
+
+// Close dialog when clicking outside
+confirmDialog.addEventListener('click', (e) => {
+  if (e.target === confirmDialog) {
+    confirmDialog.style.display = 'none';
   }
 });
 
@@ -932,32 +1034,6 @@ document.addEventListener("DOMContentLoaded", async function() {
 const deleteConfirmModal = document.getElementById('deleteConfirmModal');
 const deleteConfirmBtn   = document.getElementById('deleteConfirmBtn');
 const deleteCancelBtn    = document.getElementById('deleteCancelBtn');
-
-function sarkiSil(index) {
-  silinecekIndex = index;
-  deleteConfirmModal.style.display = 'flex';
-}
-
-deleteConfirmBtn.addEventListener('click', async () => {
-  if (silinecekIndex !== null) {
-    await performDeleteSong(silinecekIndex);
-    silinecekIndex = null;
-    await guncelleListe();
-  }
-  deleteConfirmModal.style.display = 'none';
-});
-
-deleteCancelBtn.addEventListener('click', () => {
-  silinecekIndex = null;
-  deleteConfirmModal.style.display = 'none';
-});
-
-deleteConfirmModal.addEventListener('click', (e) => {
-  if (e.target === deleteConfirmModal) {
-    silinecekIndex = null;
-    deleteConfirmModal.style.display = 'none';
-  }
-});
 
 // Global scope'a fonksiyonları ekle
 window.sarkiSil = sarkiSil;

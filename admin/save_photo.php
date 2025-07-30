@@ -51,6 +51,6 @@ echo json_encode([
     'cevap' => '', // Bu bilgiyi veritabanından alabilirsiniz
     'sarki' => '', // Bu bilgiyi veritabanından alabilirsiniz
     'dosya' => '', // Bu bilgiyi veritabanından alabilirsiniz
-    'kapak' => '/kapaklar/' . $fileName,
+    'kapak' => 'kapaklar/' . $fileName,
     'created_at' => date('Y-m-d H:i:s')
 ]);
