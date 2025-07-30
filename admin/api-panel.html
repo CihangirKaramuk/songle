@@ -256,7 +256,99 @@
   #liste {
     padding-left: 40px;
   }
-</style>
+
+  /* Floating batch delete controls */
+  .batch-controls {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: none;
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+    border-radius: 30px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    align-items: center;
+    gap: 20px;
+    z-index: 100;
+    animation: fadeIn 0.3s ease;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translate(-50%, 10px); }
+    to { opacity: 1; transform: translate(-50%, 0); }
+  }
+  
+  .batch-controls.show {
+    display: flex;
+  }
+  
+  .btn-batch-delete {
+    background: white;
+    color: #6c5ce7;
+    border: none;
+    padding: 8px 24px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin-top: 10px;
+  }
+  
+  .btn-batch-delete:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+  }
+  
+  .selected-count {
+    color: white;
+    font-weight: 600;
+    font-size: 15px;
+  }
+  
+  .sarki-select {
+    position: relative;
+    margin-right: 15px;
+    margin-top: 8px;
+  }
+  
+  .song-checkbox {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #6c5ce7;
+    border-radius: 4px;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    background: rgba(108, 92, 231, 0.1);
+  }
+  
+  .song-checkbox:checked {
+    background: #6c5ce7;
+    border-color: #6c5ce7;
+  }
+  
+  .song-checkbox:checked::after {
+    content: '✓';
+    position: absolute;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+  
+  .song-checkbox:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 2px rgba(108, 92, 231, 0.3);
+  }
+  </style>
 </head>
 <body id="panelBody">
     <!-- Tema Değiştirici -->
@@ -291,6 +383,12 @@
         <span id="deleteToastMsg">Silindi!</span>
       </div>
 
+      <!-- Batch Delete Controls -->
+      <div class="batch-controls" id="batchControls">
+        <div class="selected-count" id="selectedCount">0 şarkı seçildi</div>
+        <button class="btn-batch-delete" id="btnBatchDelete">Seçilenleri Sil</button>
+      </div>
+
       <section id="ekle" class="panel-section active">
         <h1>Yeni Şarkı Ekle</h1>
         <div class="ekle-formu" style="max-width:400px;">
@@ -322,7 +420,7 @@
       <section id="sarkiListesi" class="panel-section">
         <h1>Eklenen Şarkılar</h1>
           <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:15px; max-width:600px;">
-            <input type="text" id="aramaInput" placeholder="Şarkı Ara..." style="flex:1; min-width:160px;">
+            <input type="text" id="searchInput" placeholder="Şarkı Ara..." style="flex:1; min-width:160px;">
             <select id="filterKategori" style="flex:1; min-width:140px;">
               <option value="">Kategori Seç</option>
               <option value="turkce">Türkçe</option>

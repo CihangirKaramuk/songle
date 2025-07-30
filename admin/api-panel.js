@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ------- Şarkı Listesi Arama & Kategori Filtre Özelliği -------
 document.addEventListener('DOMContentLoaded', () => {
-  const searchInput   = document.getElementById('aramaInput');
+  const searchInput   = document.getElementById('searchInput');
   const katSelect     = document.getElementById('filterKategori');
   const altSelect     = document.getElementById('filterAltKategori');
   const paginationDiv = document.getElementById('pagination');
@@ -43,6 +43,14 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentPage = 1;
 
   if (!searchInput && !katSelect) return;
+
+  // Initialize search input
+  if (searchInput) {
+    searchInput.addEventListener('input', function() {
+      currentPage = 1; // Reset to first page when searching
+      applyFilters();
+    });
+  }
 
   // Kategori değişince alt kategori seçeneklerini doldur
   if (katSelect) {
@@ -69,9 +77,6 @@ document.addEventListener('DOMContentLoaded', () => {
   if (altSelect) {
     altSelect.addEventListener('change', applyFilters);
   }
-  if (searchInput) {
-    searchInput.addEventListener('input', applyFilters);
-  }
 
   function applyFilters() {
     // Expose for other scripts
@@ -79,11 +84,17 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const filterKategori = document.getElementById('filterKategori').value;
     const filterAltKategori = document.getElementById('filterAltKategori').value;
+    const searchText = searchInput ? searchInput.value.toLowerCase().trim() : '';
     
     const filteredSongs = sarkiListesi.filter(sarki => {
       const [kategori, altKategori] = (sarki.kategori || '').split('-');
-      return (!filterKategori || kategori === filterKategori) && 
-             (!filterAltKategori || altKategori === filterAltKategori);
+      const matchesSearch = searchText === '' || 
+        (sarki.cevap && sarki.cevap.toLowerCase().includes(searchText)) ||
+        (sarki.sanatci && sarki.sanatci.toLowerCase().includes(searchText));
+      
+      return matchesSearch && 
+        (!filterKategori || kategori === filterKategori) && 
+        (!filterAltKategori || altKategori === filterAltKategori);
     });
     
     const listeDiv = document.getElementById("liste");
@@ -108,6 +119,11 @@ document.addEventListener('DOMContentLoaded', () => {
       
       sarkiDiv.dataset.number = itemNumber;
       sarkiDiv.innerHTML = `
+        <div class="sarki-select">
+          <label>
+            <input type="checkbox" class="song-checkbox" data-id="${sarki.id}">
+          </label>
+        </div>
         <div class="sarki-bilgi">
           <span class="sarki-ad">${sarki.cevap}</span>
           <span class="sarki-kategori">${sarki.kategori}</span>
@@ -117,6 +133,12 @@ document.addEventListener('DOMContentLoaded', () => {
           <button class="btn btn-delete" onclick="sarkiSil(${sarkiListesi.indexOf(sarki)})">Sil</button>
         </div>
       `;
+      // Kategori verilerini dataset olarak ekle
+      const kategoriStr = sarki.kategori || '';
+      const [anaKat, altKat] = kategoriStr.split('-');
+      sarkiDiv.dataset.kategori = anaKat || '';
+      sarkiDiv.dataset.alt = altKat || '';
+
       listeDiv.appendChild(sarkiDiv);
     });
     
@@ -404,6 +426,11 @@ async function guncelleListe(page = 1) {
       sarkiDiv.className = "sarki-item";
       sarkiDiv.dataset.number = currentNumber;
       sarkiDiv.innerHTML = `
+        <div class="sarki-select">
+          <label>
+            <input type="checkbox" class="song-checkbox" data-id="${sarki.id}">
+          </label>
+        </div>
         <div class="sarki-bilgi">
           <span class="sarki-ad">${sarki.cevap}</span>
           <span class="sarki-kategori">${sarki.kategori}</span>
@@ -572,6 +599,50 @@ async function performDeleteSong(index) {
   }
 }
 
+// Batch delete functionality
+const batchControls = document.getElementById('batchControls');
+const selectedCount = document.getElementById('selectedCount');
+const btnBatchDelete = document.getElementById('btnBatchDelete');
+
+// Toggle batch controls when checkboxes are clicked
+document.addEventListener('click', (e) => {
+  if (e.target.classList.contains('song-checkbox')) {
+    const checkedBoxes = document.querySelectorAll('.song-checkbox:checked');
+    if (checkedBoxes.length > 0) {
+      batchControls.classList.add('show');
+      selectedCount.textContent = `${checkedBoxes.length} şarkı seçildi`;
+    } else {
+      batchControls.classList.remove('show');
+    }
+  }
+});
+
+// Handle batch delete
+btnBatchDelete.addEventListener('click', async () => {
+  const checkboxes = document.querySelectorAll('.song-checkbox:checked');
+  if (checkboxes.length === 0) return;
+  
+  if (!confirm(`${checkboxes.length} şarkıyı silmek istediğinize emin misiniz?`)) {
+    return;
+  }
+  
+  try {
+    const deletePromises = [];
+    checkboxes.forEach(checkbox => {
+      const songId = checkbox.dataset.id;
+      deletePromises.push(apiService.deleteSong(songId));
+    });
+    
+    await Promise.all(deletePromises);
+    showSuccessToast(`${checkboxes.length} şarkı başarıyla silindi`);
+    await guncelleListe(currentPage);
+    batchControls.classList.remove('show');
+  } catch (error) {
+    console.error('Batch delete error:', error);
+    showGuncelleToast('Silme işlemi sırasında hata oluştu');
+  }
+});
+
 // Alt kategorileri tanımla
 const altKategoriler = {
   turkce: ["Rock", "Pop", "Hip Hop", "Karışık"],
@@ -583,15 +654,15 @@ const altKategoriler = {
 // Kategori değiştiğinde alt kategorileri güncelle
 document.getElementById('kategori').addEventListener('change', function() {
   const altKategoriSelect = document.getElementById('altKategori');
-  const secilenKategori = this.value;
+  const kategori = this.value;
   
   // Alt kategorileri temizle
   altKategoriSelect.innerHTML = '<option value="">Alt Kategori Seç</option>';
   
   // Eğer seçilen bir kategori varsa, alt kategorileri doldur
-  if (secilenKategori && altKategoriler[secilenKategori]) {
+  if (kategori && altKategoriler[kategori]) {
     altKategoriSelect.style.display = 'block';
-    altKategoriler[secilenKategori].forEach(kategori => {
+    altKategoriler[kategori].forEach(kategori => {
       const option = document.createElement('option');
       option.value = kategori.toLowerCase();
       option.textContent = kategori;
