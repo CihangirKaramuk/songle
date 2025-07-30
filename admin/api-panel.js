@@ -192,6 +192,7 @@ window.deezerJsonpSonuc = function(response) {
     const btn = div.querySelector('.ekle-btn');
     btn.addEventListener('click', () => {
       secilenDeezerSarki = {
+        id: sarki.id,
         artist: sarki.artist.name,
         title: sarki.title_short,
         preview: sarki.preview,
@@ -472,13 +473,31 @@ document.getElementById("ekleBtn").addEventListener("click", async () => {
       const result = await response.json();
       dosyaYolu = result.filePath;
     }
+    let kapakYolu = null;
+    if (secilenDeezerSarki) {
+    const response = await fetch(secilenDeezerSarki.cover);
+    const blob = await response.blob();
+    const file = new File([blob], secilenDeezerSarki.cover, { type: blob.type });
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("song_id",secilenDeezerSarki.id);
+    
+    const uploadResponse = await fetch("save_photo.php", {
+      method: "POST",
+      body: formData
+    });
+    
+    const result = await uploadResponse.json();
+    kapakYolu = result.kapak;
+    }
+    console.log(kapakYolu);
     
     const newSong = {
       kategori: tamKategori,
       cevap: sarki,
       sarki: "🎵 " + sarki + "",
       dosya: dosyaYolu,
-      kapak: (secilenDeezerSarki && secilenDeezerSarki.cover) ? secilenDeezerSarki.cover : null
+      kapak: kapakYolu
     };
 
     await apiService.addSong(newSong);
@@ -514,7 +533,7 @@ async function performDeleteSong(index) {
     await guncelleListe();
     
     // dosyayı sil
-    const response = await fetch("delete_audio.php", {
+    const response = await fetch("delete_file.php", {
       method: 'POST',
       body: JSON.stringify({ filePath: dosyaYolu }),
     });
@@ -696,6 +715,94 @@ document.addEventListener("DOMContentLoaded", async function() {
   await checkLogin();
   await guncelleListe();
   await getKategoriler();
+  document.getElementById("linkliSongs").addEventListener("click", async function() {
+    try {
+      const linkliSongs = await apiService.linkliSongs();
+      console.log('Found songs:', linkliSongs);
+      
+      if (!linkliSongs || linkliSongs.length === 0) {
+        alert('Bağlantılı şarkı bulunamadı');
+        return;
+      }
+      
+      // Tüm yüklemeleri takip et
+      const uploadPromises = [];
+      
+      linkliSongs.forEach(song => {
+        if (song.kapak) {
+          uploadPromises.push(
+            (async () => {
+              try {
+                console.log(`Downloading cover for song ${song.id}: ${song.kapak}`);
+                const response = await fetch(song.kapak);
+                const blob = await response.blob();
+                const file = new File([blob], song.kapak, { type: blob.type });
+                const formData = new FormData();
+                formData.append("file", file);
+                formData.append("song_id", song.id);
+                
+                console.log(`Uploading cover for song ${song.id}`);
+                const uploadResponse = await fetch("save_photo.php", {
+                  method: "POST",
+                  body: formData
+                });
+                
+                const result = await uploadResponse.json();
+                
+                if (result.error) {
+                  console.error(`Photo upload failed for song ${song.id}:`, result.error);
+                  return { success: false, songId: song.id, error: result.error };
+                } else {
+                  console.log(`Photo uploaded successfully for song ${song.id}:`, result);
+                  song.kapak = result.kapak;
+                  
+                  // Veritabanını güncelle
+                  try {
+                    const updateResult = await apiService.updateSong({
+                      id: song.id,
+                      kapak: result.kapak
+                    });
+                    console.log(`Database updated for song ${song.id}:`, updateResult);
+                    return { success: true, songId: song.id, dbUpdated: true };
+                  } catch (updateError) {
+                    console.error(`Database update failed for song ${song.id}:`, updateError);
+                    return { 
+                      success: false, 
+                      songId: song.id, 
+                      error: `Photo uploaded but database update failed: ${updateError.message}` 
+                    };
+                  }
+                }
+              } catch (error) {
+                console.error(`Upload failed for song ${song.id}:`, error);
+                return { success: false, songId: song.id, error: error.message };
+              }
+            })()
+          );
+        }
+      });
+      
+      // Tüm yüklemelerin tamamlanmasını bekle
+      const results = await Promise.all(uploadPromises);
+      
+      // Sonuçları analiz et
+      const successfulUploads = results.filter(r => r.success).length;
+      const failedUploads = results.filter(r => !r.success);
+      
+      if (failedUploads.length > 0) {
+        console.error('Failed uploads:', failedUploads);
+        alert(`${successfulUploads} kapak başarıyla yüklendi, ${failedUploads.length} kapak yüklenemedi`);
+      } else {
+        alert(`Tüm kapaklar başarıyla yüklendi (${successfulUploads} adet)`);
+      }
+      
+      // Güncellenmiş şarkı listesini göster
+      console.log('Updated songs:', linkliSongs);
+    } catch (error) {
+      console.error('Error processing linkli songs:', error);
+      alert('Şarkı listesi alınırken hata oluştu: ' + error.message);
+    }
+  });
   
   // Kategori değiştiğinde alt kategorileri güncelle
   document.getElementById("kategori").addEventListener("change", function() {
@@ -761,3 +868,50 @@ window.sarkiDuzenle = function(index) {
   // Düzenleme işlevselliği buraya eklenecek
   showGuncelleToast('Düzenleme özelliği yakında eklenecek');
 };
+
+// Şarkı güncelleme işlevi
+async function updateSong(songData) {
+  try {
+    const updatedSong = await apiService.updateSong(songData);
+    console.log('Song updated:', updatedSong);
+    return updatedSong;
+  } catch (error) {
+    console.error('Error updating song:', error);
+    alert('Şarkı güncellenirken hata oluştu: ' + error.message);
+    throw error;
+  }
+}
+
+// Mevcut saveSong fonksiyonunu güncelle
+async function saveSong() {
+  const songData = {
+    id: document.getElementById('songId').value,
+    sanatci: document.getElementById('sanatciAdi').value,
+    sarki: document.getElementById('sarkiAdi').value,
+    kategori: document.getElementById('kategori').value,
+    alt_kategori: document.getElementById('altKategori').value,
+    dosya: document.getElementById('mp3File').value
+  };
+
+  try {
+    let result;
+    
+    if (songData.id) {
+      // Şarkı güncelleme
+      result = await updateSong(songData);
+      alert('Şarkı başarıyla güncellendi!');
+    } else {
+      // Yeni şarkı ekleme
+      result = await apiService.addSong(songData);
+      alert('Şarkı başarıyla eklendi!');
+    }
+    
+    // Formu temizle ve listeyi güncelle
+    resetForm();
+    loadSongs();
+    
+    return result;
+  } catch (error) {
+    console.error('Error saving song:', error);
+  }
+}

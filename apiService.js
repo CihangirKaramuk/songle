@@ -29,6 +29,27 @@ const apiService = {
       return [];
     }
   },
+  //update songs
+  async updateSong(songData) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/songs.php`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(songData),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to update song');
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error('Error updating song:', error);
+      throw error; // Re-throw to handle in the calling code
+    }
+  },
 
   // Add a new song
   async addSong(songData) {
@@ -80,6 +101,22 @@ const apiService = {
   async getSongById(id) {
     const songs = await this.getSongs();
     return songs.find(song => song.id === id);
+  },
+  async linkliSongs() {
+    try {
+      const response = await fetch(`${API_BASE_URL}/songs.php?linkliler=true`, {
+        method: 'GET',
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch songs');
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching linkli songs:', error);
+      throw error; // Re-throw to handle in the calling code
+    }
   },
 
   // login
