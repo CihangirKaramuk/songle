@@ -199,6 +199,35 @@
   #deezerResultsList::-webkit-scrollbar-thumb:hover {
     background: #66BB6A;
   }
+
+  .sarki-item {
+    position: relative;
+    counter-increment: song-counter;
+  }
+  
+  .sarki-item::before {
+    content: counter(song-counter);
+    position: absolute;
+    left: -35px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 28px;
+    height: 28px;
+    background: linear-gradient(135deg, #6c5ce7 0%, #a259c7 100%);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 14px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  }
+  
+  #liste {
+    counter-reset: song-counter;
+    padding-left: 40px;
+  }
 </style>
 </head>
 <body id="panelBody">
