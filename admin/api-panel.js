@@ -76,34 +76,50 @@ document.addEventListener('DOMContentLoaded', () => {
   function applyFilters() {
     // Expose for other scripts
     window.applySongFilters = applyFilters;
-    const term = searchInput ? searchInput.value.trim().toLowerCase() : '';
-    const kat  = katSelect ? katSelect.value : '';
-    const alt  = altSelect ? altSelect.value : '';
-
-    const allItems = Array.from(document.querySelectorAll('#liste .sarki-item'));
-    const filtered = [];
-
-    allItems.forEach(item => {
-      const text = item.textContent.toLowerCase();
-      const itemKat = item.dataset.kategori || '';
-      const itemAlt = item.dataset.alt || '';
-      const matchesTerm = term ? text.includes(term) : true;
-      const matchesKat  = kat ? itemKat === kat : true;
-      const matchesAlt  = alt ? itemAlt === alt : true;
-      if (matchesTerm && matchesKat && matchesAlt) {
-        filtered.push(item);
-      }
-      // tüm öğeleri gizle
-      item.style.display = 'none';
+    
+    const filterKategori = document.getElementById('filterKategori').value;
+    const filterAltKategori = document.getElementById('filterAltKategori').value;
+    
+    const filteredSongs = sarkiListesi.filter(sarki => {
+      const [kategori, altKategori] = (sarki.kategori || '').split('-');
+      return (!filterKategori || kategori === filterKategori) && 
+             (!filterAltKategori || altKategori === filterAltKategori);
     });
-
-    const totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
+    
+    const listeDiv = document.getElementById("liste");
+    listeDiv.innerHTML = "";
+    
+    const ITEMS_PER_PAGE = 10;
+    const totalPages = Math.max(1, Math.ceil(filteredSongs.length / ITEMS_PER_PAGE));
     if (currentPage > totalPages) currentPage = totalPages;
-
+    
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-    const endIndex   = startIndex + ITEMS_PER_PAGE;
-    filtered.slice(startIndex, endIndex).forEach(item => item.style.display = 'flex');
-
+    const endIndex = startIndex + ITEMS_PER_PAGE;
+    
+    // Show filtered and paginated results
+    filteredSongs.slice(startIndex, endIndex).forEach((sarki, index) => {
+      const sarkiDiv = document.createElement("div");
+      sarkiDiv.className = "sarki-item";
+      
+      // For filtered results, show position in full filtered list (11-20 etc)
+      const itemNumber = filterKategori || filterAltKategori 
+        ? startIndex + index + 1
+        : startIndex + index + 1;
+      
+      sarkiDiv.dataset.number = itemNumber;
+      sarkiDiv.innerHTML = `
+        <div class="sarki-bilgi">
+          <span class="sarki-ad">${sarki.cevap}</span>
+          <span class="sarki-kategori">${sarki.kategori}</span>
+        </div>
+        <div class="sarki-actions">
+          <button class="btn btn-edit" onclick="sarkiDuzenle(${sarkiListesi.indexOf(sarki)})">Düzenle</button>
+          <button class="btn btn-delete" onclick="sarkiSil(${sarkiListesi.indexOf(sarki)})">Sil</button>
+        </div>
+      `;
+      listeDiv.appendChild(sarkiDiv);
+    });
+    
     buildPagination(totalPages);
   }
 
@@ -372,15 +388,21 @@ function showCenterAlert(msg) {
 }
 
 // Şarkı listesini güncelle
-async function guncelleListe() {
+async function guncelleListe(page = 1) {
   try {
+    // Calculate starting number for current page
+    const itemsPerPage = 10;
+    const startNumber = (page - 1) * itemsPerPage + 1;
+    
     sarkiListesi = await apiService.getSongs();
     const listeDiv = document.getElementById("liste");
     listeDiv.innerHTML = "";
 
     sarkiListesi.forEach((sarki, index) => {
+      const currentNumber = startNumber + index;
       const sarkiDiv = document.createElement("div");
       sarkiDiv.className = "sarki-item";
+      sarkiDiv.dataset.number = currentNumber;
       sarkiDiv.innerHTML = `
         <div class="sarki-bilgi">
           <span class="sarki-ad">${sarki.cevap}</span>
@@ -494,18 +516,20 @@ document.getElementById("ekleBtn").addEventListener("click", async () => {
     const newSong = {
       kategori: tamKategori,
       cevap: sarki,
-      sarki: "🎵 " + sarki + "",
+      sarki: " " + sarki + "",
       dosya: dosyaYolu,
       kapak: kapakYolu
     };
 
     await apiService.addSong(newSong);
-    showSuccessToast('✅ Şarkı başarıyla eklendi!');
+    showSuccessToast(' Şarkı başarıyla eklendi!');
     
     // Formu temizle
+    document.getElementById("sanatciAdi").value = "";
     document.getElementById("sarkiAdi").value = "";
     document.getElementById("kategori").value = "";
     document.getElementById("altKategori").innerHTML = '<option value="">Alt Kategori Seç</option>';
+    document.getElementById("altKategori").style.display = "none";
     document.getElementById("mp3File").value = "";
     
     // Listeyi güncelle
@@ -680,7 +704,7 @@ function resetForm() {
   document.getElementById("sanatciAdi").value = "";
   document.getElementById("sarkiAdi").value = "";
   document.getElementById("kategori").value = "";
-  document.getElementById("altKategori").innerHTML = '<option value="">Alt Kategori Seç *</option>';
+  document.getElementById("altKategori").innerHTML = '<option value="">Alt Kategori Seç</option>';
   document.getElementById("altKategori").style.display = "none";
   document.getElementById("mp3File").value = "";
 }

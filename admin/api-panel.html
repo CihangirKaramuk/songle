@@ -232,11 +232,10 @@
 
   .sarki-item {
     position: relative;
-    counter-increment: song-counter;
   }
   
   .sarki-item::before {
-    content: counter(song-counter);
+    content: attr(data-number);
     position: absolute;
     left: -35px;
     top: 50%;
@@ -255,7 +254,6 @@
   }
   
   #liste {
-    counter-reset: song-counter;
     padding-left: 40px;
   }
 </style>
