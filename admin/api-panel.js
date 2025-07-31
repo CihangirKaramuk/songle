@@ -52,6 +52,68 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
+// Logout functionality
+document.addEventListener('DOMContentLoaded', () => {
+  const logoutBtn = document.getElementById('logoutBtn');
+  const logoutConfirmDialog = document.getElementById('logoutConfirmDialog');
+  const logoutConfirmBtn = document.getElementById('logoutConfirmBtn');
+  const logoutCancelBtn = document.getElementById('logoutCancelBtn');
+  let isLoggingOut = false;
+
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', () => {
+      if (!isLoggingOut) {
+        logoutConfirmDialog.style.display = 'flex';
+      }
+    });
+  }
+
+  if (logoutCancelBtn) {
+    logoutCancelBtn.addEventListener('click', () => {
+      logoutConfirmDialog.style.display = 'none';
+    });
+  }
+
+  if (logoutConfirmBtn) {
+    logoutConfirmBtn.addEventListener('click', () => {
+      isLoggingOut = true;
+      logoutConfirmDialog.style.display = 'none';
+      // Perform logout after hiding dialog
+      setTimeout(() => {
+        window.location.href = 'login.html';
+      }, 100);
+    });
+  }
+});
+
+// Simple Logout Confirmation
+document.addEventListener('DOMContentLoaded', function() {
+  const logoutBtn = document.getElementById('logoutBtn');
+  const confirmDialog = document.getElementById('logoutConfirmDialog');
+  
+  if (logoutBtn && confirmDialog) {
+    logoutBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      confirmDialog.style.display = 'flex';
+    });
+    
+    document.getElementById('logoutConfirmBtn').addEventListener('click', function() {
+      window.location.href = 'login.html';
+    });
+    
+    document.getElementById('logoutCancelBtn').addEventListener('click', function() {
+      confirmDialog.style.display = 'none';
+    });
+    
+    // Close dialog when clicking outside
+    confirmDialog.addEventListener('click', function(e) {
+      if (e.target === confirmDialog) {
+        confirmDialog.style.display = 'none';
+      }
+    });
+  }
+});
+
 // ------- Şarkı Listesi Arama & Kategori Filtre Özelliği -------
 document.addEventListener('DOMContentLoaded', () => {
   const searchInput   = document.getElementById('searchInput');
@@ -865,46 +927,59 @@ async function checkLogin() {
   }
 }
 
-function logout() {
-  localStorage.removeItem("adminGiris");
-  window.location.href = "login.html";
+// Global scope'a fonksiyonları ekle
+window.sarkiSil = sarkiSil;
+window.sarkiDuzenle = function(index) {
+  // Düzenleme işlevselliği buraya eklenecek
+  showGuncelleToast('Düzenleme özelliği yakında eklenecek');
+};
+
+// Şarkı güncelleme işlevi
+async function updateSong(songData) {
+  try {
+    const updatedSong = await apiService.updateSong(songData);
+    console.log('Song updated:', updatedSong);
+    return updatedSong;
+  } catch (error) {
+    console.error('Error updating song:', error);
+    alert('Şarkı güncellenirken hata oluştu: ' + error.message);
+    throw error;
+  }
 }
 
-document.getElementById("logoutBtn").addEventListener("click", logout);
+// Mevcut saveSong fonksiyonunu güncelle
+async function saveSong() {
+  const songData = {
+    id: document.getElementById('songId').value,
+    sanatci: document.getElementById('sanatciAdi').value,
+    sarki: document.getElementById('sarkiAdi').value,
+    kategori: document.getElementById('kategori').value,
+    alt_kategori: document.getElementById('altKategori').value,
+    dosya: document.getElementById('mp3File').value
+  };
 
-// Form reset function
-function resetForm() {
-  document.getElementById("sanatciAdi").value = "";
-  document.getElementById("sarkiAdi").value = "";
-  document.getElementById("kategori").value = "";
-  document.getElementById("altKategori").innerHTML = '<option value="">Alt Kategori Seç</option>';
-  document.getElementById("altKategori").style.display = "none";
-  document.getElementById("mp3File").value = "";
+  try {
+    let result;
+    
+    if (songData.id) {
+      // Şarkı güncelleme
+      result = await updateSong(songData);
+      alert('Şarkı başarıyla güncellendi!');
+    } else {
+      // Yeni şarkı ekleme
+      result = await apiService.addSong(songData);
+      alert('Şarkı başarıyla eklendi!');
+    }
+    
+    // Formu temizle ve listeyi güncelle
+    resetForm();
+    loadSongs();
+    
+    return result;
+  } catch (error) {
+    console.error('Error saving song:', error);
+  }
 }
-
-// Listen for section changes
-const panelSections = document.querySelectorAll('.panel-section');
-const observer = new MutationObserver(mutations => {
-  mutations.forEach(mutation => {
-    if (mutation.attributeName === 'class') {
-      resetForm();
-    }
-  });
-});
-
-panelSections.forEach(section => {
-  observer.observe(section, { attributes: true });
-});
-
-// Add event listeners to menu items
-const menuItems = document.querySelectorAll('.menu-item');
-menuItems.forEach(item => {
-  item.addEventListener('click', () => {
-    if (!item.classList.contains('active')) {
-      resetForm();
-    }
-  });
-});
 
 // Sayfa yüklendiğinde listeyi güncelle
 document.addEventListener("DOMContentLoaded", async function() {
@@ -1035,56 +1110,36 @@ const deleteConfirmModal = document.getElementById('deleteConfirmModal');
 const deleteConfirmBtn   = document.getElementById('deleteConfirmBtn');
 const deleteCancelBtn    = document.getElementById('deleteCancelBtn');
 
-// Global scope'a fonksiyonları ekle
-window.sarkiSil = sarkiSil;
-window.sarkiDuzenle = function(index) {
-  // Düzenleme işlevselliği buraya eklenecek
-  showGuncelleToast('Düzenleme özelliği yakında eklenecek');
-};
-
-// Şarkı güncelleme işlevi
-async function updateSong(songData) {
-  try {
-    const updatedSong = await apiService.updateSong(songData);
-    console.log('Song updated:', updatedSong);
-    return updatedSong;
-  } catch (error) {
-    console.error('Error updating song:', error);
-    alert('Şarkı güncellenirken hata oluştu: ' + error.message);
-    throw error;
-  }
+// Form reset function
+function resetForm() {
+  document.getElementById("sanatciAdi").value = "";
+  document.getElementById("sarkiAdi").value = "";
+  document.getElementById("kategori").value = "";
+  document.getElementById("altKategori").innerHTML = '<option value="">Alt Kategori Seç</option>';
+  document.getElementById("altKategori").style.display = "none";
+  document.getElementById("mp3File").value = "";
 }
 
-// Mevcut saveSong fonksiyonunu güncelle
-async function saveSong() {
-  const songData = {
-    id: document.getElementById('songId').value,
-    sanatci: document.getElementById('sanatciAdi').value,
-    sarki: document.getElementById('sarkiAdi').value,
-    kategori: document.getElementById('kategori').value,
-    alt_kategori: document.getElementById('altKategori').value,
-    dosya: document.getElementById('mp3File').value
-  };
-
-  try {
-    let result;
-    
-    if (songData.id) {
-      // Şarkı güncelleme
-      result = await updateSong(songData);
-      alert('Şarkı başarıyla güncellendi!');
-    } else {
-      // Yeni şarkı ekleme
-      result = await apiService.addSong(songData);
-      alert('Şarkı başarıyla eklendi!');
+// Listen for section changes
+const panelSections = document.querySelectorAll('.panel-section');
+const observer = new MutationObserver(mutations => {
+  mutations.forEach(mutation => {
+    if (mutation.attributeName === 'class') {
+      resetForm();
     }
-    
-    // Formu temizle ve listeyi güncelle
-    resetForm();
-    loadSongs();
-    
-    return result;
-  } catch (error) {
-    console.error('Error saving song:', error);
-  }
-}
+  });
+});
+
+panelSections.forEach(section => {
+  observer.observe(section, { attributes: true });
+});
+
+// Add event listeners to menu items
+const menuItems = document.querySelectorAll('.menu-item');
+menuItems.forEach(item => {
+  item.addEventListener('click', () => {
+    if (!item.classList.contains('active')) {
+      resetForm();
+    }
+  });
+});
