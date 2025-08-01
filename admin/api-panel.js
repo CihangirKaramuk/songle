@@ -930,8 +930,40 @@ async function checkLogin() {
 // Global scope'a fonksiyonları ekle
 window.sarkiSil = sarkiSil;
 window.sarkiDuzenle = function(index) {
-  // Düzenleme işlevselliği buraya eklenecek
-  showGuncelleToast('Düzenleme özelliği yakında eklenecek');
+  const song = sarkiListesi[index];
+  
+  // Get modal elements
+  const modal = document.getElementById('sarkiDuzenleModal');
+  const songIdInput = document.getElementById('duzenleSarkiId');
+  const songNameInput = document.getElementById('duzenleSarkiAdi');
+  const categorySelect = document.getElementById('duzenleKategori');
+  const subcategorySelect = document.getElementById('duzenleAltKategori');
+  
+  // Populate fields with song data
+  songIdInput.value = song.id;
+  songNameInput.value = song.cevap;
+  
+  // Parse category and subcategory
+  const [category, subcategory] = song.kategori ? song.kategori.split('-') : ['', ''];
+  categorySelect.value = category;
+  
+  // Update subcategories based on category
+  subcategorySelect.innerHTML = '<option value="">Alt Kategori Seç</option>';
+  if (category && altKategoriler[category]) {
+    subcategorySelect.style.display = 'block';
+    altKategoriler[category].forEach(subcat => {
+      const option = document.createElement('option');
+      option.value = subcat.toLowerCase();
+      option.textContent = subcat;
+      subcategorySelect.appendChild(option);
+    });
+    subcategorySelect.value = subcategory || '';
+  } else {
+    subcategorySelect.style.display = 'none';
+  }
+  
+  // Show modal
+  modal.style.display = 'flex';
 };
 
 // Şarkı güncelleme işlevi
@@ -1103,6 +1135,67 @@ document.addEventListener("DOMContentLoaded", async function() {
       });
     }
   });
+});
+
+// Modal save button event listener
+document.getElementById('popupKaydet').addEventListener('click', async function() {
+  const modal = document.getElementById('sarkiDuzenleModal');
+  const songId = document.getElementById('duzenleSarkiId').value;
+  const songName = document.getElementById('duzenleSarkiAdi').value.trim();
+  const category = document.getElementById('duzenleKategori').value;
+  const subcategory = document.getElementById('duzenleAltKategori').value;
+  
+  if (!songName || !category) {
+    showCenterAlert('Lütfen tüm alanları doldurun!');
+    return;
+  }
+  
+  const fullCategory = subcategory ? `${category}-${subcategory.toLowerCase().replace(' ', '')}` : category;
+  
+  try {
+    await apiService.updateSong({
+      id: songId,
+      cevap: songName,
+      kategori: fullCategory
+    });
+    
+    // Oyun verilerini güncelle
+    if (window.soruListesi) {
+      const updatedSong = window.soruListesi.find(s => s.id === songId);
+      if (updatedSong) {
+        updatedSong.sarki = songName;
+      }
+    }
+    
+    // Oyun arayüzünü yenile
+    if (window.guncelleSoru) {
+      window.guncelleSoru();
+    }
+    
+    showSuccessToast('Şarkı başarıyla güncellendi!');
+    modal.style.display = 'none';
+    await guncelleListe(currentPage);
+  } catch (error) {
+    console.error('Update error:', error);
+    showGuncelleToast('Güncelleme sırasında hata oluştu');
+  }
+});
+
+// Modal delete button event listener
+document.getElementById('popupSil').addEventListener('click', async function() {
+  const modal = document.getElementById('sarkiDuzenleModal');
+  const songId = document.getElementById('duzenleSarkiId').value;
+  
+  modal.style.display = 'none';
+  await sarkiSil(songId);
+});
+
+// Close modal when clicking outside
+const editModal = document.getElementById('sarkiDuzenleModal');
+editModal.addEventListener('click', function(e) {
+  if (e.target === editModal) {
+    editModal.style.display = 'none';
+  }
 });
 
 // Delete confirmation modal elements

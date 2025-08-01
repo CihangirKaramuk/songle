@@ -564,6 +564,29 @@
     </div>
   </div>
 
+  <!-- Song Edit Modal -->
+  <div id="sarkiDuzenleModal" class="modal-overlay">
+    <div class="modal-icerik">
+      <h2>Şarkı Düzenle</h2>
+      <input type="hidden" id="duzenleSarkiId">
+      <input type="text" id="duzenleSarkiAdi" placeholder="Şarkı Adı">
+      <select id="duzenleKategori">
+        <option value="">Kategori Seç</option>
+        <option value="turkce">Türkçe</option>
+        <option value="yabanci">Yabancı</option>
+        <option value="dizi">Dizi</option>
+        <option value="film">Film</option>
+      </select>
+      <select id="duzenleAltKategori" style="display:none;">
+        <option value="">Alt Kategori Seç</option>
+      </select>
+      <div class="duzenle-btn-grup">
+        <button id="popupKaydet">Kaydet</button>
+        <button id="popupSil">Sil</button>
+      </div>
+    </div>
+  </div>
+
   <!-- API servisini ve panel kodunu yükle -->
   <script type="module" src="../apiService.js"></script>
   <script type="module" src="api-panel.js"></script>

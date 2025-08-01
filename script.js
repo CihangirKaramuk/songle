@@ -388,7 +388,7 @@ function guncelleSoru() {
   const soru = soruListesi[soruIndex];
   // Blur while playing (apply before updating text to avoid flicker)
   sarkiKutusu.classList.add('blurred');
-  sarkiKutusu.textContent = soru.sarki;
+  sarkiKutusu.textContent = soru.cevap; // Veritabanındaki cevap alanını kullan
   const tahminInputEl = document.querySelector(".tahmin-input");
   tahminInputEl.value = "";
   tahminInputEl.focus();
