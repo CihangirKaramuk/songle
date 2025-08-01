@@ -183,6 +183,7 @@ body.light #sarkiListesi li:hover {
 .btn-group {
   display: flex;
   gap: 5px;
+  margin-top: 10px;
 }
 
 .btn-group button {
@@ -298,6 +299,7 @@ body.light .toast-success {
   right: -350px;
   opacity: 0;
 }
+
 .modal-onay {
   display: none;
   position: fixed;
@@ -1028,4 +1030,46 @@ body.light .islem-kaydi-panel {
 }
 #sarkiDuzenleModal .duzenle-btn-grup button#popupSil:hover {
   background: #b71c1c !important;
+}
+
+.sarki-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 15px;
+}
+
+.sarki-actions button {
+  padding: 8px 16px;
+  font-size: 14px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 80px;
+  font-weight: 600;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.btn-edit {
+  background: linear-gradient(135deg, #4CAF50, #2E7D32);
+  color: white;
+}
+
+.btn-delete {
+  background: linear-gradient(135deg, #f44336, #c62828);
+  color: white;
+}
+
+.sarki-actions button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  opacity: 0.9;
+}
+
+.sarki-actions button:active {
+  transform: translateY(0);
 }
