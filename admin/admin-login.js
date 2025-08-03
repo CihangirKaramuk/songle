@@ -1,33 +1,35 @@
-import apiService from "../apiService.js";
+import apiService from '../apiService.js'
 
-document.getElementById("loginBtn").addEventListener("click", girisKontrol);
-document.addEventListener("keydown", function (e) {
-  if (e.key === "Enter") {
-    girisKontrol();
+document.getElementById('loginBtn').addEventListener('click', girisKontrol)
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Enter') {
+    girisKontrol()
   }
-});
+})
 
 function girisKontrol() {
-  const usernameInput = document.getElementById("adminUsername").value.trim();
-  const passwordInput = document.getElementById("adminPassword").value;
+  const usernameInput = document.getElementById('adminUsername').value.trim()
+  const passwordInput = document.getElementById('adminPassword').value
 
-  apiService.login(usernameInput, passwordInput)
-    .then(response => {
+  apiService
+    .login(usernameInput, passwordInput)
+    .then((response) => {
       if (response.success && response.is_admin === true) {
-        localStorage.setItem("adminGiris", "ok");
-        window.location.href = "api-panel.html";
+        localStorage.setItem('adminGiris', 'ok')
+        window.location.href = 'api-panel.html'
       } else {
-        document.getElementById("errorMsg").textContent = "Kullanıcı adı veya şifre yanlış!";
+        document.getElementById('errorMsg').textContent =
+          'Kullanıcı adı veya şifre yanlış!'
       }
     })
-    .catch(error => {
-      console.error("Error logging in:", error);
-      document.getElementById("errorMsg").textContent = "Bir hata oluştu!";
-    });
+    .catch((error) => {
+      console.error('Error logging in:', error)
+      document.getElementById('errorMsg').textContent = 'Bir hata oluştu!'
+    })
 }
 
-const passwordInput = document.getElementById("adminPassword");
-const togglePassword = document.getElementById("togglePassword");
+const passwordInput = document.getElementById('adminPassword')
+const togglePassword = document.getElementById('togglePassword')
 
 // Modern göz (göz açık)
 const eyeOpenSvg = `
@@ -38,7 +40,7 @@ const eyeOpenSvg = `
   <path d="M21 16 L21 12" stroke="#aaa" stroke-width="1.5"/>
   <path d="M27 17 L29 14" stroke="#aaa" stroke-width="1.5"/>
 </svg>
-`;
+`
 
 // Modern göz kapalı (çapraz çizgiyle, evrensel ve çok net)
 const eyeClosedSvg = `
@@ -52,31 +54,30 @@ const eyeClosedSvg = `
   <path d="M21 25 L21 30" stroke="#aaa" stroke-width="1.5"/>
   <path d="M27 24 L29 27" stroke="#aaa" stroke-width="1.5"/>
 </svg>
-`;
+`
 
 function updateTogglePasswordIcon() {
-  if (passwordInput.type === "password") {
-    togglePassword.innerHTML = eyeClosedSvg;
+  if (passwordInput.type === 'password') {
+    togglePassword.innerHTML = eyeClosedSvg
   } else {
-    togglePassword.innerHTML = eyeOpenSvg;
+    togglePassword.innerHTML = eyeOpenSvg
   }
 }
 
-passwordInput.addEventListener("input", function() {
+passwordInput.addEventListener('input', function () {
   if (this.value.length > 0) {
-    togglePassword.style.display = "flex";
-    updateTogglePasswordIcon();
+    togglePassword.style.display = 'flex'
+    updateTogglePasswordIcon()
   } else {
-    togglePassword.style.display = "none";
-    passwordInput.type = "password";
+    togglePassword.style.display = 'none'
+    passwordInput.type = 'password'
   }
-});
+})
 
-togglePassword.addEventListener("click", function() {
-  passwordInput.type = passwordInput.type === "password" ? "text" : "password";
-  updateTogglePasswordIcon();
-});
+togglePassword.addEventListener('click', function () {
+  passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password'
+  updateTogglePasswordIcon()
+})
 
 // Başlangıçta simgeyi doğru ayarla
-updateTogglePasswordIcon();
-
+updateTogglePasswordIcon()

@@ -15,12 +15,12 @@ body {
   padding: 40px;
   border-radius: 15px;
   text-align: center;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
   width: 300px;
 }
 
-input[type="text"],
-input[type="password"] {
+input[type='text'],
+input[type='password'] {
   padding: 10px 15px;
   font-size: 16px;
   border: none;
@@ -56,8 +56,8 @@ button:hover {
   width: 100%;
 }
 
-.password-wrapper input[type="password"],
-.password-wrapper input[type="text"] {
+.password-wrapper input[type='password'],
+.password-wrapper input[type='text'] {
   padding-right: 45px;
 }
 
@@ -93,4 +93,3 @@ button:hover {
     right: 10px;
   }
 }
-
