@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <!-- Nota başları -->
+  <ellipse cx="46" cy="104" rx="16" ry="12" fill="#181818"/>
+  <ellipse cx="90" cy="100" rx="16" ry="12" fill="#181818"/>
+  <!-- Saptar -->
+  <rect x="55" y="44" width="6" height="52" rx="3" fill="#181818"/>
+  <rect x="98" y="40" width="6" height="52" rx="3" fill="#181818"/>
+  <!-- Üstte kıvrımlı birleştirici (hafif eğimli, şık çizgi) -->
+  <path d="M58 46 Q77 30 104 42" stroke="#181818" stroke-width="7" fill="none" stroke-linecap="round"/>
+</svg>

@@ -1,612 +1,754 @@
 <!DOCTYPE html>
 <html lang="tr">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Songle Admin Panel (API)</title>
-  <link rel="stylesheet" href="panel-style.css" />
-  <style>
-    /* Toast mesajları için stil */
-    .toast {
-      visibility: hidden;
-      min-width: 250px;
-      background-color: #333;
-      color: #fff;
-      text-align: center;
-      border-radius: 4px;
-      padding: 16px;
-      position: fixed;
-      z-index: 1000;
-      right: 30px;
-      top: 30px;
-      font-size: 17px;
-      opacity: 0;
-      transition: opacity 0.3s, visibility 0.3s;
-    }
-    
-    .toast.show {
-      visibility: visible;
-      opacity: 1;
-    }
-    
-    /* Şarkı listesi için stil */
-    .sarki-item {
-      background: #2a2a4a;
-      border-radius: 10px;
-      padding: 15px;
-      margin-bottom: 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      transition: all 0.3s ease;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    
-    .sarki-item:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    }
-    
-    .sarki-bilgi {
-      flex: 1;
-      min-width: 0;
-    }
-    
-    .sarki-ad {
-      font-size: 16px;
-      font-weight: 500;
-      color: #fff;
-      display: block;
-      margin-bottom: 4px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    
-    .sarki-kategori {
-      font-size: 13px;
-      color: #a0a0c0;
-      background: rgba(0,0,0,0.2);
-      padding: 2px 8px;
-      border-radius: 10px;
-      display: inline-block;
-    }
-    
-    .sarki-actions {
-      display: flex;
-      gap: 8px;
-      margin-left: 15px;
-    }
-    
-    .sarki-actions button {
-      padding: 6px 12px;
-      font-size: 13px;
-      border-radius: 6px;
-      border: none;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      min-width: 60px;
-    }
-    
-    .btn-edit {
-      background: #4CAF50;
-      color: white;
-    }
-    
-    .btn-delete {
-      background: #f44336;
-      color: white;
-    }
-    
-    .sarki-actions button:hover {
-      opacity: 0.9;
-      transform: scale(1.05);
-    }
-    
-    .page-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: auto;
-      min-width: 30px;
-      padding: 6px 10px;
-      margin: 2px;
-      font-size: 14px;
-      background: #2a2a4a;
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    .page-btn:hover { background: #444; }
-    .page-btn.active { background: #6c5ce7; color:#fff; }
-    .page-btn:disabled, .page-btn[disabled] {
-      opacity: 0.5;
-      cursor: default;
-    }
-    body.light .page-btn { background: #e0e0e0; color: #111; }
-    body.light .page-btn.active { background:#9c27b0; color:#fff; }
+  <head>
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Songle Admin Panel (API)</title>
+    <link rel="stylesheet" href="panel-style.css" />
+    <style>
+      /* Toast mesajları için stil */
+      .toast {
+        visibility: hidden;
+        min-width: 250px;
+        background-color: #333;
+        color: #fff;
+        text-align: center;
+        border-radius: 4px;
+        padding: 16px;
+        position: fixed;
+        z-index: 1000;
+        right: 30px;
+        top: 30px;
+        font-size: 17px;
+        opacity: 0;
+        transition: opacity 0.3s, visibility 0.3s;
+      }
 
-    /* Modal overlay */
-    .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.6);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 2000;
-    }
+      .toast.show {
+        visibility: visible;
+        opacity: 1;
+      }
 
-    .modal-content {
-      background: #1e1e3c;
-      padding: 20px;
-      border-radius: 8px;
-      width: 320px;
-      max-width: 90%;
-      text-align: center;
-    }
+      /* Şarkı listesi için stil */
+      .sarki-item {
+        background: #2a2a4a;
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
 
-    .modal-content h2 {
-      margin-top: 0;
-      margin-bottom: 15px;
-      color: #fff;
-    }
+      .sarki-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
 
-    .modal-content input {
-      width: 100%;
-      padding: 8px;
-      border-radius: 4px;
-      border: 1px solid #444;
-      background: #2a2a4a;
-      color: #fff;
-    }
+      .sarki-bilgi {
+        flex: 1;
+        min-width: 0;
+      }
 
-    .modal-content .modal-buttons {
-      margin-top: 15px;
-      display: flex;
-      gap: 10px;
-    }
+      .sarki-ad {
+        font-size: 16px;
+        font-weight: 500;
+        color: #fff;
+        display: block;
+        margin-bottom: 4px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
 
-    .modal-content button {
-      flex: 1;
-      padding: 8px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
+      .sarki-kategori {
+        font-size: 13px;
+        color: #a0a0c0;
+        background: rgba(0, 0, 0, 0.2);
+        padding: 2px 8px;
+        border-radius: 10px;
+        display: inline-block;
+      }
 
-    /* Deezer sonuç listesi */
-    #deezerResultsList {
-      max-height: 300px;
-      overflow-y: auto;
-      margin-top: 10px;
-      text-align: left;
-    }
+      .sarki-actions {
+        display: flex;
+        gap: 8px;
+        margin-left: 15px;
+      }
 
-    #deezerResultsList > div {
-      padding: 10px;
-      border-bottom: 1px solid #444;
-      display: flex;
-      justify-content: flex-start;
-      align-items: center;
-      column-gap: 8px;
-    }
+      .sarki-actions button {
+        padding: 6px 12px;
+        font-size: 13px;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        min-width: 60px;
+      }
 
-    #deezerResultsList > div:hover {
-      background: #2a2a4a;
-    }
+      .btn-edit {
+        background: #4caf50;
+        color: white;
+      }
 
-    #deezerResultsList .ekle-btn {
-      background: #4CAF50;
-      color: #fff;
-      border: none;
-      padding: 5px 12px;
-      border-radius: 14px;
-      cursor: pointer;
-      margin: 0 auto;
-    }
-    /* Özel kaydırma çubuğu (#deezerResultsList) */
-  #deezerResultsList {
-    scrollbar-width: thin;               /* Firefox */
-    scrollbar-color: #4CAF50 #333;       /* thumb track */
-  }
-  #deezerResultsList::-webkit-scrollbar {
-    width: 6px;                          /* Chrome/Safari */
-  }
-  #deezerResultsList::-webkit-scrollbar-track {
-    background: #333;
-    border-radius: 3px;
-  }
-  #deezerResultsList::-webkit-scrollbar-thumb {
-    background: #4CAF50;
-    border-radius: 3px;
-  }
-  #deezerResultsList::-webkit-scrollbar-thumb:hover {
-    background: #66BB6A;
-  }
+      .btn-delete {
+        background: #f44336;
+        color: white;
+      }
 
-  .sarki-item {
-    position: relative;
-  }
-  
-  .sarki-item::before {
-    content: attr(data-number);
-    position: absolute;
-    left: -35px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 28px;
-    height: 28px;
-    background: linear-gradient(135deg, #6c5ce7 0%, #a259c7 100%);
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-size: 14px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-  }
-  
-  #liste {
-    padding-left: 40px;
-  }
+      .sarki-actions button:hover {
+        opacity: 0.9;
+        transform: scale(1.05);
+      }
 
-  /* Floating batch delete controls */
-  .batch-controls {
-    position: fixed;
-    bottom: 80px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: none;
-    padding: 12px 24px;
-    background: linear-gradient(135deg, #6c5ce7, #a29bfe);
-    border-radius: 30px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-    align-items: center;
-    gap: 20px;
-    z-index: 100;
-    animation: fadeIn 0.3s ease;
-  }
-  
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translate(-50%, 10px); }
-    to { opacity: 1; transform: translate(-50%, 0); }
-  }
-  
-  .batch-controls.show {
-    display: flex;
-  }
-  
-  .btn-batch-delete {
-    background: white;
-    color: #6c5ce7;
-    border: none;
-    padding: 8px 24px;
-    border-radius: 20px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    margin-top: 10px;
-  }
-  
-  .btn-batch-delete:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-  }
-  
-  .selected-count {
-    color: white;
-    font-weight: 600;
-    font-size: 15px;
-  }
-  
-  .sarki-select {
-    position: relative;
-    margin-right: 15px;
-    margin-top: 8px;
-  }
-  
-  .song-checkbox {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    width: 20px;
-    height: 20px;
-    border: 2px solid #6c5ce7;
-    border-radius: 4px;
-    outline: none;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    position: relative;
-    background: rgba(108, 92, 231, 0.1);
-  }
-  
-  .song-checkbox:checked {
-    background: #6c5ce7;
-    border-color: #6c5ce7;
-  }
-  
-  .song-checkbox:checked::after {
-    content: '✓';
-    position: absolute;
-    color: white;
-    font-size: 14px;
-    font-weight: bold;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-  }
-  
-  .song-checkbox:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 0 2px rgba(108, 92, 231, 0.3);
-  }
+      .page-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: auto;
+        min-width: 30px;
+        padding: 6px 10px;
+        margin: 2px;
+        font-size: 14px;
+        background: #2a2a4a;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      .page-btn:hover {
+        background: #444;
+      }
+      .page-btn.active {
+        background: #6c5ce7;
+        color: #fff;
+      }
+      .page-btn:disabled,
+      .page-btn[disabled] {
+        opacity: 0.5;
+        cursor: default;
+      }
+      body.light .page-btn {
+        background: #e0e0e0;
+        color: #111;
+      }
+      body.light .page-btn.active {
+        background: #9c27b0;
+        color: #fff;
+      }
 
-  /* Custom Confirmation Dialog */
-  .confirm-dialog {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.5);
-    z-index: 1000;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .dialog-content {
-    background: #2a2a4a;
-    padding: 25px;
-    border-radius: 12px;
-    width: 400px;
-    max-width: 90%;
-    box-shadow: 0 5px 30px rgba(0,0,0,0.3);
-    text-align: center;
-    border: 1px solid #6c5ce7;
-  }
-  
-  .dialog-content h3 {
-    color: #fff;
-    margin-bottom: 15px;
-    font-size: 20px;
-  }
-  
-  .dialog-content p {
-    color: #ddd;
-    margin-bottom: 25px;
-    font-size: 16px;
-  }
-  
-  .dialog-actions {
-    display: flex;
-    gap: 15px;
-    justify-content: center;
-    flex-direction: row;
-  }
-  
-  .dialog-btn {
-    padding: 10px 25px;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    border: none;
-  }
-  
-  .cancel-btn {
-    background: #444;
-    color: #fff;
-  }
-  
-  .cancel-btn:hover {
-    background: #555;
-  }
-  
-  .delete-btn {
-    background: #f44336;
-    color: white;
-  }
-  
-  .delete-btn:hover {
-    background: #e53935;
-  }
-  </style>
-</head>
-<body id="panelBody">
+      /* Modal overlay */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 2000;
+      }
+
+      .modal-content {
+        background: #1e1e3c;
+        padding: 20px;
+        border-radius: 8px;
+        width: 320px;
+        max-width: 90%;
+        text-align: center;
+      }
+
+      .modal-content h2 {
+        margin-top: 0;
+        margin-bottom: 15px;
+        color: #fff;
+      }
+
+      .modal-content input {
+        width: 100%;
+        padding: 8px;
+        border-radius: 4px;
+        border: 1px solid #444;
+        background: #2a2a4a;
+        color: #fff;
+      }
+
+      .modal-content .modal-buttons {
+        margin-top: 15px;
+        display: flex;
+        gap: 10px;
+      }
+
+      .modal-content button {
+        flex: 1;
+        padding: 8px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      /* Deezer sonuç listesi */
+      #deezerResultsList {
+        max-height: 300px;
+        overflow-y: auto;
+        margin-top: 10px;
+        text-align: left;
+      }
+
+      #deezerResultsList > div {
+        padding: 10px;
+        border-bottom: 1px solid #444;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        column-gap: 8px;
+      }
+
+      #deezerResultsList > div:hover {
+        background: #2a2a4a;
+      }
+
+      #deezerResultsList .ekle-btn {
+        background: #4caf50;
+        color: #fff;
+        border: none;
+        padding: 5px 12px;
+        border-radius: 14px;
+        cursor: pointer;
+        margin: 0 auto;
+      }
+      /* Özel kaydırma çubuğu (#deezerResultsList) */
+      #deezerResultsList {
+        scrollbar-width: thin; /* Firefox */
+        scrollbar-color: #4caf50 #333; /* thumb track */
+      }
+      #deezerResultsList::-webkit-scrollbar {
+        width: 6px; /* Chrome/Safari */
+      }
+      #deezerResultsList::-webkit-scrollbar-track {
+        background: #333;
+        border-radius: 3px;
+      }
+      #deezerResultsList::-webkit-scrollbar-thumb {
+        background: #4caf50;
+        border-radius: 3px;
+      }
+      #deezerResultsList::-webkit-scrollbar-thumb:hover {
+        background: #66bb6a;
+      }
+
+      .sarki-item {
+        position: relative;
+      }
+
+      .sarki-item::before {
+        content: attr(data-number);
+        position: absolute;
+        left: -35px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 28px;
+        height: 28px;
+        background: linear-gradient(135deg, #6c5ce7 0%, #a259c7 100%);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 14px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      }
+
+      #liste {
+        padding-left: 40px;
+      }
+
+      /* Floating batch delete controls */
+      .batch-controls {
+        position: fixed;
+        bottom: 80px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: none;
+        padding: 12px 24px;
+        background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+        border-radius: 30px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        align-items: center;
+        gap: 20px;
+        z-index: 100;
+        animation: fadeIn 0.3s ease;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translate(-50%, 10px);
+        }
+        to {
+          opacity: 1;
+          transform: translate(-50%, 0);
+        }
+      }
+
+      .batch-controls.show {
+        display: flex;
+      }
+
+      .btn-batch-delete {
+        background: white;
+        color: #6c5ce7;
+        border: none;
+        padding: 8px 24px;
+        border-radius: 20px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        margin-top: 10px;
+      }
+
+      .btn-batch-delete:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+      }
+
+      .selected-count {
+        color: white;
+        font-weight: 600;
+        font-size: 15px;
+      }
+
+      .sarki-select {
+        position: relative;
+        margin-right: 15px;
+        margin-top: 8px;
+      }
+
+      .song-checkbox {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        border: 2px solid #6c5ce7;
+        border-radius: 4px;
+        outline: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        position: relative;
+        background: rgba(108, 92, 231, 0.1);
+      }
+
+      .song-checkbox:checked {
+        background: #6c5ce7;
+        border-color: #6c5ce7;
+      }
+
+      .song-checkbox:checked::after {
+        content: '✓';
+        position: absolute;
+        color: white;
+        font-size: 14px;
+        font-weight: bold;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      .song-checkbox:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 2px rgba(108, 92, 231, 0.3);
+      }
+
+      /* Custom Confirmation Dialog */
+      .confirm-dialog {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .dialog-content {
+        background: #2a2a4a;
+        padding: 25px;
+        border-radius: 12px;
+        width: 400px;
+        max-width: 90%;
+        box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
+        text-align: center;
+        border: 1px solid #6c5ce7;
+      }
+
+      .dialog-content h3 {
+        color: #fff;
+        margin-bottom: 15px;
+        font-size: 20px;
+      }
+
+      .dialog-content p {
+        color: #ddd;
+        margin-bottom: 25px;
+        font-size: 16px;
+      }
+
+      .dialog-actions {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        flex-direction: row;
+      }
+
+      .dialog-btn {
+        padding: 10px 25px;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: none;
+      }
+
+      .cancel-btn {
+        background: #444;
+        color: #fff;
+      }
+
+      .cancel-btn:hover {
+        background: #555;
+      }
+
+      .delete-btn {
+        background: #f44336;
+        color: white;
+      }
+
+      .delete-btn:hover {
+        background: #e53935;
+      }
+    </style>
+  </head>
+  <body id="panelBody">
     <!-- Tema Değiştirici -->
     <div class="theme-toggle">
       <span>🌙</span>
       <label class="switch">
-        <input type="checkbox" id="themeToggle">
+        <input type="checkbox" id="themeToggle" />
         <span class="slider"></span>
       </label>
       <span>☀️</span>
     </div>
-  <div class="admin-panel">
-    <div class="sidebar">
-      <div class="logo">Songle 🎧</div>
-      <ul class="menu">
-        <li class="menu-item active" data-section="ekle">🎵 Şarkı Ekle</li>
-        <li class="menu-item" data-section="sarkiListesi">📄 Şarkı Listesi</li>
-        <li class="menu-item" data-section="kategoriler">🗂️ Kategoriler</li>
-        <li class="menu-item logout-item" id="logoutBtn">🚪 Çıkış Yap</li>
-      </ul>
-    </div>
-
-    <div class="main-content">
-      <!-- Toast mesajları -->
-      <div id="guncelleToast" class="toast">
-        <span id="guncelleToastMsg">Güncelleniyor...</span>
-      </div>
-      <div id="successToast" class="toast" style="background-color: #4CAF50;">
-        <span id="successToastMsg">Başarılı!</span>
-      </div>
-      <div id="deleteToast" class="toast" style="background-color: #f44336;">
-        <span id="deleteToastMsg">Silindi!</span>
+    <div class="admin-panel">
+      <div class="sidebar">
+        <div class="logo">Songle 🎧</div>
+        <ul class="menu">
+          <li class="menu-item active" data-section="ekle">🎵 Şarkı Ekle</li>
+          <li class="menu-item" data-section="sarkiListesi">
+            📄 Şarkı Listesi
+          </li>
+          <li class="menu-item" data-section="kategoriler">🗂️ Kategoriler</li>
+          <li class="menu-item logout-item" id="logoutBtn">🚪 Çıkış Yap</li>
+        </ul>
       </div>
 
-      <!-- Batch Delete Controls -->
-      <div class="batch-controls" id="batchControls">
-        <div class="selected-count" id="selectedCount">0 şarkı seçildi</div>
-        <button class="btn-batch-delete" id="btnBatchDelete">Seçilenleri Sil</button>
-      </div>
-
-      <section id="ekle" class="panel-section active">
-        <h1>Yeni Şarkı Ekle</h1>
-        <div class="ekle-formu" style="max-width:400px;">
-          <input type="text" id="sanatciAdi" placeholder="Sanatçı Adı" />
-          <input type="text" id="sarkiAdi" placeholder="Şarkı Adı" />
-          <select id="kategori">
-            <option value="">Kategori Seç</option>
-            <option value="turkce">Türkçe</option>
-            <option value="yabanci">Yabancı</option>
-            <option value="dizi">Dizi</option>
-            <option value="film">Film</option>
-          </select>
-          <select id="altKategori" style="display: none;">
-            <option value="">Alt Kategori Seç *</option>
-          </select>
-          <div class="deezer-search" style="display: flex; gap: 10px; margin-bottom: 15px;">
-            <button type="button" id="deezerAraBtn" style="flex: 1;">Deezer'dan Ara</button>
-            <button type="button" id="dosyaYukleBtn" style="flex: 1;">Dosya Yükle</button>
-          </div>
-          <input type="file" id="mp3File" accept="audio/mpeg" style="display: none; visibility: hidden; opacity: 0;" />
-
-          <div id="deezerSonuclar" style="display: none; max-height: 200px; overflow-y: auto; border: 1px solid #444; border-radius: 4px; margin-bottom: 15px; background: #2a2a4a;">
-            <!-- Deezer sonuçları buraya eklenecek -->
-          </div>
-          <button id="ekleBtn">Şarkıyı Ekle</button>
+      <div class="main-content">
+        <!-- Toast mesajları -->
+        <div id="guncelleToast" class="toast">
+          <span id="guncelleToastMsg">Güncelleniyor...</span>
         </div>
-      </section>
+        <div id="successToast" class="toast" style="background-color: #4caf50">
+          <span id="successToastMsg">Başarılı!</span>
+        </div>
+        <div id="deleteToast" class="toast" style="background-color: #f44336">
+          <span id="deleteToastMsg">Silindi!</span>
+        </div>
 
-      <section id="sarkiListesi" class="panel-section">
-        <h1>Eklenen Şarkılar</h1>
-          <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:15px; max-width:600px;">
-            <input type="text" id="searchInput" placeholder="Şarkı Ara..." style="flex:1; min-width:160px;">
-            <select id="filterKategori" style="flex:1; min-width:140px;">
+        <!-- Batch Delete Controls -->
+        <div class="batch-controls" id="batchControls">
+          <div class="selected-count" id="selectedCount">0 şarkı seçildi</div>
+          <button class="btn-batch-delete" id="btnBatchDelete">
+            Seçilenleri Sil
+          </button>
+        </div>
+
+        <section id="ekle" class="panel-section active">
+          <h1>Yeni Şarkı Ekle</h1>
+          <div class="ekle-formu" style="max-width: 400px">
+            <input type="text" id="sanatciAdi" placeholder="Sanatçı Adı" />
+            <input type="text" id="sarkiAdi" placeholder="Şarkı Adı" />
+            <select id="kategori">
               <option value="">Kategori Seç</option>
               <option value="turkce">Türkçe</option>
               <option value="yabanci">Yabancı</option>
               <option value="dizi">Dizi</option>
               <option value="film">Film</option>
             </select>
-            <select id="filterAltKategori" style="flex:1; min-width:140px; display:none;">
+            <select id="altKategori" style="display: none">
+              <option value="">Alt Kategori Seç *</option>
+            </select>
+            <div
+              class="deezer-search"
+              style="display: flex; gap: 10px; margin-bottom: 15px"
+            >
+              <button type="button" id="deezerAraBtn" style="flex: 1">
+                Deezer'dan Ara
+              </button>
+              <button type="button" id="dosyaYukleBtn" style="flex: 1">
+                Dosya Yükle
+              </button>
+            </div>
+            <input
+              type="file"
+              id="mp3File"
+              accept="audio/mpeg"
+              style="display: none; visibility: hidden; opacity: 0"
+            />
+
+            <div
+              id="deezerSonuclar"
+              style="
+                display: none;
+                max-height: 200px;
+                overflow-y: auto;
+                border: 1px solid #444;
+                border-radius: 4px;
+                margin-bottom: 15px;
+                background: #2a2a4a;
+              "
+            >
+              <!-- Deezer sonuçları buraya eklenecek -->
+            </div>
+            <button id="ekleBtn">Şarkıyı Ekle</button>
+          </div>
+        </section>
+
+        <section id="sarkiListesi" class="panel-section">
+          <h1>Eklenen Şarkılar</h1>
+          <div
+            style="
+              display: flex;
+              gap: 10px;
+              flex-wrap: wrap;
+              margin-bottom: 15px;
+              max-width: 600px;
+            "
+          >
+            <input
+              type="text"
+              id="searchInput"
+              placeholder="Şarkı Ara..."
+              style="flex: 1; min-width: 160px"
+            />
+            <select id="filterKategori" style="flex: 1; min-width: 140px">
+              <option value="">Kategori Seç</option>
+              <option value="turkce">Türkçe</option>
+              <option value="yabanci">Yabancı</option>
+              <option value="dizi">Dizi</option>
+              <option value="film">Film</option>
+            </select>
+            <select
+              id="filterAltKategori"
+              style="flex: 1; min-width: 140px; display: none"
+            >
               <option value="">Alt Kategori Seç</option>
             </select>
           </div>
-        <div id="liste">
-          <!-- Şarkılar buraya eklenecek -->
+          <div id="liste">
+            <!-- Şarkılar buraya eklenecek -->
+          </div>
+          <!-- Pagination controls -->
+          <div
+            id="pagination"
+            style="margin-top: 20px; display: flex; gap: 6px; flex-wrap: wrap"
+          ></div>
+        </section>
+
+        <section id="kategoriler" class="panel-section">
+          <h1>Kategoriler</h1>
+          <div id="getKategoriler">
+            <!-- Kategoriler buraya eklenecek -->
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- Deezer Search Modal -->
+    <div id="deezerSearchModal" class="modal-overlay">
+      <div class="modal-content">
+        <h2>Deezer'da Şarkı Ara</h2>
+        <input type="text" id="deezerSearchInput" placeholder="Şarkı adı..." />
+        <div class="modal-buttons">
+          <button id="deezerSearchGo">Ara</button>
+          <button id="deezerSearchCancel">İptal</button>
         </div>
-        <!-- Pagination controls -->
-        <div id="pagination" style="margin-top:20px; display:flex; gap:6px; flex-wrap:wrap;"></div>
-      </section>
+      </div>
+    </div>
 
-      <section id="kategoriler" class="panel-section">
-        <h1>Kategoriler</h1>
-        <div id="getKategoriler">
-          <!-- Kategoriler buraya eklenecek -->
+    <!-- Deezer Results Modal -->
+    <div id="deezerResultsModal" class="modal-overlay">
+      <div
+        class="modal-content"
+        style="
+          width: 400px;
+          max-height: 80%;
+          display: flex;
+          flex-direction: column;
+        "
+      >
+        <h2>Arama Sonuçları</h2>
+        <div id="deezerResultsList" style="flex: 1; overflow-y: auto"></div>
+        <button id="deezerResultsClose" style="margin-top: 15px">Kapat</button>
+      </div>
+    </div>
+
+    <!-- Logout Confirmation Dialog -->
+    <div id="logoutConfirmDialog" class="modal-overlay">
+      <div
+        class="modal-content"
+        style="
+          width: 380px;
+          border-radius: 12px;
+          background: linear-gradient(145deg, #2a2a4a, #1e1e3c);
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+        "
+      >
+        <h2
+          style="
+            margin: 0 0 15px;
+            color: #fff;
+            font-size: 22px;
+            text-align: center;
+          "
+        >
+          Çıkış Yap
+        </h2>
+        <p
+          style="
+            color: #a0a0c0;
+            margin-bottom: 25px;
+            text-align: center;
+            font-size: 15px;
+          "
+        >
+          Çıkış yapmak istediğinize emin misiniz?
+        </p>
+        <div
+          class="modal-buttons"
+          style="display: flex; gap: 12px; justify-content: center"
+        >
+          <button
+            id="logoutConfirmBtn"
+            style="
+              flex: 1;
+              padding: 12px;
+              background: linear-gradient(135deg, #ff5e5e, #f44336);
+              color: #fff;
+              border: none;
+              border-radius: 8px;
+              cursor: pointer;
+              font-weight: 500;
+              transition: all 0.2s;
+            "
+          >
+            Çıkış Yap
+          </button>
+          <button
+            id="logoutCancelBtn"
+            style="
+              flex: 1;
+              padding: 12px;
+              background: #444;
+              color: #fff;
+              border: none;
+              border-radius: 8px;
+              cursor: pointer;
+              transition: all 0.2s;
+            "
+          >
+            İptal
+          </button>
         </div>
-      </section>
-    </div>
-  </div>
-
-  <!-- Deezer Search Modal -->
-  <div id="deezerSearchModal" class="modal-overlay">
-    <div class="modal-content">
-      <h2>Deezer'da Şarkı Ara</h2>
-      <input type="text" id="deezerSearchInput" placeholder="Şarkı adı..." />
-      <div class="modal-buttons">
-        <button id="deezerSearchGo">Ara</button>
-        <button id="deezerSearchCancel">İptal</button>
       </div>
     </div>
-  </div>
 
-  <!-- Deezer Results Modal -->
-  <div id="deezerResultsModal" class="modal-overlay">
-    <div class="modal-content" style="width: 400px; max-height: 80%; display: flex; flex-direction: column;">
-      <h2>Arama Sonuçları</h2>
-      <div id="deezerResultsList" style="flex:1; overflow-y:auto;"></div>
-      <button id="deezerResultsClose" style="margin-top: 15px;">Kapat</button>
-    </div>
-  </div>
-
-  <!-- Logout Confirmation Dialog -->
-  <div id="logoutConfirmDialog" class="modal-overlay">
-    <div class="modal-content" style="width: 380px; border-radius: 12px; background: linear-gradient(145deg, #2a2a4a, #1e1e3c); box-shadow: 0 8px 32px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1);">
-      <h2 style="margin: 0 0 15px; color: #fff; font-size: 22px; text-align: center;">Çıkış Yap</h2>
-      <p style="color:#a0a0c0; margin-bottom:25px; text-align:center; font-size:15px;">Çıkış yapmak istediğinize emin misiniz?</p>
-      <div class="modal-buttons" style="display:flex; gap:12px; justify-content:center;">
-        <button id="logoutConfirmBtn" style="flex:1; padding:12px; background:linear-gradient(135deg, #ff5e5e, #f44336); color:#fff; border:none; border-radius:8px; cursor:pointer; font-weight:500; transition:all 0.2s;">Çıkış Yap</button>
-        <button id="logoutCancelBtn" style="flex:1; padding:12px; background:#444; color:#fff; border:none; border-radius:8px; cursor:pointer; transition:all 0.2s;">İptal</button>
+    <!-- Custom Confirmation Dialog -->
+    <div id="confirmDialog" class="confirm-dialog">
+      <div class="dialog-content">
+        <h3>Silme Onayı</h3>
+        <p id="confirmMessage">
+          Seçilen <span id="songCount">0</span> şarkı silinecek. Emin misiniz?
+        </p>
+        <div class="dialog-actions">
+          <button id="confirmDelete" class="dialog-btn delete-btn">Sil</button>
+          <button id="confirmCancel" class="dialog-btn cancel-btn">
+            Vazgeç
+          </button>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- Custom Confirmation Dialog -->
-  <div id="confirmDialog" class="confirm-dialog">
-    <div class="dialog-content">
-      <h3>Silme Onayı</h3>
-      <p id="confirmMessage">Seçilen <span id="songCount">0</span> şarkı silinecek. Emin misiniz?</p>
-      <div class="dialog-actions">
-        <button id="confirmDelete" class="dialog-btn delete-btn">Sil</button>
-        <button id="confirmCancel" class="dialog-btn cancel-btn">Vazgeç</button>
+    <!-- Song Edit Modal -->
+    <div id="sarkiDuzenleModal" class="modal-overlay">
+      <div class="modal-icerik">
+        <h2>Şarkı Düzenle</h2>
+        <input type="hidden" id="duzenleSarkiId" />
+        <input type="text" id="duzenleSarkiAdi" placeholder="Şarkı Adı" />
+        <select id="duzenleKategori">
+          <option value="">Kategori Seç</option>
+          <option value="turkce">Türkçe</option>
+          <option value="yabanci">Yabancı</option>
+          <option value="dizi">Dizi</option>
+          <option value="film">Film</option>
+        </select>
+        <select id="duzenleAltKategori" style="display: none">
+          <option value="">Alt Kategori Seç</option>
+        </select>
+        <div class="duzenle-btn-grup">
+          <button id="popupKaydet">Kaydet</button>
+          <button id="popupSil">Sil</button>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- Song Edit Modal -->
-  <div id="sarkiDuzenleModal" class="modal-overlay">
-    <div class="modal-icerik">
-      <h2>Şarkı Düzenle</h2>
-      <input type="hidden" id="duzenleSarkiId">
-      <input type="text" id="duzenleSarkiAdi" placeholder="Şarkı Adı">
-      <select id="duzenleKategori">
-        <option value="">Kategori Seç</option>
-        <option value="turkce">Türkçe</option>
-        <option value="yabanci">Yabancı</option>
-        <option value="dizi">Dizi</option>
-        <option value="film">Film</option>
-      </select>
-      <select id="duzenleAltKategori" style="display:none;">
-        <option value="">Alt Kategori Seç</option>
-      </select>
-      <div class="duzenle-btn-grup">
-        <button id="popupKaydet">Kaydet</button>
-        <button id="popupSil">Sil</button>
-      </div>
-    </div>
-  </div>
+    <!-- API servisini ve panel kodunu yükle -->
+    <script type="module" src="../apiService.js"></script>
+    <script type="module" src="api-panel.js"></script>
 
-  <!-- API servisini ve panel kodunu yükle -->
-  <script type="module" src="../apiService.js"></script>
-  <script type="module" src="api-panel.js"></script>
-  
-  <script>
-    // Menü geçişleri
-    document.querySelectorAll('.menu-item:not(.logout-item)').forEach(item => {
-      item.addEventListener('click', function() {
-        // Tüm menü öğelerinden active sınıfını kaldır
-        document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
-        // Tüm bölümleri gizle
-        document.querySelectorAll('.panel-section').forEach(section => section.classList.remove('active'));
-        
-        // Tıklanan menü öğesine active sınıfını ekle
-        this.classList.add('active');
-        // İlgili bölümü göster
-        const sectionId = this.getAttribute('data-section');
-        document.getElementById(sectionId).classList.add('active');
-      });
-    });
-  </script>
-</body>
+    <script>
+      // Menü geçişleri
+      document
+        .querySelectorAll('.menu-item:not(.logout-item)')
+        .forEach((item) => {
+          item.addEventListener('click', function () {
+            // Tüm menü öğelerinden active sınıfını kaldır
+            document
+              .querySelectorAll('.menu-item')
+              .forEach((i) => i.classList.remove('active'))
+            // Tüm bölümleri gizle
+            document
+              .querySelectorAll('.panel-section')
+              .forEach((section) => section.classList.remove('active'))
+
+            // Tıklanan menü öğesine active sınıfını ekle
+            this.classList.add('active')
+            // İlgili bölümü göster
+            const sectionId = this.getAttribute('data-section')
+            document.getElementById(sectionId).classList.add('active')
+          })
+        })
+    </script>
+  </body>
 </html>
