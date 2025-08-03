@@ -809,8 +809,8 @@ confirmDialog.addEventListener('click', (e) => {
 
 // Alt kategorileri tanımla
 const altKategoriler = {
-  turkce: ["Rock", "Pop", "Hip Hop", "Karışık"],
-  yabanci: ["Rock", "Pop", "Hip Hop", "Karışık"],
+  turkce: ["Rock", "Pop", "Hip Hop"],
+  yabanci: ["Rock", "Pop", "Hip Hop"],
   dizi: ["Türkçe", "Yabancı"],
   film: ["Türkçe", "Yabancı"]
 };
