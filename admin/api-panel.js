@@ -1236,3 +1236,32 @@ menuItems.forEach(item => {
     }
   });
 });
+
+// Function to clear all song selections
+function clearSongSelections() {
+  const checkboxes = document.querySelectorAll('.song-checkbox:checked');
+  checkboxes.forEach(checkbox => checkbox.checked = false);
+  
+  // Hide batch controls if visible
+  const batchControls = document.getElementById('batchControls');
+  if (batchControls) {
+    batchControls.classList.remove('show');
+  }
+}
+
+// Modify menu click handler to clear selections
+const menuItems2 = document.querySelectorAll('.menu-item:not(.logout-item)');
+menuItems2.forEach(item => {
+  item.addEventListener('click', function() {
+    // Clear selections when switching sections
+    clearSongSelections();
+    
+    // Rest of existing click handler...
+    document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
+    document.querySelectorAll('.panel-section').forEach(section => section.classList.remove('active'));
+    
+    this.classList.add('active');
+    const sectionId = this.getAttribute('data-section');
+    document.getElementById(sectionId).classList.add('active');
+  });
+});
