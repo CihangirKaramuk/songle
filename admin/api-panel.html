@@ -302,6 +302,12 @@
         display: flex;
       }
 
+      .batch-buttons {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+
       .btn-batch-delete {
         background: white;
         color: #6c5ce7;
@@ -318,6 +324,39 @@
       .btn-batch-delete:hover {
         transform: translateY(-2px);
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+      }
+
+      .btn-batch-cancel {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        padding: 8px 24px;
+        border-radius: 20px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        margin-top: 10px;
+        backdrop-filter: blur(10px);
+      }
+
+      .btn-batch-cancel:hover {
+        background: rgba(255, 255, 255, 0.3);
+        border-color: rgba(255, 255, 255, 0.5);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+      }
+
+      /* Light tema için batch cancel butonu */
+      body.light .btn-batch-cancel {
+        background: rgba(0, 0, 0, 0.1);
+        color: #333;
+        border: 1px solid rgba(0, 0, 0, 0.2);
+      }
+
+      body.light .btn-batch-cancel:hover {
+        background: rgba(0, 0, 0, 0.15);
+        border-color: rgba(0, 0, 0, 0.3);
       }
 
       .selected-count {
@@ -558,9 +597,12 @@
         <!-- Batch Delete Controls -->
         <div class="batch-controls" id="batchControls">
           <div class="selected-count" id="selectedCount">0 şarkı seçildi</div>
-          <button class="btn-batch-delete" id="btnBatchDelete">
-            Seçilenleri Sil
-          </button>
+          <div class="batch-buttons">
+            <button class="btn-batch-delete" id="btnBatchDelete">
+              Seçilenleri Sil
+            </button>
+            <button class="btn-batch-cancel" id="btnBatchCancel">Vazgeç</button>
+          </div>
         </div>
 
         <section id="ekle" class="panel-section active">

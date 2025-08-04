@@ -1385,6 +1385,7 @@ async function silSarki(sarkiId) {
 const batchControls = document.getElementById('batchControls')
 const selectedCount = document.getElementById('selectedCount')
 const btnBatchDelete = document.getElementById('btnBatchDelete')
+const btnBatchCancel = document.getElementById('btnBatchCancel')
 const confirmDialog = document.getElementById('confirmDialog')
 const confirmMessage = document.getElementById('confirmMessage')
 const songCount = document.getElementById('songCount')
@@ -1412,6 +1413,18 @@ btnBatchDelete.addEventListener('click', async () => {
   // Show custom confirmation dialog
   songCount.textContent = checkboxes.length
   confirmDialog.style.display = 'flex'
+})
+
+// Handle batch cancel (vazgeç)
+btnBatchCancel.addEventListener('click', () => {
+  // Uncheck all checkboxes
+  const checkboxes = document.querySelectorAll('.song-checkbox:checked')
+  checkboxes.forEach((checkbox) => {
+    checkbox.checked = false
+  })
+
+  // Hide batch controls
+  batchControls.classList.remove('show')
 })
 
 // Confirm delete
