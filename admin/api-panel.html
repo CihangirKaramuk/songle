@@ -438,6 +438,86 @@
       .delete-btn:hover {
         background: #e53935;
       }
+
+      /* Kategori Silme Onay Modal */
+      .kategori-sil-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 2000;
+      }
+
+      .kategori-sil-content {
+        background: #1e1e3c;
+        padding: 25px;
+        border-radius: 12px;
+        width: 350px;
+        max-width: 90%;
+        text-align: center;
+        border: 1px solid #6c5ce7;
+        box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
+      }
+
+      .kategori-sil-icon {
+        margin-bottom: 15px;
+      }
+
+      .kategori-sil-icon svg {
+        width: 48px;
+        height: 48px;
+        fill: #4caf50;
+      }
+
+      .kategori-sil-title {
+        color: #fff;
+        margin-bottom: 10px;
+        font-size: 20px;
+      }
+
+      .kategori-sil-message {
+        color: #ddd;
+        margin-bottom: 25px;
+        font-size: 16px;
+      }
+
+      .kategori-sil-buttons {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+      }
+
+      .kategori-sil-btn {
+        padding: 10px 25px;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: none;
+      }
+
+      .kategori-sil-btn.cancel {
+        background: #444;
+        color: #fff;
+      }
+
+      .kategori-sil-btn.cancel:hover {
+        background: #555;
+      }
+
+      .kategori-sil-btn.delete {
+        background: #f44336;
+        color: #fff;
+      }
+
+      .kategori-sil-btn.delete:hover {
+        background: #e53935;
+      }
     </style>
   </head>
   <body id="panelBody">
@@ -576,9 +656,45 @@
         </section>
 
         <section id="kategoriler" class="panel-section">
-          <h1>Kategoriler</h1>
-          <div id="getKategoriler">
-            <!-- Kategoriler buraya eklenecek -->
+          <h1>Kategoriler Yönetimi</h1>
+
+          <!-- Kategori Ekleme Formu -->
+          <div class="kategori-form-container">
+            <h3>Yeni Kategori Ekle</h3>
+            <div class="kategori-form">
+              <div class="form-row">
+                <input
+                  type="text"
+                  id="yeniKategoriAdi"
+                  placeholder="Kategori Adı"
+                />
+                <select id="yeniKategoriParent">
+                  <option value="">Ana Kategori</option>
+                </select>
+              </div>
+              <button id="kategoriEkleBtn" class="btn-primary">
+                Kategori Ekle
+              </button>
+            </div>
+          </div>
+
+          <!-- Kategoriler Listesi -->
+          <div class="kategoriler-container">
+            <div class="kategoriler-header">
+              <h3>Mevcut Kategoriler</h3>
+              <div class="kategoriler-filtre">
+                <button id="anaKategorilerBtn" class="filtre-btn active">
+                  Ana Kategoriler
+                </button>
+                <button id="altKategorilerBtn" class="filtre-btn">
+                  Alt Kategoriler
+                </button>
+              </div>
+            </div>
+
+            <div id="getKategoriler" class="kategoriler-grid">
+              <!-- Kategoriler buraya eklenecek -->
+            </div>
           </div>
         </section>
       </div>
@@ -627,58 +743,83 @@
       >
         <h2
           style="
-            margin: 0 0 15px;
+            margin: 0 0 15px 0;
             color: #fff;
-            font-size: 22px;
-            text-align: center;
+            font-size: 18px;
+            font-weight: 600;
           "
         >
           Çıkış Yap
         </h2>
         <p
           style="
-            color: #a0a0c0;
-            margin-bottom: 25px;
-            text-align: center;
-            font-size: 15px;
+            margin: 0 0 20px 0;
+            color: #ccc;
+            font-size: 14px;
+            line-height: 1.5;
           "
         >
-          Çıkış yapmak istediğinize emin misiniz?
+          Çıkış yapmak istediğinizden emin misiniz?
         </p>
-        <div
-          class="modal-buttons"
-          style="display: flex; gap: 12px; justify-content: center"
-        >
+        <div style="display: flex; gap: 10px; justify-content: flex-end">
+          <button
+            id="logoutCancelBtn"
+            style="
+              padding: 8px 16px;
+              border: 1px solid rgba(255, 255, 255, 0.2);
+              background: transparent;
+              color: #fff;
+              border-radius: 6px;
+              cursor: pointer;
+              font-size: 14px;
+              transition: all 0.3s ease;
+            "
+          >
+            İptal
+          </button>
           <button
             id="logoutConfirmBtn"
             style="
-              flex: 1;
-              padding: 12px;
-              background: linear-gradient(135deg, #ff5e5e, #f44336);
-              color: #fff;
+              padding: 8px 16px;
+              background: linear-gradient(145deg, #f44336, #d32f2f);
               border: none;
-              border-radius: 8px;
+              color: #fff;
+              border-radius: 6px;
               cursor: pointer;
-              font-weight: 500;
-              transition: all 0.2s;
+              font-size: 14px;
+              font-weight: 600;
+              transition: all 0.3s ease;
             "
           >
             Çıkış Yap
           </button>
-          <button
-            id="logoutCancelBtn"
-            style="
-              flex: 1;
-              padding: 12px;
-              background: #444;
-              color: #fff;
-              border: none;
-              border-radius: 8px;
-              cursor: pointer;
-              transition: all 0.2s;
-            "
-          >
+        </div>
+      </div>
+    </div>
+
+    <!-- Kategori Silme Onay Modal -->
+    <div id="kategoriSilModal" class="kategori-sil-modal">
+      <div class="kategori-sil-content">
+        <div class="kategori-sil-header">
+          <div class="kategori-sil-icon">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
+                fill="#f44336"
+              />
+            </svg>
+          </div>
+          <h3 class="kategori-sil-title">Kategoriyi Sil</h3>
+        </div>
+        <p class="kategori-sil-message" id="kategoriSilMessage">
+          Bu kategoriyi silmek istediğinizden emin misiniz?
+        </p>
+        <div class="kategori-sil-buttons">
+          <button class="kategori-sil-btn cancel" id="kategoriSilCancel">
             İptal
+          </button>
+          <button class="kategori-sil-btn delete" id="kategoriSilConfirm">
+            Sil
           </button>
         </div>
       </div>

@@ -99,6 +99,66 @@ const apiService = {
     return songs.filter((song) => song.kategori === category)
   },
 
+  // Kategori yönetimi fonksiyonları
+  async addKategori(kategoriData) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/kategoriler.php`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(kategoriData),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to add category')
+      }
+
+      return await response.json()
+    } catch (error) {
+      console.error('Error adding category:', error)
+      throw error
+    }
+  },
+
+  async updateKategori(id, kategoriData) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/kategoriler.php?id=${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(kategoriData),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to update category')
+      }
+
+      return await response.json()
+    } catch (error) {
+      console.error('Error updating category:', error)
+      throw error
+    }
+  },
+
+  async deleteKategori(id) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/kategoriler.php?id=${id}`, {
+        method: 'DELETE',
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to delete category')
+      }
+
+      return await response.json()
+    } catch (error) {
+      console.error('Error deleting category:', error)
+      throw error
+    }
+  },
+
   // Get song by ID
   async getSongById(id) {
     const songs = await this.getSongs()
