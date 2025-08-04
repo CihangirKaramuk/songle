@@ -896,3 +896,15 @@ body.error {
     min-width: 0;
   }
 }
+
+/* Dinamik alt kategoriler için animasyon */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

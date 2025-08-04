@@ -27,6 +27,71 @@ document.addEventListener('DOMContentLoaded', () => {
   dialogElements.confirmCancel = document.getElementById('confirmCancel')
 })
 
+// Kategori gösterimini formatla (virgülle ayrılmış kategorilerde sadece ilkini göster)
+function formatKategoriForDisplay(kategoriStr) {
+  if (!kategoriStr) return ''
+
+  // Virgülle ayrılmış kategorileri al
+  const kategoriler = kategoriStr.split(',')
+
+  // İlk kategoriyi al
+  const ilkKategori = kategoriler[0].trim()
+
+  // Kategori ismini düzenle
+  const [anaKategori, altKategori] = ilkKategori.split('-')
+
+  // Görsel formatı oluştur
+  let gorunurAnaKategori = anaKategori
+  let gorunurAltKategori = altKategori
+
+  // Ana kategori ismini düzenle
+  switch (anaKategori.toLowerCase()) {
+    case 'türkçe':
+    case 'turkce':
+      gorunurAnaKategori = 'Türkçe'
+      break
+    case 'yabancı':
+    case 'yabanci':
+      gorunurAnaKategori = 'Yabancı'
+      break
+    case 'dizi':
+      gorunurAnaKategori = 'Dizi'
+      break
+    case 'film':
+      gorunurAnaKategori = 'Film'
+      break
+    default:
+      gorunurAnaKategori =
+        anaKategori.charAt(0).toUpperCase() + anaKategori.slice(1)
+  }
+
+  // Alt kategori ismini düzenle
+  switch (altKategori.toLowerCase()) {
+    case 'diğer':
+      gorunurAltKategori = 'Karışık'
+      break
+    case 'rock':
+      gorunurAltKategori = 'Rock'
+      break
+    case 'pop':
+      gorunurAltKategori = 'Pop'
+      break
+    case 'hip hop':
+    case 'hiphop':
+      gorunurAltKategori = 'Hip Hop'
+      break
+    case 'karışık':
+    case 'karisik':
+      gorunurAltKategori = 'Karışık'
+      break
+    default:
+      gorunurAltKategori =
+        altKategori.charAt(0).toUpperCase() + altKategori.slice(1)
+  }
+
+  return `${gorunurAnaKategori} - ${gorunurAltKategori}`
+}
+
 // ----- Tema (Dark/Light) Toggle Ayarları -----
 document.addEventListener('DOMContentLoaded', () => {
   const bodyEl = document.getElementById('panelBody')
@@ -228,7 +293,9 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
         <div class="sarki-bilgi">
           <span class="sarki-ad">${sarki.cevap}</span>
-          <span class="sarki-kategori">${sarki.kategori}</span>
+          <span class="sarki-kategori">${formatKategoriForDisplay(
+            sarki.kategori
+          )}</span>
         </div>
         <div class="sarki-actions">
           <button class="btn btn-edit" onclick="sarkiDuzenle(${sarkiListesi.indexOf(
@@ -713,11 +780,15 @@ async function guncelleListe(page = 1) {
         </div>
         <div class="sarki-bilgi">
           <span class="sarki-ad">${sarki.cevap}</span>
-          <span class="sarki-kategori">${sarki.kategori}</span>
+          <span class="sarki-kategori">${formatKategoriForDisplay(
+            sarki.kategori
+          )}</span>
         </div>
         <div class="sarki-actions">
           <button class="btn btn-edit" onclick="sarkiDuzenle(${index})">Düzenle</button>
-          <button class="btn btn-delete" onclick="sarkiSil(${sarki.id})">Sil</button>
+          <button class="btn btn-delete" onclick="sarkiSil(${
+            sarki.id
+          })">Sil</button>
         </div>
       `
       // Kategori verilerini dataset olarak ekle
@@ -821,7 +892,9 @@ window.kategoriSil = async function (kategoriId) {
       // Kategori seçim alanlarını güncelle
       updateCategorySelects()
 
-      showDeleteToast('Kategori başarıyla silindi!')
+      showDeleteToast(
+        'Kategori başarıyla silindi! Ana sayfada otomatik olarak kaldırılacak.'
+      )
     } catch (error) {
       console.error('Error deleting category:', error)
       showGuncelleToast('Kategori silinirken hata oluştu')
@@ -886,7 +959,9 @@ window.kategoriKaydet = async function (kategoriId) {
     // Kategori seçim alanlarını güncelle
     updateCategorySelects()
 
-    showSuccessToast('Kategori başarıyla güncellendi!')
+    showSuccessToast(
+      'Kategori başarıyla güncellendi! Ana sayfada otomatik olarak güncellenecek.'
+    )
   } catch (error) {
     console.error('Error updating category:', error)
     showGuncelleToast('Kategori güncellenirken hata oluştu')
@@ -1024,7 +1099,9 @@ async function kategoriEkle() {
     // Kategori seçim alanlarını güncelle
     updateCategorySelects()
 
-    showSuccessToast('Kategori başarıyla eklendi!')
+    showSuccessToast(
+      'Kategori başarıyla eklendi! Ana sayfada otomatik olarak görünecek.'
+    )
   } catch (error) {
     console.error('Error adding category:', error)
     showGuncelleToast('Kategori eklenirken hata oluştu')

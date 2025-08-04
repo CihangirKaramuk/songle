@@ -8,14 +8,17 @@ let selectedDiziAltKategori = ''
 let selectedFilmAltKategori = ''
 let selectedTurkceAltKategori = ''
 let selectedYabanciAltKategori = ''
+let anaKategoriler = []
+let altKategoriler = []
 const dropdownSelected = document.querySelector('.dropdown-selected')
 const dropdownOptions = document.querySelector('.dropdown-options')
 const options = document.querySelectorAll('.option')
 
-// Initialize the app by fetching songs
+// Initialize the app by fetching songs and categories
 async function initializeApp() {
   try {
     sarkiListesi = await apiService.getSongs()
+    await loadCategories()
   } catch (error) {
     console.error('Failed to load songs:', error)
     // Show error to user if needed
@@ -25,11 +28,265 @@ async function initializeApp() {
   }
 }
 
+// Kategorileri yükle
+async function loadCategories() {
+  try {
+    // Ana kategorileri al
+    const anaKategorilerResponse = await apiService.getKategoriler('1')
+    const altKategorilerResponse = await apiService.getKategoriler('0')
+
+    anaKategoriler = anaKategorilerResponse.data || anaKategorilerResponse
+    altKategoriler = altKategorilerResponse.data || altKategorilerResponse
+
+    // Dropdown'u güncelle
+    updateCategoryDropdown()
+  } catch (error) {
+    console.error('Failed to load categories:', error)
+  }
+}
+
+// Kategori dropdown'unu güncelle
+function updateCategoryDropdown() {
+  const dropdownOptions = document.querySelector('.dropdown-options')
+
+  // Mevcut seçenekleri temizle
+  dropdownOptions.innerHTML = ''
+
+  // Ana kategorileri sırala - Türkçe, Yabancı, Dizi, Film sırasında
+  const sortedAnaKategoriler = [...anaKategoriler].sort((a, b) => {
+    const aIsim = a.isim.toLowerCase()
+    const bIsim = b.isim.toLowerCase()
+
+    // Sıralama önceliği: Türkçe, Yabancı, Dizi, Film
+    const siralama = {
+      türkçe: 1,
+      turkce: 1,
+      yabancı: 2,
+      yabanci: 2,
+      dizi: 3,
+      film: 4,
+    }
+
+    const aOncelik = siralama[aIsim] || 999
+    const bOncelik = siralama[bIsim] || 999
+
+    return aOncelik - bOncelik
+  })
+
+  // Ana kategorileri ekle
+  sortedAnaKategoriler.forEach((kategori) => {
+    const option = document.createElement('div')
+    option.className = 'option'
+    option.setAttribute('data-value', kategori.id)
+
+    // Kategori ismini düzenle
+    let gorunurIsim = kategori.isim
+    switch (kategori.isim.toLowerCase()) {
+      case 'türkçe':
+      case 'turkce':
+        gorunurIsim = 'Türkçe'
+        break
+      case 'yabancı':
+      case 'yabanci':
+        gorunurIsim = 'Yabancı'
+        break
+      case 'dizi':
+        gorunurIsim = 'Dizi'
+        break
+      case 'film':
+        gorunurIsim = 'Film'
+        break
+      default:
+        gorunurIsim =
+          kategori.isim.charAt(0).toUpperCase() + kategori.isim.slice(1)
+    }
+
+    option.textContent = gorunurIsim
+    dropdownOptions.appendChild(option)
+  })
+
+  // Event listener'ları yeniden ekle
+  const newOptions = document.querySelectorAll('.option')
+  newOptions.forEach((option) => {
+    option.addEventListener('click', handleCategorySelection)
+  })
+}
+
+// Kategori seçim işleyicisi
+function handleCategorySelection() {
+  document
+    .querySelectorAll('.alt-kategori-card')
+    .forEach((card) => card.classList.remove('selected'))
+  document
+    .querySelectorAll('.dizi-alt-kategori-card.selected')
+    .forEach((card) => card.classList.remove('selected'))
+  document
+    .querySelectorAll('.film-alt-kategori-card.selected')
+    .forEach((card) => card.classList.remove('selected'))
+  selectedTurkceAltKategori = ''
+  selectedYabanciAltKategori = ''
+  selectedDiziAltKategori = ''
+  selectedFilmAltKategori = ''
+
+  dropdownSelected.textContent = this.textContent
+  dropdownSelected.setAttribute('data-value', this.getAttribute('data-value'))
+  dropdownOptions.style.display = 'none'
+
+  // Alt kategorileri göster/gizle
+  const kategoriId = this.getAttribute('data-value')
+  showSubcategories(kategoriId)
+}
+
+// Alt kategorileri göster/gizle
+function showSubcategories(kategoriId) {
+  // Tüm alt kategori div'lerini gizle
+  const altKategoriDivs = [
+    'diziAltKategoriler',
+    'filmAltKategoriler',
+    'turkceAltKategoriler',
+    'yabanciAltKategoriler',
+  ]
+
+  altKategoriDivs.forEach((divId) => {
+    const div = document.getElementById(divId)
+    if (div) {
+      div.style.display = 'none'
+      div.innerHTML = '' // İçeriği temizle
+    }
+  })
+
+  // Seçilen kategoriye ait alt kategorileri bul
+  const kategoriAltKategoriler = altKategoriler.filter(
+    (alt) => alt.parent_id == kategoriId
+  )
+
+  // Eğer alt kategoriler varsa, dinamik olarak oluştur
+  if (kategoriAltKategoriler.length > 0) {
+    createDynamicSubcategories(kategoriAltKategoriler, kategoriId)
+  }
+}
+
+// Dinamik alt kategoriler oluştur
+function createDynamicSubcategories(altKategoriler, parentId) {
+  // Ana kategoriyi bul
+  const anaKategori = anaKategoriler.find((kat) => kat.id == parentId)
+  if (!anaKategori) return
+
+  // Hangi div'i kullanacağımızı belirle
+  let targetDivId = ''
+  let cardClassName = ''
+
+  // Ana kategori adına göre uygun div'i seç
+  if (anaKategori.isim.toLowerCase().includes('dizi')) {
+    targetDivId = 'diziAltKategoriler'
+    cardClassName = 'dizi-alt-kategori-card'
+  } else if (anaKategori.isim.toLowerCase().includes('film')) {
+    targetDivId = 'filmAltKategoriler'
+    cardClassName = 'film-alt-kategori-card'
+  } else if (
+    anaKategori.isim.toLowerCase().includes('türkçe') ||
+    anaKategori.isim.toLowerCase().includes('turkce')
+  ) {
+    targetDivId = 'turkceAltKategoriler'
+    cardClassName = 'alt-kategori-card'
+  } else if (
+    anaKategori.isim.toLowerCase().includes('yabancı') ||
+    anaKategori.isim.toLowerCase().includes('yabanci')
+  ) {
+    targetDivId = 'yabanciAltKategoriler'
+    cardClassName = 'alt-kategori-card'
+  } else {
+    // Eğer kategori adı eşleşmezse, genel alt kategori div'ini kullan
+    targetDivId = 'turkceAltKategoriler'
+    cardClassName = 'alt-kategori-card'
+  }
+
+  const targetDiv = document.getElementById(targetDivId)
+  if (!targetDiv) return
+
+  // Div'i temizle ve alt kategorileri ekle
+  targetDiv.innerHTML = ''
+
+  // Alt kategorileri sırala - "Karışık" en sağda olsun
+  const sortedAltKategoriler = [...altKategoriler].sort((a, b) => {
+    const aIsDiger = a.isim.toLowerCase() === 'diğer'
+    const bIsDiger = b.isim.toLowerCase() === 'diğer'
+
+    if (aIsDiger && !bIsDiger) return 1 // Diğer'i sağa taşı
+    if (!aIsDiger && bIsDiger) return -1 // Diğer'i sağa taşı
+    return 0 // Diğerleri aynı sırada bırak
+  })
+
+  sortedAltKategoriler.forEach((altKategori) => {
+    const card = document.createElement('div')
+    card.className = cardClassName
+    card.id = `altKategori-${altKategori.id}`
+
+    // Alt kategori ismini düzenle
+    let gorunurIsim = altKategori.isim
+    switch (altKategori.isim.toLowerCase()) {
+      case 'diğer':
+        gorunurIsim = 'Karışık'
+        break
+      case 'rock':
+        gorunurIsim = 'Rock'
+        break
+      case 'pop':
+        gorunurIsim = 'Pop'
+        break
+      case 'hip hop':
+      case 'hiphop':
+        gorunurIsim = 'Hip Hop'
+        break
+      case 'karışık':
+      case 'karisik':
+        gorunurIsim = 'Karışık'
+        break
+      default:
+        gorunurIsim =
+          altKategori.isim.charAt(0).toUpperCase() + altKategori.isim.slice(1)
+    }
+
+    card.textContent = gorunurIsim
+    card.addEventListener('click', function () {
+      // Diğer kartları seçimden çıkar
+      document
+        .querySelectorAll(`#${targetDivId} .${cardClassName}`)
+        .forEach((card) => card.classList.remove('selected'))
+
+      // Bu kartı seç
+      this.classList.add('selected')
+
+      // Seçilen alt kategoriyi kaydet
+      window[`selectedAltKategori-${parentId}`] = altKategori.id
+    })
+
+    targetDiv.appendChild(card)
+  })
+
+  // Div'i göster
+  targetDiv.style.display = 'flex'
+  setTimeout(() => {
+    targetDiv.classList.add('gorunur')
+  }, 10)
+}
+
 // Initialize the app when the script loads
 initializeApp()
 
+// Periyodik olarak kategorileri kontrol et (admin panelinden değişiklikler için)
+setInterval(async () => {
+  try {
+    // Kategorileri yeniden yükle
+    await loadCategories()
+  } catch (error) {
+    console.error('Error updating categories:', error)
+  }
+}, 10000) // Her 10 saniyede bir kontrol et
+
 // Sayfa yüklendiğinde rastgele kategori seç
 function rastgeleKategoriSec() {
+  const options = document.querySelectorAll('.option')
   if (options.length > 0) {
     // Rastgele bir ana kategori seç
     const rastgeleIndex = Math.floor(Math.random() * options.length)
@@ -38,34 +295,40 @@ function rastgeleKategoriSec() {
 
     // Alt kategoriler yüklendikten sonra rastgele bir alt kategori seç
     setTimeout(() => {
-      let altKategoriler = []
+      const parentId = secilenKategori.getAttribute('data-value')
+      const anaKategori = anaKategoriler.find((kat) => kat.id == parentId)
 
-      // Seçilen kategoriye göre uygun alt kategorileri belirle
-      switch (secilenKategori.getAttribute('data-value')) {
-        case 'dizi':
-          altKategoriler = document.querySelectorAll('.dizi-alt-kategori-card')
-          break
-        case 'film':
-          altKategoriler = document.querySelectorAll('.film-alt-kategori-card')
-          break
-        case 'turkce':
-          altKategoriler = document.querySelectorAll(
-            '#turkceAltKategoriler .alt-kategori-card'
-          )
-          break
-        case 'yabanci':
-          altKategoriler = document.querySelectorAll(
-            '#yabanciAltKategoriler .alt-kategori-card'
-          )
-          break
-      }
+      if (anaKategori) {
+        let targetDivId = ''
+        if (anaKategori.isim.toLowerCase().includes('dizi')) {
+          targetDivId = 'diziAltKategoriler'
+        } else if (anaKategori.isim.toLowerCase().includes('film')) {
+          targetDivId = 'filmAltKategoriler'
+        } else if (
+          anaKategori.isim.toLowerCase().includes('türkçe') ||
+          anaKategori.isim.toLowerCase().includes('turkce')
+        ) {
+          targetDivId = 'turkceAltKategoriler'
+        } else if (
+          anaKategori.isim.toLowerCase().includes('yabancı') ||
+          anaKategori.isim.toLowerCase().includes('yabanci')
+        ) {
+          targetDivId = 'yabanciAltKategoriler'
+        } else {
+          targetDivId = 'turkceAltKategoriler'
+        }
 
-      // Eğer alt kategori varsa rastgele birini seç
-      if (altKategoriler && altKategoriler.length > 0) {
-        const rastgeleAltKategoriIndex = Math.floor(
-          Math.random() * altKategoriler.length
+        const altKategoriler = document.querySelectorAll(
+          `#${targetDivId} div[id^="altKategori-"]`
         )
-        altKategoriler[rastgeleAltKategoriIndex].click()
+
+        // Eğer alt kategori varsa rastgele birini seç
+        if (altKategoriler && altKategoriler.length > 0) {
+          const rastgeleAltKategoriIndex = Math.floor(
+            Math.random() * altKategoriler.length
+          )
+          altKategoriler[rastgeleAltKategoriIndex].click()
+        }
       }
     }, 100)
   }
@@ -83,159 +346,10 @@ dropdownSelected.addEventListener('click', () => {
     dropdownOptions.style.display === 'block' ? 'none' : 'block'
 })
 
+// Mevcut event listener'ları güncelle
 options.forEach((option) => {
-  option.addEventListener('click', () => {
-    document
-      .querySelectorAll('.alt-kategori-card')
-      .forEach((card) => card.classList.remove('selected'))
-    document
-      .querySelectorAll('.dizi-alt-kategori-card.selected')
-      .forEach((card) => card.classList.remove('selected'))
-    document
-      .querySelectorAll('.film-alt-kategori-card.selected')
-      .forEach((card) => card.classList.remove('selected'))
-    selectedTurkceAltKategori = ''
-    selectedYabanciAltKategori = ''
-    selectedDiziAltKategori = ''
-    selectedFilmAltKategori = ''
-    dropdownSelected.textContent = option.textContent
-    dropdownSelected.setAttribute(
-      'data-value',
-      option.getAttribute('data-value')
-    )
-    dropdownOptions.style.display = 'none'
-    document.getElementById('secili-kategori').textContent = option.textContent
-
-    const tumAltlar = [
-      'diziAltKategoriler',
-      'filmAltKategoriler',
-      'turkceAltKategoriler',
-      'yabanciAltKategoriler',
-    ]
-    tumAltlar.forEach((id) => {
-      document.getElementById(id).classList.remove('gorunur')
-      document.getElementById(id).style.display = 'none'
-    })
-
-    if (option.getAttribute('data-value') === 'dizi') {
-      const el = document.getElementById('diziAltKategoriler')
-      el.style.display = 'flex'
-      setTimeout(() => {
-        el.classList.add('gorunur')
-      }, 10)
-    }
-    if (option.getAttribute('data-value') === 'film') {
-      const el = document.getElementById('filmAltKategoriler')
-      el.style.display = 'flex'
-      setTimeout(() => {
-        el.classList.add('gorunur')
-      }, 10)
-    }
-    if (option.getAttribute('data-value') === 'turkce') {
-      const el = document.getElementById('turkceAltKategoriler')
-      el.style.display = 'flex'
-      setTimeout(() => {
-        el.classList.add('gorunur')
-      }, 10)
-    }
-    if (option.getAttribute('data-value') === 'yabanci') {
-      const el = document.getElementById('yabanciAltKategoriler')
-      el.style.display = 'flex'
-      setTimeout(() => {
-        el.classList.add('gorunur')
-      }, 10)
-    }
-  })
+  option.addEventListener('click', handleCategorySelection)
 })
-
-document
-  .getElementById('diziTurkceCard')
-  .addEventListener('click', function () {
-    selectedDiziAltKategori = 'dizi-turkce'
-    this.classList.add('selected')
-    document.getElementById('diziYabanciCard').classList.remove('selected')
-  })
-
-document
-  .getElementById('diziYabanciCard')
-  .addEventListener('click', function () {
-    selectedDiziAltKategori = 'dizi-yabanci'
-    this.classList.add('selected')
-    document.getElementById('diziTurkceCard').classList.remove('selected')
-  })
-
-document
-  .getElementById('filmTurkceCard')
-  .addEventListener('click', function () {
-    selectedFilmAltKategori = 'film-turkce'
-    this.classList.add('selected')
-    document.getElementById('filmYabanciCard').classList.remove('selected')
-  })
-
-document
-  .getElementById('filmYabanciCard')
-  .addEventListener('click', function () {
-    selectedFilmAltKategori = 'film-yabanci'
-    this.classList.add('selected')
-    document.getElementById('filmTurkceCard').classList.remove('selected')
-  })
-
-document
-  .getElementById('turkceRockCard')
-  .addEventListener('click', function () {
-    selectedTurkceAltKategori = 'rock'
-    altKategoriCardSec('turkceAltKategoriler', this)
-  })
-document.getElementById('turkcePopCard').addEventListener('click', function () {
-  selectedTurkceAltKategori = 'pop'
-  altKategoriCardSec('turkceAltKategoriler', this)
-})
-document
-  .getElementById('turkceHipHopCard')
-  .addEventListener('click', function () {
-    selectedTurkceAltKategori = 'hiphop'
-    altKategoriCardSec('turkceAltKategoriler', this)
-  })
-document
-  .getElementById('turkceKarisikCard')
-  .addEventListener('click', function () {
-    selectedTurkceAltKategori = 'karisik'
-    altKategoriCardSec('turkceAltKategoriler', this)
-  })
-
-document
-  .getElementById('yabanciRockCard')
-  .addEventListener('click', function () {
-    selectedYabanciAltKategori = 'rock'
-    altKategoriCardSec('yabanciAltKategoriler', this)
-  })
-document
-  .getElementById('yabanciPopCard')
-  .addEventListener('click', function () {
-    selectedYabanciAltKategori = 'pop'
-    altKategoriCardSec('yabanciAltKategoriler', this)
-  })
-document
-  .getElementById('yabanciHipHopCard')
-  .addEventListener('click', function () {
-    selectedYabanciAltKategori = 'hiphop'
-    altKategoriCardSec('yabanciAltKategoriler', this)
-  })
-document
-  .getElementById('yabanciKarisikCard')
-  .addEventListener('click', function () {
-    selectedYabanciAltKategori = 'karisik'
-    altKategoriCardSec('yabanciAltKategoriler', this)
-  })
-
-function altKategoriCardSec(altKategoriDivId, secilenCard) {
-  document
-    .querySelectorAll(`#${altKategoriDivId} .alt-kategori-card`)
-    .forEach((card) => {
-      card.classList.remove('selected')
-    })
-  secilenCard.classList.add('selected')
-}
 
 document.addEventListener('click', async (e) => {
   if (!e.target.closest('.custom-dropdown')) {
@@ -256,42 +370,97 @@ document
       return
     }
 
-    // Alt kategori kontrolü (Türkçe/Yabancı için zorunlu)
-    if (kategoriKey === 'turkce' && !selectedTurkceAltKategori) {
-      showAlertOverlay('Türkçe için bir alt kategori seçin!')
-      return
-    }
-    if (kategoriKey === 'yabanci' && !selectedYabanciAltKategori) {
-      showAlertOverlay('Yabancı için bir alt kategori seçin!')
-      return
-    }
-    if (kategoriKey === 'dizi' && !selectedDiziAltKategori) {
-      showAlertOverlay('Dizi için bir alt kategori seçin!')
-      return
-    }
-    if (kategoriKey === 'film' && !selectedFilmAltKategori) {
-      showAlertOverlay('Film için bir alt kategori seçin!')
+    // Seçilen ana kategoriyi bul
+    const anaKategori = anaKategoriler.find((kat) => kat.id == kategoriKey)
+    if (!anaKategori) {
+      showAlertOverlay('Geçersiz kategori seçimi!')
       return
     }
 
-    // Oyun için kategori key oluştur
+    // Alt kategori kontrolü
+    const selectedAltKategoriId = window[`selectedAltKategori-${kategoriKey}`]
+    if (!selectedAltKategoriId) {
+      showAlertOverlay(`${anaKategori.isim} için bir alt kategori seçin!`)
+      return
+    }
+
+    // Seçilen alt kategoriyi bul
+    const altKategori = altKategoriler.find(
+      (alt) => alt.id == selectedAltKategoriId
+    )
+    if (!altKategori) {
+      showAlertOverlay('Geçersiz alt kategori seçimi!')
+      return
+    }
+
+    // Oyun için kategori key oluştur (admin panel formatına uygun)
     let oyunKategoriKey
-    if (kategoriKey === 'turkce') {
-      oyunKategoriKey = `turkce-${selectedTurkceAltKategori}` // "turkce-rock"
-    } else if (kategoriKey === 'yabanci') {
-      oyunKategoriKey = `yabanci-${selectedYabanciAltKategori}` // "yabanci-pop"
-    } else if (kategoriKey === 'dizi') {
-      oyunKategoriKey = selectedDiziAltKategori // "dizi-turkce"
-    } else if (kategoriKey === 'film') {
-      oyunKategoriKey = selectedFilmAltKategori // "film-yabanci"
+    if (altKategori.isim.toLowerCase() === 'diğer') {
+      oyunKategoriKey = `${anaKategori.isim.toLowerCase()}-diğer`
+    } else {
+      oyunKategoriKey = `${anaKategori.isim.toLowerCase()}-${altKategori.isim
+        .toLowerCase()
+        .replace(' ', '')}`
+    }
+
+    // Görsel kategori isimlerini düzenle
+    let gorunurAnaKategori = anaKategori.isim
+    let gorunurAltKategori = altKategori.isim
+
+    // Ana kategori isimlerini düzenle
+    switch (anaKategori.isim.toLowerCase()) {
+      case 'türkçe':
+      case 'turkce':
+        gorunurAnaKategori = 'Türkçe'
+        break
+      case 'yabancı':
+      case 'yabanci':
+        gorunurAnaKategori = 'Yabancı'
+        break
+      case 'dizi':
+        gorunurAnaKategori = 'Dizi'
+        break
+      case 'film':
+        gorunurAnaKategori = 'Film'
+        break
+      default:
+        gorunurAnaKategori =
+          anaKategori.isim.charAt(0).toUpperCase() + anaKategori.isim.slice(1)
+    }
+
+    // Alt kategori isimlerini düzenle
+    switch (altKategori.isim.toLowerCase()) {
+      case 'diğer':
+        gorunurAltKategori = 'Karışık'
+        break
+      case 'rock':
+        gorunurAltKategori = 'Rock'
+        break
+      case 'pop':
+        gorunurAltKategori = 'Pop'
+        break
+      case 'hip hop':
+      case 'hiphop':
+        gorunurAltKategori = 'Hip Hop'
+        break
+      case 'karışık':
+      case 'karisik':
+        gorunurAltKategori = 'Karışık'
+        break
+      default:
+        gorunurAltKategori =
+          altKategori.isim.charAt(0).toUpperCase() + altKategori.isim.slice(1)
     }
 
     // Şarkıları filtrele
     try {
       sarkiListesi = await apiService.getSongs()
-      soruListesi = sarkiListesi.filter(
-        (sarki) => sarki.kategori === oyunKategoriKey
-      )
+
+      soruListesi = sarkiListesi.filter((sarki) => {
+        // Virgülle ayrılmış kategorileri kontrol et
+        const kategoriler = sarki.kategori.split(',')
+        return kategoriler.some((kat) => kat.trim() === oyunKategoriKey)
+      })
 
       if (soruListesi.length === 0) {
         showNoSongsOverlay()
@@ -304,6 +473,11 @@ document
       )
       return
     }
+
+    // Oyun başlığını güncelle
+    document.getElementById(
+      'secili-kategori'
+    ).textContent = `${gorunurAnaKategori} - ${gorunurAltKategori}`
 
     kullanilanSarkilar = []
     soruIndex = rastgeleSoruIndex()
