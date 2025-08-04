@@ -477,7 +477,7 @@ document
     // Oyun başlığını güncelle
     document.getElementById(
       'secili-kategori'
-    ).textContent = `${gorunurAnaKategori} - ${gorunurAltKategori}`
+    ).textContent = `${gorunurAnaKategori} ${gorunurAltKategori}`
 
     kullanilanSarkilar = []
     soruIndex = rastgeleSoruIndex()

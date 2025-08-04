@@ -152,6 +152,10 @@ body {
   letter-spacing: 0.3px;
   pointer-events: none;
   z-index: 1100;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 90vw;
 }
 
 /* Kalan süre rozeti */
