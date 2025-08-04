@@ -139,20 +139,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // Kategori değişince alt kategori seçeneklerini doldur
   if (katSelect) {
     katSelect.addEventListener('change', () => {
-      if (!altSelect) return
-      altSelect.innerHTML = '<option value="">Alt Kategori Seç</option>'
       const secKat = katSelect.value
-      if (secKat && altKategoriler[secKat]) {
-        altSelect.style.display = 'inline-block'
-        altKategoriler[secKat].forEach((k) => {
-          const option = document.createElement('option')
-          option.value = k.toLowerCase().replace(' ', '')
-          option.textContent = k
-          altSelect.appendChild(option)
-        })
-      } else {
-        altSelect.style.display = 'none'
-      }
+      updateSubcategoriesForCategory(secKat, altSelect)
       applyFilters()
     })
   }
@@ -171,17 +159,40 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchText = searchInput ? searchInput.value.toLowerCase().trim() : ''
 
     const filteredSongs = sarkiListesi.filter((sarki) => {
-      const [kategori, altKategori] = (sarki.kategori || '').split('-')
+      // Kategori bilgisini virgülle ayır (birden fazla kategori olabilir)
+      const kategoriListesi = (sarki.kategori || '').split(',')
+
+      // Her kategori için kontrol et
+      const kategoriEslesmesi = kategoriListesi.some((kategoriStr) => {
+        const [kategori, altKategori] = kategoriStr.trim().split('-')
+
+        // Ana kategori filtresi: Seçilen ana kategoriye ait tüm şarkıları göster
+        const anaKategoriEslesmesi =
+          !filterKategori || kategori === filterKategori
+
+        // Alt kategori filtresi: Eğer alt kategori seçilmişse, sadece o alt kategorideki şarkıları göster
+        let altKategoriEslesmesi =
+          !filterAltKategori || altKategori === filterAltKategori
+
+        // Eğer "Diğer" kategorisi seçildiyse, sadece gerçekten "Diğer" kategorisinde olan şarkıları göster
+        if (filterAltKategori === 'diğer') {
+          // Şarkının sadece "diğer" kategorisinde olup olmadığını kontrol et
+          const sadeceDigerKategorisinde = kategoriListesi.every((katStr) => {
+            const [kat, altKat] = katStr.trim().split('-')
+            return altKat === 'diğer'
+          })
+          altKategoriEslesmesi = sadeceDigerKategorisinde
+        }
+
+        return anaKategoriEslesmesi && altKategoriEslesmesi
+      })
+
       const matchesSearch =
         searchText === '' ||
         (sarki.cevap && sarki.cevap.toLowerCase().includes(searchText)) ||
         (sarki.sanatci && sarki.sanatci.toLowerCase().includes(searchText))
 
-      return (
-        matchesSearch &&
-        (!filterKategori || kategori === filterKategori) &&
-        (!filterAltKategori || altKategori === filterAltKategori)
-      )
+      return matchesSearch && kategoriEslesmesi
     })
 
     const listeDiv = document.getElementById('liste')
@@ -537,6 +548,147 @@ function showCenterAlert(msg) {
   overlay.style.display = 'flex'
 }
 
+// --------- Modern Uyarı Fonksiyonu ---------
+function showModernAlert(msg, type = 'info') {
+  let overlay = document.getElementById('modernAlertModal')
+  if (!overlay) {
+    // Stil ekle (yalnızca ilk sefer)
+    const style = document.createElement('style')
+    style.textContent = `
+      .modern-alert-content {
+        background: linear-gradient(135deg, #2a2a4a 0%, #1e1e3c 100%);
+        color: #ffffff;
+        padding: 32px 40px 28px 40px;
+        border-radius: 24px;
+        width: 380px;
+        max-width: 90%;
+        text-align: center;
+        box-shadow: 0 12px 40px rgba(0,0,0,0.3), inset 0 0 20px rgba(255,255,255,0.05);
+        animation: modernAlertPop 0.4s cubic-bezier(.22,.82,.46,1.02);
+        border: 1px solid rgba(255,255,255,0.1);
+        position: relative;
+        overflow: hidden;
+      }
+      .modern-alert-content::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #4caf50, #66bb6a);
+      }
+      .modern-alert-content.warning::before {
+        background: linear-gradient(90deg, #ff9800, #ffb74d);
+      }
+      .modern-alert-content.error::before {
+        background: linear-gradient(90deg, #f44336, #ef5350);
+      }
+      .modern-alert-content.info::before {
+        background: linear-gradient(90deg, #2196f3, #42a5f5);
+      }
+      .modern-alert-icon {
+        width: 60px;
+        height: 60px;
+        margin: 0 auto 20px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        background: rgba(255,255,255,0.1);
+        backdrop-filter: blur(10px);
+      }
+      .modern-alert-title {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 12px;
+        letter-spacing: 0.5px;
+      }
+      .modern-alert-message {
+        font-size: 16px;
+        line-height: 1.6;
+        color: #e0e0e0;
+        margin-bottom: 24px;
+      }
+      .modern-alert-button {
+        padding: 12px 32px;
+        border-radius: 30px;
+        border: none;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: linear-gradient(135deg, #6c5ce7 0%, #a259c7 100%);
+        color: white;
+        box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
+      }
+      .modern-alert-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(108, 92, 231, 0.4);
+      }
+      @keyframes modernAlertPop {
+        0% {
+          opacity: 0;
+          transform: scale(0.8) translateY(20px);
+        }
+        100% {
+          opacity: 1;
+          transform: scale(1) translateY(0);
+        }
+      }
+    `
+    document.head.appendChild(style)
+
+    overlay = document.createElement('div')
+    overlay.id = 'modernAlertModal'
+    overlay.className = 'modal-overlay'
+    overlay.style.display = 'none'
+    overlay.innerHTML = `
+      <div class="modern-alert-content">
+        <div class="modern-alert-icon" id="modernAlertIcon">ℹ️</div>
+        <h3 class="modern-alert-title" id="modernAlertTitle">Bilgi</h3>
+        <p class="modern-alert-message" id="modernAlertMessage"></p>
+        <button class="modern-alert-button" id="modernAlertOkBtn">Tamam</button>
+      </div>`
+    document.body.appendChild(overlay)
+
+    // Dış alana tıklanınca veya butona basınca kapat
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) overlay.style.display = 'none'
+    })
+    overlay.querySelector('#modernAlertOkBtn').addEventListener('click', () => {
+      overlay.style.display = 'none'
+    })
+  }
+
+  // Uyarı tipine göre içeriği güncelle
+  const content = overlay.querySelector('.modern-alert-content')
+  const icon = overlay.querySelector('#modernAlertIcon')
+  const title = overlay.querySelector('#modernAlertTitle')
+  const message = overlay.querySelector('#modernAlertMessage')
+
+  // Tip'e göre stil ve içerik ayarla
+  content.className = `modern-alert-content ${type}`
+
+  if (type === 'warning') {
+    icon.textContent = '⚠️'
+    title.textContent = 'Uyarı'
+  } else if (type === 'error') {
+    icon.textContent = '❌'
+    title.textContent = 'Hata'
+  } else if (type === 'success') {
+    icon.textContent = '✅'
+    title.textContent = 'Başarılı'
+  } else {
+    icon.textContent = 'ℹ️'
+    title.textContent = 'Bilgi'
+  }
+
+  message.textContent = msg
+  overlay.style.display = 'flex'
+}
+
 // Şarkı listesini güncelle
 async function guncelleListe(page = 1) {
   try {
@@ -611,7 +763,11 @@ window.kategoriDuzenle = function (kategoriId) {
         <select id="duzenleKategoriParent">
           <option value="">Ana Kategori</option>
           ${tumKategoriler
-            .filter((k) => k.parent_id === null || k.parent_id === '')
+            .filter(
+              (k) =>
+                (k.parent_id === null || k.parent_id === '') &&
+                k.id != kategoriId
+            )
             .map(
               (k) =>
                 `<option value="${k.id}" ${
@@ -661,7 +817,9 @@ window.kategoriSil = async function (kategoriId) {
       await apiService.deleteKategori(kategoriId)
       tumKategoriler = tumKategoriler.filter((k) => k.id != kategoriId)
       kategorileriGoster()
-      getKategoriler() // Parent select'i güncelle
+
+      // Kategori seçim alanlarını güncelle
+      updateCategorySelects()
 
       showDeleteToast('Kategori başarıyla silindi!')
     } catch (error) {
@@ -724,7 +882,9 @@ window.kategoriKaydet = async function (kategoriId) {
 
     kategoriModalKapat()
     kategorileriGoster()
-    getKategoriler() // Parent select'i güncelle
+
+    // Kategori seçim alanlarını güncelle
+    updateCategorySelects()
 
     showSuccessToast('Kategori başarıyla güncellendi!')
   } catch (error) {
@@ -765,6 +925,9 @@ async function getKategoriler() {
     })
 
     kategorileriGoster()
+
+    // Kategori seçim alanlarını güncelle
+    updateCategorySelects()
   } catch (error) {
     console.error('Error fetching categories:', error)
     showGuncelleToast('Kategoriler alınamadı')
@@ -857,7 +1020,9 @@ async function kategoriEkle() {
 
     // Listeyi güncelle
     kategorileriGoster()
-    getKategoriler() // Parent select'i güncelle
+
+    // Kategori seçim alanlarını güncelle
+    updateCategorySelects()
 
     showSuccessToast('Kategori başarıyla eklendi!')
   } catch (error) {
@@ -933,7 +1098,27 @@ document.getElementById('ekleBtn').addEventListener('click', async () => {
     return
   }
 
-  const tamKategori = altKategori
+  // Alt kategori kontrolü (sadece Türkçe ve Yabancı için opsiyonel)
+  const anaKategori = kategori
+    .toLowerCase()
+    .replace(/\s+/g, '')
+    .replace('ü', 'u')
+    .replace('ç', 'c')
+    .replace('ı', 'i')
+  const altKategoriSecildi = altKategori && altKategori.trim() !== ''
+
+  // Türkçe ve Yabancı dışındaki kategoriler için alt kategori zorunlu
+  if (
+    anaKategori !== 'turkce' &&
+    anaKategori !== 'yabanci' &&
+    !altKategoriSecildi
+  ) {
+    showModernAlert('Lütfen alt kategori seçiniz!', 'warning')
+    return
+  }
+
+  // Eğer alt kategori seçildiyse tam kategori oluştur, yoksa sadece ana kategori
+  const tamKategori = altKategoriSecildi
     ? `${kategori}-${altKategori.toLowerCase().replace(' ', '')}`
     : kategori
 
@@ -982,15 +1167,45 @@ document.getElementById('ekleBtn').addEventListener('click', async () => {
       kapakYolu = result.kapak
     }
 
-    const newSong = {
-      kategori: tamKategori,
+    // Ana kategoriyi belirle (Türkçe, Yabancı vs.)
+    const anaKategori = kategori.toLowerCase()
+
+    // "Diğer" kategorisini bul
+    const digerKategori = tumKategoriler.find(
+      (kat) =>
+        kat.isim.toLowerCase() === 'diğer' &&
+        kat.parent_id &&
+        tumKategoriler.find(
+          (parent) =>
+            parent.id == kat.parent_id &&
+            parent.isim.toLowerCase().replace(/\s+/g, '') === anaKategori
+        )
+    )
+
+    // Kategori bilgisini oluştur
+    let kategoriBilgisi = tamKategori
+
+    // Eğer "Diğer" kategorisi varsa ve alt kategori seçilmediyse, sadece "Diğer" kategorisinde kaydet
+    if (digerKategori && !altKategoriSecildi) {
+      const digerKategoriAdi = `${anaKategori}-diğer`
+      kategoriBilgisi = digerKategoriAdi
+    }
+    // Eğer alt kategori seçildiyse, hem spesifik hem de "Diğer" kategorisinde kaydet
+    else if (digerKategori && altKategoriSecildi) {
+      const digerKategoriAdi = `${anaKategori}-diğer`
+      kategoriBilgisi = `${tamKategori},${digerKategoriAdi}`
+    }
+
+    const songData = {
+      kategori: kategoriBilgisi,
       cevap: sarki,
       sarki: ' ' + sarki + '',
       dosya: dosyaYolu,
       kapak: kapakYolu,
     }
 
-    await apiService.addSong(newSong)
+    // Şarkıyı ekle
+    await apiService.addSong(songData)
     showSuccessToast(' Şarkı başarıyla eklendi!')
 
     // Formu temizle
@@ -1182,26 +1397,13 @@ const altKategoriler = {
   film: ['Türkçe', 'Yabancı'],
 }
 
-// Kategori değiştiğinde alt kategorileri güncelle
+// Kategori değiştiğinde alt kategorileri güncelle (şarkı ekleme kısmı için)
 document.getElementById('kategori').addEventListener('change', function () {
-  const altKategoriSelect = document.getElementById('altKategori')
   const kategori = this.value
-
-  // Alt kategorileri temizle
-  altKategoriSelect.innerHTML = '<option value="">Alt Kategori Seç</option>'
-
-  // Eğer seçilen bir kategori varsa, alt kategorileri doldur
-  if (kategori && altKategoriler[kategori]) {
-    altKategoriSelect.style.display = 'block'
-    altKategoriler[kategori].forEach((kategori) => {
-      const option = document.createElement('option')
-      option.value = kategori.toLowerCase()
-      option.textContent = kategori
-      altKategoriSelect.appendChild(option)
-    })
-  } else {
-    altKategoriSelect.style.display = 'none'
-  }
+  updateSubcategoriesForSongAdd(
+    kategori,
+    document.getElementById('altKategori')
+  )
 })
 
 // Dosya yükleme işlemleri
@@ -1310,26 +1512,64 @@ window.sarkiDuzenle = function (index) {
   songIdInput.value = song.id
   songNameInput.value = song.cevap
 
-  // Parse category and subcategory
-  const [category, subcategory] = song.kategori
-    ? song.kategori.split('-')
-    : ['', '']
-  categorySelect.value = category
+  // Parse category and subcategory (ilk kategoriyi al)
+  const kategoriListesi = song.kategori ? song.kategori.split(',') : ['']
+  const [category, subcategory] = kategoriListesi[0].split('-')
+
+  // Kategori ismini kategori ID'sine çevir
+  const categoryName = category || ''
+  const matchingCategory = tumKategoriler.find(
+    (kat) =>
+      kat.isim.toLowerCase().replace(/\s+/g, '') === categoryName ||
+      kat.isim.toLowerCase() === categoryName
+  )
+
+  if (matchingCategory) {
+    categorySelect.value = matchingCategory.isim
+      .toLowerCase()
+      .replace(/\s+/g, '')
+  } else {
+    categorySelect.value = categoryName
+  }
 
   // Update subcategories based on category
-  subcategorySelect.innerHTML = '<option value="">Alt Kategori Seç</option>'
-  if (category && altKategoriler[category]) {
-    subcategorySelect.style.display = 'block'
-    altKategoriler[category].forEach((subcat) => {
-      const option = document.createElement('option')
-      option.value = subcat.toLowerCase()
-      option.textContent = subcat
-      subcategorySelect.appendChild(option)
-    })
-    subcategorySelect.value = subcategory || ''
+  const selectedCategoryValue = matchingCategory
+    ? matchingCategory.isim.toLowerCase().replace(/\s+/g, '')
+    : categoryName
+  updateSubcategoriesForCategory(selectedCategoryValue, subcategorySelect)
+
+  // Alt kategori ismini de eşleştir
+  if (subcategory) {
+    const matchingSubcategory = tumKategoriler.find(
+      (kat) =>
+        kat.isim.toLowerCase().replace(/\s+/g, '') === subcategory ||
+        kat.isim.toLowerCase() === subcategory
+    )
+
+    if (matchingSubcategory) {
+      subcategorySelect.value = matchingSubcategory.isim
+        .toLowerCase()
+        .replace(/\s+/g, '')
+    } else {
+      subcategorySelect.value = subcategory
+    }
   } else {
-    subcategorySelect.style.display = 'none'
+    subcategorySelect.value = ''
   }
+
+  // Add event listener for category change in edit modal (remove existing first)
+  const existingListener = categorySelect._changeListener
+  if (existingListener) {
+    categorySelect.removeEventListener('change', existingListener)
+  }
+
+  const changeListener = function () {
+    const selectedCategory = this.value
+    updateSubcategoriesForCategory(selectedCategory, subcategorySelect)
+  }
+
+  categorySelect.addEventListener('change', changeListener)
+  categorySelect._changeListener = changeListener
 
   // Show modal
   modal.style.display = 'flex'
@@ -1503,30 +1743,13 @@ document.addEventListener('DOMContentLoaded', async function () {
     })
   }
 
-  // Kategori değiştiğinde alt kategorileri güncelle
+  // Kategori değiştiğinde alt kategorileri güncelle (şarkı ekleme kısmı için)
   document.getElementById('kategori').addEventListener('change', function () {
-    const altKategoriSelect = document.getElementById('altKategori')
     const kategori = this.value
-
-    altKategoriSelect.innerHTML = '<option value="">Alt Kategori Seç</option>'
-
-    if (kategori === 'turkce' || kategori === 'yabanci') {
-      const altKategoriler = ['Pop', 'Rock', 'Hip Hop']
-      altKategoriler.forEach((kategori) => {
-        const option = document.createElement('option')
-        option.value = kategori
-        option.textContent = kategori
-        altKategoriSelect.appendChild(option)
-      })
-    } else if (kategori === 'dizi' || kategori === 'film') {
-      const altKategoriler = ['Türkçe', 'Yabancı']
-      altKategoriler.forEach((kategori) => {
-        const option = document.createElement('option')
-        option.value = kategori.toLowerCase()
-        option.textContent = kategori
-        altKategoriSelect.appendChild(option)
-      })
-    }
+    updateSubcategoriesForSongAdd(
+      kategori,
+      document.getElementById('altKategori')
+    )
   })
 })
 
@@ -1545,15 +1768,47 @@ document
       return
     }
 
-    const fullCategory = subcategory
+    // Alt kategori seçilip seçilmediğini kontrol et
+    const altKategoriSecildi = subcategory && subcategory.trim() !== ''
+
+    const fullCategory = altKategoriSecildi
       ? `${category}-${subcategory.toLowerCase().replace(' ', '')}`
       : category
+
+    // Ana kategoriyi belirle
+    const anaKategori = category.toLowerCase()
+
+    // "Diğer" kategorisini bul
+    const digerKategori = tumKategoriler.find(
+      (kat) =>
+        kat.isim.toLowerCase() === 'diğer' &&
+        kat.parent_id &&
+        tumKategoriler.find(
+          (parent) =>
+            parent.id == kat.parent_id &&
+            parent.isim.toLowerCase().replace(/\s+/g, '') === anaKategori
+        )
+    )
+
+    // Kategori bilgisini oluştur
+    let kategoriBilgisi = fullCategory
+
+    // Eğer "Diğer" kategorisi varsa ve alt kategori seçilmediyse, sadece "Diğer" kategorisinde kaydet
+    if (digerKategori && !altKategoriSecildi) {
+      const digerKategoriAdi = `${anaKategori}-diğer`
+      kategoriBilgisi = digerKategoriAdi
+    }
+    // Eğer alt kategori seçildiyse, hem spesifik hem de "Diğer" kategorisinde kaydet
+    else if (digerKategori && altKategoriSecildi) {
+      const digerKategoriAdi = `${anaKategori}-diğer`
+      kategoriBilgisi = `${fullCategory},${digerKategoriAdi}`
+    }
 
     try {
       await apiService.updateSong({
         id: songId,
         cevap: songName,
-        kategori: fullCategory,
+        kategori: kategoriBilgisi,
       })
 
       // Oyun verilerini güncelle
@@ -1669,3 +1924,186 @@ menuItems2.forEach((item) => {
     document.getElementById(sectionId).classList.add('active')
   })
 })
+
+// Kategori seçim alanlarını güncelleme fonksiyonu
+function updateCategorySelects() {
+  // Ana kategorileri al
+  const anaKategoriler = tumKategoriler.filter(
+    (kategori) => kategori.parent_id === null || kategori.parent_id === ''
+  )
+
+  // Alt kategorileri al
+  const altKategoriler = tumKategoriler.filter(
+    (kategori) => kategori.parent_id !== null && kategori.parent_id !== ''
+  )
+
+  // Şarkı ekleme kısmındaki kategori seçimi
+  const kategoriSelect = document.getElementById('kategori')
+  if (kategoriSelect) {
+    kategoriSelect.innerHTML = '<option value="">Kategori Seç</option>'
+    anaKategoriler.forEach((kategori) => {
+      const option = document.createElement('option')
+      option.value = kategori.isim.toLowerCase().replace(/\s+/g, '')
+      option.textContent = kategori.isim
+      kategoriSelect.appendChild(option)
+    })
+  }
+
+  // Şarkı listesi filtreleme kısmındaki kategori seçimi (sadece ana kategoriler)
+  const filterKategoriSelect = document.getElementById('filterKategori')
+  if (filterKategoriSelect) {
+    filterKategoriSelect.innerHTML = '<option value="">Kategori Seç</option>'
+    anaKategoriler.forEach((kategori) => {
+      const option = document.createElement('option')
+      option.value = kategori.isim.toLowerCase().replace(/\s+/g, '')
+      option.textContent = kategori.isim
+      filterKategoriSelect.appendChild(option)
+    })
+  }
+
+  // Şarkı düzenleme modalındaki kategori seçimi
+  const duzenleKategoriSelect = document.getElementById('duzenleKategori')
+  if (duzenleKategoriSelect) {
+    duzenleKategoriSelect.innerHTML = '<option value="">Kategori Seç</option>'
+    anaKategoriler.forEach((kategori) => {
+      const option = document.createElement('option')
+      option.value = kategori.isim.toLowerCase().replace(/\s+/g, '')
+      option.textContent = kategori.isim
+      duzenleKategoriSelect.appendChild(option)
+    })
+  }
+
+  // Alt kategorileri güncelle
+  updateSubcategoryOptions()
+
+  // Kategori ekleme formundaki ana kategori seçim alanını güncelle
+  const yeniKategoriParentSelect = document.getElementById('yeniKategoriParent')
+  if (yeniKategoriParentSelect) {
+    yeniKategoriParentSelect.innerHTML =
+      '<option value="">Ana Kategori</option>'
+    anaKategoriler.forEach((kategori) => {
+      const option = document.createElement('option')
+      option.value = kategori.id
+      option.textContent = kategori.isim
+      yeniKategoriParentSelect.appendChild(option)
+    })
+  }
+}
+
+// Alt kategori seçeneklerini güncelleme fonksiyonu
+function updateSubcategoryOptions() {
+  const anaKategoriler = tumKategoriler.filter(
+    (kategori) => kategori.parent_id === null || kategori.parent_id === ''
+  )
+
+  const altKategoriler = tumKategoriler.filter(
+    (kategori) => kategori.parent_id !== null && kategori.parent_id !== ''
+  )
+
+  // Her ana kategori için alt kategorileri grupla
+  const altKategoriMap = {}
+  altKategoriler.forEach((altKat) => {
+    const parentId = altKat.parent_id
+    if (!altKategoriMap[parentId]) {
+      altKategoriMap[parentId] = []
+    }
+    altKategoriMap[parentId].push(altKat)
+  })
+
+  // Alt kategori seçim alanlarını güncelle
+  const altKategoriSelects = [
+    document.getElementById('altKategori'),
+    document.getElementById('filterAltKategori'),
+    document.getElementById('duzenleAltKategori'),
+  ]
+
+  altKategoriSelects.forEach((select) => {
+    if (select) {
+      select.innerHTML = '<option value="">Alt Kategori Seç</option>'
+    }
+  })
+}
+
+// Kategori değiştiğinde alt kategorileri güncelleme fonksiyonu
+function updateSubcategoriesForCategory(categoryValue, targetSelect) {
+  if (!targetSelect) return
+
+  targetSelect.innerHTML = '<option value="">Alt Kategori Seç</option>'
+
+  if (!categoryValue) {
+    targetSelect.style.display = 'none'
+    return
+  }
+
+  // Seçilen ana kategoriyi bul
+  const selectedAnaKategori = tumKategoriler.find(
+    (kat) =>
+      kat.isim.toLowerCase().replace(/\s+/g, '') === categoryValue ||
+      kat.isim.toLowerCase() === categoryValue
+  )
+
+  if (!selectedAnaKategori) {
+    targetSelect.style.display = 'none'
+    return
+  }
+
+  // Bu ana kategoriye ait alt kategorileri bul
+  const altKategoriler = tumKategoriler.filter(
+    (kat) => kat.parent_id == selectedAnaKategori.id
+  )
+
+  if (altKategoriler.length > 0) {
+    targetSelect.style.display = 'block'
+    altKategoriler.forEach((altKat) => {
+      const option = document.createElement('option')
+      option.value = altKat.isim.toLowerCase().replace(/\s+/g, '')
+      option.textContent = altKat.isim
+      targetSelect.appendChild(option)
+    })
+  } else {
+    targetSelect.style.display = 'none'
+  }
+}
+
+// Şarkı ekleme kısmı için özel alt kategori güncelleme fonksiyonu
+function updateSubcategoriesForSongAdd(categoryValue, targetSelect) {
+  if (!targetSelect) return
+
+  targetSelect.innerHTML = '<option value="">Alt Kategori Seç</option>'
+
+  if (!categoryValue) {
+    targetSelect.style.display = 'none'
+    return
+  }
+
+  // Seçilen ana kategoriyi bul
+  const selectedAnaKategori = tumKategoriler.find(
+    (kat) =>
+      kat.isim.toLowerCase().replace(/\s+/g, '') === categoryValue ||
+      kat.isim.toLowerCase() === categoryValue
+  )
+
+  if (!selectedAnaKategori) {
+    targetSelect.style.display = 'none'
+    return
+  }
+
+  // Bu ana kategoriye ait alt kategorileri bul ("Diğer" hariç)
+  const altKategoriler = tumKategoriler.filter(
+    (kat) =>
+      kat.parent_id == selectedAnaKategori.id &&
+      kat.isim.toLowerCase() !== 'diğer'
+  )
+
+  if (altKategoriler.length > 0) {
+    targetSelect.style.display = 'block'
+    altKategoriler.forEach((altKat) => {
+      const option = document.createElement('option')
+      option.value = altKat.isim.toLowerCase().replace(/\s+/g, '')
+      option.textContent = altKat.isim
+      targetSelect.appendChild(option)
+    })
+  } else {
+    targetSelect.style.display = 'none'
+  }
+}

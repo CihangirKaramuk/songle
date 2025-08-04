@@ -1149,6 +1149,17 @@ body.light .kategori-form-container h3 {
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: #fff;
   backdrop-filter: blur(10px);
+  padding: 12px 15px;
+}
+
+.form-row select {
+  cursor: pointer;
+}
+
+.form-row select option {
+  background: #2a2a4a;
+  color: #fff;
+  padding: 8px;
 }
 
 body.light .form-row input,
@@ -1156,6 +1167,13 @@ body.light .form-row select {
   background: rgba(255, 255, 255, 0.9);
   border: 1px solid rgba(0, 0, 0, 0.1);
   color: #333;
+  padding: 12px 15px;
+}
+
+body.light .form-row select option {
+  background: #ffffff;
+  color: #333;
+  padding: 8px;
 }
 
 .form-row input:focus,
@@ -1163,6 +1181,7 @@ body.light .form-row select {
   background: rgba(255, 255, 255, 0.15);
   border-color: #6a1b9a;
   box-shadow: 0 0 0 3px rgba(106, 27, 154, 0.2);
+  color: #fff;
 }
 
 body.light .form-row input:focus,
@@ -1170,6 +1189,7 @@ body.light .form-row select:focus {
   background: rgba(255, 255, 255, 1);
   border-color: #9c27b0;
   box-shadow: 0 0 0 3px rgba(156, 39, 176, 0.2);
+  color: #333;
 }
 
 .btn-primary {
@@ -1276,8 +1296,8 @@ body.light .filtre-btn:hover:not(.active) {
 
 .kategori-item {
   background: linear-gradient(145deg, #3a3a5a, #2a2a4a);
-  border-radius: 12px;
-  padding: 20px;
+  border-radius: 10px;
+  padding: 8px 15px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   transition: all 0.3s ease;
   position: relative;
@@ -1321,17 +1341,23 @@ body.light .kategori-item:hover {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  min-height: 35px;
 }
 
 .kategori-info {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 35px;
 }
 
 .kategori-ad {
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 600;
   color: #fff;
-  margin-bottom: 5px;
+  margin-bottom: 2px;
+  line-height: 1.2;
 }
 
 body.light .kategori-ad {
@@ -1339,12 +1365,13 @@ body.light .kategori-ad {
 }
 
 .kategori-tip {
-  font-size: 12px;
+  font-size: 11px;
   color: #aaa;
   background: rgba(255, 255, 255, 0.1);
-  padding: 4px 8px;
-  border-radius: 6px;
+  padding: 3px 6px;
+  border-radius: 5px;
   display: inline-block;
+  align-self: flex-start;
 }
 
 body.light .kategori-tip {
@@ -1354,9 +1381,15 @@ body.light .kategori-tip {
 
 .kategori-actions {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   opacity: 0;
   transition: opacity 0.3s ease;
+  margin-left: auto;
+  align-items: flex-end;
+  justify-content: center;
+  height: 100%;
+  padding-bottom: 25px;
+  margin-top: 30px;
 }
 
 .kategori-item:hover .kategori-actions {
@@ -1364,48 +1397,78 @@ body.light .kategori-tip {
 }
 
 .kategori-btn {
-  background: transparent;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1),
+    rgba(255, 255, 255, 0.05)
+  );
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: #fff;
   padding: 6px 10px;
-  border-radius: 6px;
+  border-radius: 5px;
   cursor: pointer;
   transition: all 0.3s ease;
-  font-size: 12px;
+  font-size: 11px;
+  font-weight: 500;
   backdrop-filter: blur(10px);
+  min-width: 60px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 body.light .kategori-btn {
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.02));
   border: 1px solid rgba(0, 0, 0, 0.1);
-  color: #666;
+  color: #555;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .kategori-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.3);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.15),
+    rgba(255, 255, 255, 0.1)
+  );
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 body.light .kategori-btn:hover {
-  background: rgba(0, 0, 0, 0.05);
-  border-color: rgba(0, 0, 0, 0.2);
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.05));
+  border-color: rgba(0, 0, 0, 0.25);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .kategori-btn.edit {
   color: #4caf50;
+  border-color: rgba(76, 175, 80, 0.3);
 }
 
 .kategori-btn.delete {
   color: #f44336;
+  border-color: rgba(244, 67, 54, 0.3);
 }
 
 .kategori-btn.edit:hover {
-  background: rgba(76, 175, 80, 0.1);
+  background: linear-gradient(
+    135deg,
+    rgba(76, 175, 80, 0.15),
+    rgba(76, 175, 80, 0.1)
+  );
   border-color: #4caf50;
+  color: #4caf50;
 }
 
 .kategori-btn.delete:hover {
-  background: rgba(244, 67, 54, 0.1);
+  background: linear-gradient(
+    135deg,
+    rgba(244, 67, 54, 0.15),
+    rgba(244, 67, 54, 0.1)
+  );
   border-color: #f44336;
+  color: #f44336;
 }
 
 /* Kategori Düzenleme Modal */
@@ -1428,27 +1491,31 @@ body.light .kategori-btn:hover {
 }
 
 .kategori-modal-content {
-  background: linear-gradient(145deg, #2a2a4a, #1e1e3c);
-  border-radius: 15px;
-  padding: 30px;
-  width: 90%;
-  max-width: 500px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #242043;
+  color: #fff;
+  padding: 32px 24px 26px 24px;
+  border-radius: 24px;
+  max-width: 400px;
+  width: 95%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  box-shadow: 0 8px 40px 0 rgba(100, 90, 220, 0.19);
   position: relative;
 }
 
 body.light .kategori-modal-content {
-  background: linear-gradient(145deg, #ffffff, #f8f9fa);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: #ffffff;
+  color: #333;
+  box-shadow: 0 8px 40px 0 rgba(0, 0, 0, 0.1);
 }
 
 .kategori-modal h3 {
-  margin: 0 0 20px 0;
   color: #fff;
-  font-size: 20px;
-  font-weight: 600;
+  font-size: 1.6rem;
+  margin-bottom: 22px;
+  letter-spacing: 0.4px;
 }
 
 body.light .kategori-modal h3 {
@@ -1456,40 +1523,93 @@ body.light .kategori-modal h3 {
 }
 
 .kategori-modal .form-row {
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
-.kategori-modal-buttons {
-  display: flex;
-  gap: 15px;
-  justify-content: flex-end;
-  margin-top: 25px;
-}
-
-.kategori-modal-btn {
-  padding: 10px 20px;
-  border-radius: 8px;
+.kategori-modal input,
+.kategori-modal select {
+  background: #191830;
+  color: #ececec;
   border: none;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.3s ease;
+  border-radius: 10px;
+  padding: 14px 16px;
+  font-size: 15px;
+  margin-bottom: 16px;
+  outline: none;
+  transition: border 0.22s;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.kategori-modal-btn.cancel {
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-body.light .kategori-modal-btn.cancel {
-  background: rgba(0, 0, 0, 0.05);
-  color: #666;
+body.light .kategori-modal input,
+body.light .kategori-modal select {
+  background: #f8f9fa;
+  color: #333;
   border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
+.kategori-modal input:focus,
+.kategori-modal select:focus {
+  border: 1.5px solid #a259c7;
+  background: #232043;
+}
+
+body.light .kategori-modal input:focus,
+body.light .kategori-modal select:focus {
+  border: 1.5px solid #9c27b0;
+  background: #ffffff;
+}
+
+.kategori-modal select option {
+  background: #191830;
+  color: #ececec;
+  padding: 8px;
+}
+
+body.light .kategori-modal select option {
+  background: #ffffff;
+  color: #333;
+  padding: 8px;
+}
+
+.kategori-modal-buttons {
+  display: flex !important;
+  align-items: stretch !important;
+  justify-content: stretch !important;
+  gap: 12px !important;
+  margin-top: 16px !important;
+  margin-bottom: 0 !important;
+}
+
+.kategori-modal-btn {
+  flex: 1 1 auto !important;
+  height: 44px !important;
+  font-size: 16px !important;
+  border-radius: 9px !important;
+  font-weight: bold !important;
+  border: none !important;
+  cursor: pointer !important;
+  transition: background 0.18s !important;
+  text-align: center !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.kategori-modal-btn.cancel {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: #fff !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+body.light .kategori-modal-btn.cancel {
+  background: rgba(0, 0, 0, 0.05) !important;
+  color: #666 !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+}
+
 .kategori-modal-btn.save {
-  background: linear-gradient(145deg, #6a1b9a, #8e24aa);
-  color: #fff;
+  background-color: #a259c7 !important;
+  color: white !important;
 }
 
 .kategori-modal-btn:hover {
@@ -1497,15 +1617,15 @@ body.light .kategori-modal-btn.cancel {
 }
 
 .kategori-modal-btn.cancel:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.15) !important;
 }
 
 body.light .kategori-modal-btn.cancel:hover {
-  background: rgba(0, 0, 0, 0.1);
+  background: rgba(0, 0, 0, 0.1) !important;
 }
 
 .kategori-modal-btn.save:hover {
-  background: linear-gradient(145deg, #8e24aa, #ab47bc);
+  background: #b48aff !important;
 }
 
 /* Kategori Silme Modal */
@@ -1715,5 +1835,39 @@ body.light .kategori-sil-btn.cancel:hover {
   .kategori-sil-btn {
     width: 100%;
     padding: 14px 20px;
+  }
+
+  /* Mobile responsive improvements for category buttons */
+  .kategori-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    min-height: auto;
+  }
+
+  .kategori-info {
+    min-height: auto;
+  }
+
+  .kategori-item {
+    padding: 6px 12px;
+  }
+
+  .kategori-actions {
+    opacity: 1;
+    margin-left: 0;
+    width: 100%;
+    justify-content: flex-end;
+    height: auto;
+  }
+
+  .kategori-btn {
+    padding: 7px 10px;
+    font-size: 10px;
+    min-width: 50px;
+  }
+
+  .kategori-item {
+    padding: 12px;
   }
 }
