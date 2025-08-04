@@ -1,13 +1,16 @@
 import apiService from '../apiService.js'
 
-let islemKayitlari = []
+// Global variables for song management
 let sarkiListesi = []
+let currentPage = 1
+let selectedSongIds = new Set() // Track selected song IDs globally
+
+let islemKayitlari = []
 let duzenlenenIndex = null
 let siralamaArtan = true
 let seciliIndex = null
 let silinecekIndex = null
 let secilenDeezerSarki = null
-let currentPage = 1
 
 // Store dialog elements in variables at the start
 const dialogElements = {
@@ -288,7 +291,9 @@ document.addEventListener('DOMContentLoaded', () => {
       sarkiDiv.innerHTML = `
         <div class="sarki-select">
           <label>
-            <input type="checkbox" class="song-checkbox" data-id="${sarki.id}">
+            <input type="checkbox" class="song-checkbox" data-id="${
+              sarki.id
+            }" ${selectedSongIds.has(sarki.id.toString()) ? 'checked' : ''}>
           </label>
         </div>
         <div class="sarki-bilgi">
@@ -316,6 +321,9 @@ document.addEventListener('DOMContentLoaded', () => {
     })
 
     buildPagination(totalPages)
+
+    // Update batch controls display after rendering
+    updateBatchControlsDisplay()
   }
 
   // ------- Pagination UI Builder -------
@@ -501,6 +509,17 @@ async function indirVeKaydet(url, dosyaAdi) {
   } catch (error) {
     console.error('Dosya indirilirken hata oluştu:', error)
     throw error
+  }
+}
+
+// Function to update batch controls display
+function updateBatchControlsDisplay() {
+  // Check if there are any selected songs globally (not just on current page)
+  if (selectedSongIds.size > 0) {
+    batchControls.classList.add('show')
+    selectedCount.textContent = `${selectedSongIds.size} şarkı seçildi`
+  } else {
+    batchControls.classList.remove('show')
   }
 }
 
@@ -775,7 +794,9 @@ async function guncelleListe(page = 1) {
       sarkiDiv.innerHTML = `
         <div class="sarki-select">
           <label>
-            <input type="checkbox" class="song-checkbox" data-id="${sarki.id}">
+            <input type="checkbox" class="song-checkbox" data-id="${
+              sarki.id
+            }" ${selectedSongIds.has(sarki.id.toString()) ? 'checked' : ''}>
           </label>
         </div>
         <div class="sarki-bilgi">
@@ -804,6 +825,9 @@ async function guncelleListe(page = 1) {
     if (window.applySongFilters) {
       window.applySongFilters()
     }
+
+    // Update batch controls display after rendering
+    updateBatchControlsDisplay()
   } catch (error) {
     console.error('Error updating song list:', error)
     showGuncelleToast('Şarkı listesi güncellenirken hata oluştu')
@@ -1395,10 +1419,17 @@ const confirmDelete = document.getElementById('confirmDelete')
 // Toggle batch controls when checkboxes are clicked
 document.addEventListener('click', (e) => {
   if (e.target.classList.contains('song-checkbox')) {
-    const checkedBoxes = document.querySelectorAll('.song-checkbox:checked')
-    if (checkedBoxes.length > 0) {
+    const songId = e.target.dataset.id
+    if (e.target.checked) {
+      selectedSongIds.add(songId)
+    } else {
+      selectedSongIds.delete(songId)
+    }
+
+    // Update batch controls based on global selection
+    if (selectedSongIds.size > 0) {
       batchControls.classList.add('show')
-      selectedCount.textContent = `${checkedBoxes.length} şarkı seçildi`
+      selectedCount.textContent = `${selectedSongIds.size} şarkı seçildi`
     } else {
       batchControls.classList.remove('show')
     }
@@ -1422,6 +1453,9 @@ btnBatchCancel.addEventListener('click', () => {
   checkboxes.forEach((checkbox) => {
     checkbox.checked = false
   })
+
+  // Clear global selection tracking
+  selectedSongIds.clear()
 
   // Hide batch controls
   batchControls.classList.remove('show')
@@ -1459,6 +1493,10 @@ confirmDelete.addEventListener('click', async () => {
 
     await Promise.all(deletePromises)
     showSuccessToast(`${checkboxes.length} şarkı başarıyla silindi`)
+
+    // Clear global selection tracking after successful deletion
+    selectedSongIds.clear()
+
     await guncelleListe(currentPage)
     batchControls.classList.remove('show')
   } catch (error) {
@@ -1986,6 +2024,9 @@ menuItems.forEach((item) => {
 function clearSongSelections() {
   const checkboxes = document.querySelectorAll('.song-checkbox:checked')
   checkboxes.forEach((checkbox) => (checkbox.checked = false))
+
+  // Clear global selection tracking
+  selectedSongIds.clear()
 
   // Hide batch controls if visible
   const batchControls = document.getElementById('batchControls')
