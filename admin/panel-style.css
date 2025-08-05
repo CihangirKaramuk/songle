@@ -1934,6 +1934,31 @@ body.light .page-btn.active {
   color: #fff;
 }
 
+/* İlk sayfa ve son sayfa butonları için özel stiller */
+.page-btn.first-btn,
+.page-btn.last-btn {
+  font-weight: bold;
+  font-size: 16px;
+  min-width: 35px;
+  background: #4a4a6a;
+}
+
+.page-btn.first-btn:hover,
+.page-btn.last-btn:hover {
+  background: #5a5a7a;
+}
+
+body.light .page-btn.first-btn,
+body.light .page-btn.last-btn {
+  background: #d0d0d0;
+  color: #111;
+}
+
+body.light .page-btn.first-btn:hover,
+body.light .page-btn.last-btn:hover {
+  background: #c0c0c0;
+}
+
 /* Modal overlay */
 .modal-overlay {
   position: fixed;

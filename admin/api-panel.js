@@ -208,6 +208,19 @@ function buildPagination(totalPages) {
   // Get current page from global variables
   const currentPage = GlobalVars.currentPage
 
+  // First page button (<<) - show when not on first page
+  if (currentPage > 1) {
+    const firstBtn = document.createElement('button')
+    firstBtn.textContent = '«'
+    firstBtn.className = 'page-btn first-btn'
+    firstBtn.title = 'İlk sayfa'
+    firstBtn.addEventListener('click', () => {
+      GlobalVars.updateCurrentPage(1)
+      applyFilters()
+    })
+    paginationDiv.appendChild(firstBtn)
+  }
+
   // Previous button
   const prevBtn = document.createElement('button')
   prevBtn.textContent = '‹'
@@ -248,6 +261,19 @@ function buildPagination(totalPages) {
     }
   })
   paginationDiv.appendChild(nextBtn)
+
+  // Last page button (>>) - show when not on last page
+  if (currentPage < totalPages) {
+    const lastBtn = document.createElement('button')
+    lastBtn.textContent = '»'
+    lastBtn.className = 'page-btn last-btn'
+    lastBtn.title = 'Son sayfa'
+    lastBtn.addEventListener('click', () => {
+      GlobalVars.updateCurrentPage(totalPages)
+      applyFilters()
+    })
+    paginationDiv.appendChild(lastBtn)
+  }
 }
 
 // Apply initial filters on page load
