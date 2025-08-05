@@ -16,15 +16,28 @@ const apiService = {
     }
   },
 
-  async getKategoriler(isParent) {
+  async getKategoriler(isParent = null) {
+    let _url = ''
+
+    if (isParent !== null) {
+      _url = `${API_BASE_URL}/kategoriler.php?is_parent=${isParent}`
+    } else {
+      _url = `${API_BASE_URL}/kategoriler.php`
+    }
+
     try {
-      const response = await fetch(
-        `${API_BASE_URL}/kategoriler.php?is_parent=${isParent}`
-      )
+      const response = await fetch(_url)
       if (!response.ok) {
         throw new Error('Failed to fetch categories')
       }
-      return await response.json()
+      const data = await response.json()
+
+      // Backend success response formatını kontrol et
+      if (data.success && data.data) {
+        return data.data
+      } else {
+        return data // Eğer farklı format varsa direkt döndür
+      }
     } catch (error) {
       console.error('Error fetching categories:', error)
       // Fallback to empty array if API fails
@@ -196,6 +209,64 @@ const apiService = {
     } catch (error) {
       console.error('Error logging in:', error)
       throw error // Re-throw to handle in the calling code
+    }
+  },
+
+  // Get user settings
+  async getAyarlar(kullaniciId) {
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/ayarlar.php?kullanici_id=${kullaniciId}`
+      )
+      if (!response.ok) {
+        throw new Error('Failed to fetch settings')
+      }
+      const data = await response.json()
+      if (data.success) {
+        return data.data
+      } else {
+        throw new Error(data.error || 'Failed to fetch settings')
+      }
+    } catch (error) {
+      console.error('Error fetching settings:', error)
+      // Return default settings if API fails
+      return {
+        tema: 'dark',
+        sayfa_boyutu: 20,
+        bildirim_sesi: true,
+      }
+    }
+  },
+
+  // Save user settings
+  async saveAyarlar(kullaniciId, ayarlar) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/ayarlar.php`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          kullanici_id: kullaniciId,
+          tema: ayarlar.tema,
+          sayfa_boyutu: ayarlar.sayfa_boyutu,
+          bildirim_sesi: ayarlar.bildirim_sesi,
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to save settings')
+      }
+
+      const data = await response.json()
+      if (data.success) {
+        return data
+      } else {
+        throw new Error(data.error || 'Failed to save settings')
+      }
+    } catch (error) {
+      console.error('Error saving settings:', error)
+      throw error
     }
   },
 }

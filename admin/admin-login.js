@@ -16,6 +16,17 @@ function girisKontrol() {
     .then((response) => {
       if (response.success && response.is_admin === true) {
         localStorage.setItem('adminGiris', 'ok')
+
+        // Kullanıcı bilgisini session storage'a kaydet
+        sessionStorage.setItem(
+          'userInfo',
+          JSON.stringify({
+            id: response.data.id,
+            kullanici_adi: response.data.kullanici_adi,
+            yetki: response.data.yetki,
+          })
+        )
+
         window.location.href = 'api-panel.html'
       } else {
         document.getElementById('errorMsg').textContent =
