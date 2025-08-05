@@ -228,7 +228,7 @@ const apiService = {
       // Return default settings if API fails
       return {
         tema: 'dark',
-        sayfa_boyutu: 20,
+        sayfa_boyutu: 10,
         bildirim_sesi: true,
       }
     }

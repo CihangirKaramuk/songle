@@ -1,5 +1,6 @@
 import apiService from '../../apiService.js'
 import { showSuccessToast, showModernAlert, getCurrentUserId } from './utils.js'
+import { GlobalVars, updatePageSize } from './global-variables.js'
 
 // Ayarlar sayfası fonksiyonları
 async function loadAyarlar() {
@@ -16,9 +17,20 @@ async function loadAyarlar() {
     const bildirimSelect = document.getElementById('bildirimSesi')
 
     if (temaSelect) temaSelect.value = ayarlar.tema
-    if (sayfaSelect) sayfaSelect.value = ayarlar.sayfa_boyutu
+    if (sayfaSelect)
+      sayfaSelect.value = ayarlar.sayfa_boyutu || GlobalVars.pageSize.toString()
     if (bildirimSelect)
       bildirimSelect.value = ayarlar.bildirim_sesi ? 'true' : 'false'
+
+    // Sayfa boyutu değiştiğinde otomatik güncelleme için event listener ekle
+    if (sayfaSelect) {
+      sayfaSelect.addEventListener('change', (e) => {
+        const newPageSize = parseInt(e.target.value)
+        if (GlobalVars.pageSize !== newPageSize) {
+          updatePageSizeAndRefresh(newPageSize)
+        }
+      })
+    }
 
     // Sistem bilgilerini güncelle
     updateSistemBilgileri()
@@ -30,7 +42,7 @@ async function loadAyarlar() {
     const bildirimSelect = document.getElementById('bildirimSesi')
 
     if (temaSelect) temaSelect.value = 'dark'
-    if (sayfaSelect) sayfaSelect.value = '20'
+    if (sayfaSelect) sayfaSelect.value = GlobalVars.pageSize.toString()
     if (bildirimSelect) bildirimSelect.value = 'true'
   }
 }
@@ -38,7 +50,9 @@ async function loadAyarlar() {
 async function saveAyarlar() {
   try {
     const temaSecimi = document.getElementById('temaSecimi')?.value || 'dark'
-    const sayfaBoyutu = document.getElementById('sayfaBoyutu')?.value || '20'
+    const sayfaBoyutu =
+      document.getElementById('sayfaBoyutu')?.value ||
+      GlobalVars.pageSize.toString()
     const bildirimSesi =
       document.getElementById('bildirimSesi')?.value || 'true'
 
@@ -62,10 +76,9 @@ async function saveAyarlar() {
     }
 
     // Sayfa boyutunu güncelle
-    if (window.currentPageSize !== parseInt(sayfaBoyutu)) {
-      window.currentPageSize = parseInt(sayfaBoyutu)
-      // Şarkı listesini yeniden yükle
-      await guncelleListe(1)
+    const newPageSize = parseInt(sayfaBoyutu)
+    if (GlobalVars.pageSize !== newPageSize) {
+      updatePageSizeAndRefresh(newPageSize)
     }
 
     showSuccessToast('Ayarlar başarıyla kaydedildi!')
@@ -108,4 +121,24 @@ async function updateSistemBilgileri() {
   }
 }
 
-export { loadAyarlar, saveAyarlar, updateSistemBilgileri }
+// Sayfa boyutu değiştiğinde şarkı listesini güncelle
+function updatePageSizeAndRefresh(newPageSize) {
+  updatePageSize(newPageSize)
+
+  // Şarkı listesini yeniden yükle
+  if (typeof guncelleListe === 'function') {
+    guncelleListe(1) // İlk sayfaya dön
+  }
+
+  // Filtreleri uygula
+  if (typeof window.applyFilters === 'function') {
+    window.applyFilters()
+  }
+}
+
+export {
+  loadAyarlar,
+  saveAyarlar,
+  updateSistemBilgileri,
+  updatePageSizeAndRefresh,
+}

@@ -2,6 +2,7 @@
 let sarkiListesi = []
 let currentPage = 1
 let selectedSongIds = new Set() // Track selected song IDs globally
+let pageSize = 10 // Sayfa başına şarkı sayısı (varsayılan 10)
 
 let islemKayitlari = []
 let duzenlenenIndex = null
@@ -52,6 +53,10 @@ export function updateSecilenDeezerSarki(newSarki) {
   secilenDeezerSarki = newSarki
 }
 
+export function updatePageSize(newPageSize) {
+  pageSize = newPageSize
+}
+
 // GlobalVars object to provide access to all global variables
 const GlobalVars = {
   get sarkiListesi() {
@@ -93,11 +98,15 @@ const GlobalVars = {
   get altKategoriler() {
     return altKategoriler
   },
+  get pageSize() {
+    return pageSize
+  },
   updateSarkiListesi,
   updateCurrentPage,
   updateTumKategoriler,
   updateAktifFiltre,
   updateSecilenDeezerSarki,
+  updatePageSize,
 }
 
 export {
@@ -114,5 +123,6 @@ export {
   tumKategoriler,
   aktifFiltre,
   altKategoriler,
+  pageSize,
   GlobalVars,
 }

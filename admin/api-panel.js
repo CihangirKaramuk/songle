@@ -53,6 +53,7 @@ window.updateSubcategoriesForSongAdd =
 window.loadAyarlar = Settings.loadAyarlar
 window.saveAyarlar = Settings.saveAyarlar
 window.updateSistemBilgileri = Settings.updateSistemBilgileri
+window.updatePageSizeAndRefresh = Settings.updatePageSizeAndRefresh
 
 // Initialize dialog elements when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
@@ -127,7 +128,7 @@ function applyFilters() {
   }
   listeDiv.innerHTML = ''
 
-  const ITEMS_PER_PAGE = 10
+  const ITEMS_PER_PAGE = GlobalVars.pageSize
   const totalPages = Math.max(
     1,
     Math.ceil(filteredSongs.length / ITEMS_PER_PAGE)

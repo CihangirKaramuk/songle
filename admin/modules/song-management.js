@@ -8,6 +8,7 @@ import {
   updateSarkiListesi,
   updateCurrentPage,
   GlobalVars,
+  pageSize,
 } from './global-variables.js'
 import {
   formatKategoriForDisplay,
@@ -24,7 +25,7 @@ import { updateSubcategoriesForCategory } from './category-management.js'
 async function guncelleListe(page = 1) {
   try {
     // Calculate starting number for current page
-    const itemsPerPage = 10
+    const itemsPerPage = GlobalVars.pageSize
     const startNumber = (page - 1) * itemsPerPage + 1
 
     const newSarkiListesi = await apiService.getSongs()
