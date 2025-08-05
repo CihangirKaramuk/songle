@@ -8,6 +8,12 @@ body {
   justify-content: center;
   align-items: center;
   height: 100vh;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+body.light {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  color: #1e293b;
 }
 
 .admin-login-container {
@@ -17,6 +23,13 @@ body {
   text-align: center;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
   width: 300px;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+body.light .admin-login-container {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  box-shadow: 0 8px 32px rgba(148, 163, 184, 0.15);
+  border: 1px solid #e2e8f0;
 }
 
 input[type='text'],
@@ -28,6 +41,25 @@ input[type='password'] {
   margin-top: 15px;
   width: 100%;
   box-sizing: border-box;
+  background-color: #1e1e1e;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+body.light input[type='text'],
+body.light input[type='password'] {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  color: #1e293b;
+  border: 1px solid #cbd5e1;
+  box-shadow: 0 2px 4px rgba(148, 163, 184, 0.1);
+}
+
+body.light input[type='text']:focus,
+body.light input[type='password']:focus {
+  outline: none;
+  border: 1.5px solid #8b5cf6;
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+  background: #ffffff;
 }
 
 button {
@@ -40,15 +72,31 @@ button {
   cursor: pointer;
   margin-top: 20px;
   width: 100%;
+  transition: all 0.3s ease;
+}
+
+body.light button {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
 }
 
 button:hover {
   background-color: #a29bfe;
 }
 
+body.light button:hover {
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(139, 92, 246, 0.35);
+}
+
 .error-msg {
   color: #ff4d4d;
   margin-top: 15px;
+}
+
+body.light .error-msg {
+  color: #dc2626;
 }
 
 .password-wrapper {
@@ -74,6 +122,7 @@ button:hover {
   justify-content: center;
   color: #aaa;
   z-index: 2;
+  transition: color 0.3s ease;
 }
 .toggle-password svg {
   width: 100%;
@@ -84,6 +133,14 @@ button:hover {
 /* Mouse üstüne gelince oynamasın, sadece renk koyulaşsın */
 .toggle-password:hover {
   color: #888;
+}
+
+body.light .toggle-password {
+  color: #64748b;
+}
+
+body.light .toggle-password:hover {
+  color: #475569;
 }
 
 @media (max-width: 480px) {

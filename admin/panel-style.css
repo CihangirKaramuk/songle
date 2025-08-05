@@ -10,8 +10,8 @@ body {
 }
 
 body.light {
-  background-color: #f5f5f5;
-  color: #111;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  color: #1e293b;
 }
 
 .sidebar {
@@ -29,9 +29,10 @@ body.light {
 }
 
 body.light .sidebar {
-  background: linear-gradient(145deg, #eeeeee, #ffffff);
-  color: #111;
-  box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(145deg, #ffffff 0%, #f1f5f9 100%);
+  color: #1e293b;
+  box-shadow: 4px 0 20px rgba(148, 163, 184, 0.15);
+  border-right: 1px solid rgba(148, 163, 184, 0.1);
 }
 
 .menu {
@@ -54,8 +55,9 @@ body.light .sidebar {
 }
 
 body.light .menu-item:hover {
-  background-color: #ddd;
-  color: #111;
+  background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+  color: #1e293b;
+  box-shadow: 0 2px 8px rgba(148, 163, 184, 0.2);
 }
 
 .menu-item.active {
@@ -64,8 +66,9 @@ body.light .menu-item:hover {
 }
 
 body.light .menu-item.active {
-  background-color: #9c27b0;
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
   color: #fff;
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
 }
 
 .logo {
@@ -114,9 +117,18 @@ select:focus {
 
 body.light input,
 body.light select {
-  background-color: #fff;
-  color: #111;
-  border: 1px solid #ccc;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  color: #1e293b;
+  border: 1px solid #cbd5e1;
+  box-shadow: 0 2px 4px rgba(148, 163, 184, 0.1);
+}
+
+body.light input:focus,
+body.light select:focus {
+  outline: none;
+  border: 1.5px solid #8b5cf6;
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+  background: #ffffff;
 }
 
 button {
@@ -130,6 +142,18 @@ button {
 button:hover {
   opacity: 0.9;
   transform: scale(1.02);
+}
+
+body.light button {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
+}
+
+body.light button:hover {
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(139, 92, 246, 0.35);
 }
 
 .panel-section {
@@ -170,14 +194,17 @@ button:hover {
 }
 
 body.light #sarkiListesi li {
-  background: #fff;
-  color: #111;
-  border: 1px solid #ddd;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  color: #1e293b;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(148, 163, 184, 0.1);
 }
 
 body.light #sarkiListesi li:hover {
-  background: #f9f9f9;
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(148, 163, 184, 0.15);
+  border-color: #cbd5e1;
 }
 
 .btn-group {
@@ -286,9 +313,10 @@ input:checked + .slider:before {
   gap: 14px;
 }
 body.light .toast-success {
-  background: #fff;
-  color: #6c5ce7;
-  border: 1px solid #6c5ce7;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  color: #0369a1;
+  border: 1px solid #0ea5e9;
+  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.15);
 }
 .toast-success.show {
   right: 36px;
@@ -337,9 +365,10 @@ body.light .toast-success {
   }
 }
 body.light .modal-onay .modal-icerik {
-  background: #fff;
-  color: #6c5ce7;
-  border: 1px solid #6c5ce7;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  color: #1e293b;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 8px 32px rgba(148, 163, 184, 0.15);
 }
 .modal-btnlar {
   display: flex;
@@ -369,9 +398,10 @@ body.light .modal-onay .modal-icerik {
   color: #fff;
 }
 body.light .btn-hayir {
-  background: #ece5fc;
-  color: #6c5ce7;
-  border: 1px solid #6c5ce7;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  color: #475569;
+  border: 1px solid #cbd5e1;
+  box-shadow: 0 2px 4px rgba(148, 163, 184, 0.1);
 }
 .btn-hayir:hover {
   background: #a29bfe;
@@ -399,9 +429,10 @@ body.light .btn-hayir {
   transition: right 0.5s cubic-bezier(0.7, 0, 0.3, 1), opacity 0.22s;
 }
 body.light .toast-delete {
-  background: #fff;
-  color: #d72660;
-  border: 1px solid #d72660;
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  color: #dc2626;
+  border: 1px solid #f87171;
+  box-shadow: 0 4px 12px rgba(248, 113, 113, 0.15);
 }
 .toast-delete.show {
   right: 36px;
@@ -513,12 +544,16 @@ body.light .toast-delete {
 body.light .ayarlar-item,
 body.light .islem-kaydi-panel,
 body.light .islem-kaydi-item {
-  background: #fff;
-  color: #232046;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  color: #1e293b;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(148, 163, 184, 0.1);
 }
 
 body.light .islem-kaydi-item:hover {
-  background: #ece5fc;
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(148, 163, 184, 0.15);
 }
 
 .toplu-sil-btn {
@@ -559,9 +594,10 @@ body.light .islem-kaydi-item:hover {
   transition: right 0.5s cubic-bezier(0.7, 0, 0.3, 1), opacity 0.22s;
 }
 body.light .toast-guncelle {
-  background: #eafff4;
-  color: #21b573;
-  border: 1px solid #21b573;
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  color: #166534;
+  border: 1px solid #22c55e;
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.15);
 }
 .toast-guncelle.show {
   right: 36px;
@@ -647,9 +683,10 @@ body.light #duzenleSanatci,
 body.light #duzenleSarki,
 body.light #duzenleKategori,
 body.light #kategoriFiltre {
-  background-color: #fff !important;
-  color: #111 !important;
-  border: 1px solid #ccc !important;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%) !important;
+  color: #1e293b !important;
+  border: 1px solid #cbd5e1 !important;
+  box-shadow: 0 2px 4px rgba(148, 163, 184, 0.1) !important;
 }
 
 input:focus,
@@ -670,9 +707,10 @@ input[type='file'] {
   padding: 9px 12px;
 }
 body.light input[type='file'] {
-  background: #fff;
-  color: #111;
-  border: 1px solid #ccc;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  color: #1e293b;
+  border: 1px solid #cbd5e1;
+  box-shadow: 0 2px 4px rgba(148, 163, 184, 0.1);
 }
 
 /* Deezer inputu da ekle-formu gibi olsun */
@@ -696,8 +734,10 @@ body.light input[type='file'] {
 }
 body.light .modal-icerik,
 body.light .islem-kaydi-panel {
-  color: #232046 !important;
-  background: #fff !important;
+  color: #1e293b !important;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%) !important;
+  box-shadow: 0 8px 32px rgba(148, 163, 184, 0.15) !important;
+  border: 1px solid #e2e8f0 !important;
 }
 
 /* İşlem kaydı başlığını (üstteki mor kutu) ve panelini eşit genişlikte yap */
@@ -1113,9 +1153,9 @@ body.light .islem-kaydi-panel {
 }
 
 body.light .kategori-form-container {
-  background: linear-gradient(145deg, #ffffff, #f8f9fa);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  box-shadow: 0 8px 32px rgba(148, 163, 184, 0.15);
+  border: 1px solid #e2e8f0;
 }
 
 .kategori-form-container h3 {
@@ -1126,7 +1166,7 @@ body.light .kategori-form-container {
 }
 
 body.light .kategori-form-container h3 {
-  color: #333;
+  color: #1e293b;
 }
 
 .kategori-form {
@@ -1220,9 +1260,9 @@ body.light .form-row select:focus {
 }
 
 body.light .kategoriler-container {
-  background: linear-gradient(145deg, #ffffff, #f8f9fa);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  box-shadow: 0 8px 32px rgba(148, 163, 184, 0.15);
+  border: 1px solid #e2e8f0;
 }
 
 .kategoriler-header {
@@ -1242,7 +1282,7 @@ body.light .kategoriler-container {
 }
 
 body.light .kategoriler-header h3 {
-  color: #333;
+  color: #1e293b;
 }
 
 .kategoriler-filtre {
@@ -1255,7 +1295,8 @@ body.light .kategoriler-header h3 {
 }
 
 body.light .kategoriler-filtre {
-  background: rgba(0, 0, 0, 0.05);
+  background: rgba(148, 163, 184, 0.1);
+  border: 1px solid #e2e8f0;
 }
 
 .filtre-btn {
@@ -1271,7 +1312,7 @@ body.light .kategoriler-filtre {
 }
 
 body.light .filtre-btn {
-  color: #666;
+  color: #475569;
 }
 
 .filtre-btn.active {
@@ -1285,7 +1326,7 @@ body.light .filtre-btn {
 }
 
 body.light .filtre-btn:hover:not(.active) {
-  background: rgba(0, 0, 0, 0.1);
+  background: rgba(148, 163, 184, 0.15);
 }
 
 .kategoriler-grid {
@@ -1306,8 +1347,9 @@ body.light .filtre-btn:hover:not(.active) {
 }
 
 body.light .kategori-item {
-  background: linear-gradient(145deg, #ffffff, #f8f9fa);
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(148, 163, 184, 0.1);
 }
 
 .kategori-item:hover {
@@ -1317,8 +1359,9 @@ body.light .kategori-item {
 }
 
 body.light .kategori-item:hover {
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-  border-color: rgba(156, 39, 176, 0.3);
+  box-shadow: 0 8px 25px rgba(148, 163, 184, 0.15);
+  border-color: #8b5cf6;
+  transform: translateY(-2px);
 }
 
 .kategori-item::before {
@@ -1361,7 +1404,7 @@ body.light .kategori-item:hover {
 }
 
 body.light .kategori-ad {
-  color: #333;
+  color: #1e293b;
 }
 
 .kategori-tip {
@@ -1375,8 +1418,8 @@ body.light .kategori-ad {
 }
 
 body.light .kategori-tip {
-  color: #666;
-  background: rgba(0, 0, 0, 0.05);
+  color: #64748b;
+  background: rgba(148, 163, 184, 0.1);
 }
 
 .kategori-actions {
@@ -1417,10 +1460,10 @@ body.light .kategori-tip {
 }
 
 body.light .kategori-btn {
-  background: linear-gradient(135deg, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.02));
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  color: #555;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  border: 1px solid #cbd5e1;
+  color: #475569;
+  box-shadow: 0 2px 8px rgba(148, 163, 184, 0.1);
 }
 
 .kategori-btn:hover {
@@ -1435,10 +1478,10 @@ body.light .kategori-btn {
 }
 
 body.light .kategori-btn:hover {
-  background: linear-gradient(135deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.05));
-  border-color: rgba(0, 0, 0, 0.25);
+  background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+  border-color: #94a3b8;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(148, 163, 184, 0.15);
 }
 
 .kategori-btn.edit {
@@ -1506,9 +1549,10 @@ body.light .kategori-btn:hover {
 }
 
 body.light .kategori-modal-content {
-  background: #ffffff;
-  color: #333;
-  box-shadow: 0 8px 40px 0 rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  color: #1e293b;
+  box-shadow: 0 8px 40px 0 rgba(148, 163, 184, 0.15);
+  border: 1px solid #e2e8f0;
 }
 
 .kategori-modal h3 {
@@ -1519,7 +1563,7 @@ body.light .kategori-modal-content {
 }
 
 body.light .kategori-modal h3 {
-  color: #333;
+  color: #1e293b;
 }
 
 .kategori-modal .form-row {
@@ -1543,9 +1587,10 @@ body.light .kategori-modal h3 {
 
 body.light .kategori-modal input,
 body.light .kategori-modal select {
-  background: #f8f9fa;
-  color: #333;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  color: #1e293b;
+  border: 1px solid #cbd5e1;
+  box-shadow: 0 2px 4px rgba(148, 163, 184, 0.1);
 }
 
 .kategori-modal input:focus,
@@ -1556,8 +1601,9 @@ body.light .kategori-modal select {
 
 body.light .kategori-modal input:focus,
 body.light .kategori-modal select:focus {
-  border: 1.5px solid #9c27b0;
+  border: 1.5px solid #8b5cf6;
   background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
 }
 
 .kategori-modal select option {
@@ -1568,7 +1614,7 @@ body.light .kategori-modal select:focus {
 
 body.light .kategori-modal select option {
   background: #ffffff;
-  color: #333;
+  color: #1e293b;
   padding: 8px;
 }
 
@@ -1602,9 +1648,10 @@ body.light .kategori-modal select option {
 }
 
 body.light .kategori-modal-btn.cancel {
-  background: rgba(0, 0, 0, 0.05) !important;
-  color: #666 !important;
-  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%) !important;
+  color: #475569 !important;
+  border: 1px solid #cbd5e1 !important;
+  box-shadow: 0 2px 4px rgba(148, 163, 184, 0.1) !important;
 }
 
 .kategori-modal-btn.save {
@@ -1621,7 +1668,9 @@ body.light .kategori-modal-btn.cancel {
 }
 
 body.light .kategori-modal-btn.cancel:hover {
-  background: rgba(0, 0, 0, 0.1) !important;
+  background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(148, 163, 184, 0.15) !important;
 }
 
 .kategori-modal-btn.save:hover {
@@ -1925,13 +1974,16 @@ body.light .kategori-modal-btn.cancel:hover {
 }
 
 body.light .page-btn {
-  background: #e0e0e0;
-  color: #111;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  color: #475569;
+  border: 1px solid #cbd5e1;
+  box-shadow: 0 2px 4px rgba(148, 163, 184, 0.1);
 }
 
 body.light .page-btn.active {
-  background: #9c27b0;
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
   color: #fff;
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
 }
 
 /* İlk sayfa ve son sayfa butonları için özel stiller */
@@ -1950,13 +2002,17 @@ body.light .page-btn.active {
 
 body.light .page-btn.first-btn,
 body.light .page-btn.last-btn {
-  background: #d0d0d0;
-  color: #111;
+  background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+  color: #475569;
+  border: 1px solid #94a3b8;
+  box-shadow: 0 2px 4px rgba(148, 163, 184, 0.1);
 }
 
 body.light .page-btn.first-btn:hover,
 body.light .page-btn.last-btn:hover {
-  background: #c0c0c0;
+  background: linear-gradient(135deg, #cbd5e1 0%, #94a3b8 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(148, 163, 184, 0.15);
 }
 
 /* Modal overlay */
@@ -2401,49 +2457,53 @@ body.light .btn-batch-cancel:hover {
 
 /* Light tema için ayarlar stilleri */
 body.light .ayarlar-secim {
-  background: #f8f9fa;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 16px rgba(148, 163, 184, 0.1);
 }
 
 body.light .ayarlar-secim h3 {
-  color: #333;
-  border-bottom-color: #9c27b0;
+  color: #1e293b;
+  border-bottom-color: #8b5cf6;
 }
 
 body.light .ayarlar-grup label {
-  color: #555;
+  color: #475569;
 }
 
 body.light .ayarlar-grup select {
-  background: #fff;
-  color: #333;
-  border-color: #ddd;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  color: #1e293b;
+  border-color: #cbd5e1;
+  box-shadow: 0 2px 4px rgba(148, 163, 184, 0.1);
 }
 
 body.light .ayarlar-grup select:focus {
-  border-color: #9c27b0;
-  box-shadow: 0 0 0 2px rgba(156, 39, 176, 0.2);
+  border-color: #8b5cf6;
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
 }
 
 body.light .ayarlar-grup select:hover {
-  border-color: #9c27b0;
+  border-color: #8b5cf6;
 }
 
 body.light #ayarlarKaydet {
-  background: linear-gradient(135deg, #9c27b0, #ba68c8);
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
 }
 
 body.light .bilgi-item {
-  background: rgba(0, 0, 0, 0.05);
-  border-color: rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  border-color: #cbd5e1;
+  box-shadow: 0 2px 8px rgba(148, 163, 184, 0.1);
 }
 
 body.light .bilgi-label {
-  color: #555;
+  color: #475569;
 }
 
 body.light .bilgi-deger {
-  color: #9c27b0;
+  color: #8b5cf6;
 }
 
 /* Responsive tasarım */
@@ -2451,5 +2511,414 @@ body.light .bilgi-deger {
   .ayarlar-container {
     grid-template-columns: 1fr;
     gap: 20px;
+  }
+}
+
+/* Şarkı Listesi Light Mode Stilleri */
+body.light .sarki-item {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  color: #1e293b;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(148, 163, 184, 0.1);
+}
+
+body.light .sarki-item:hover {
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(148, 163, 184, 0.15);
+  border-color: #cbd5e1;
+}
+
+body.light .sarki-ad {
+  color: #1e293b;
+}
+
+body.light .sarki-kategori {
+  color: #64748b;
+  background: rgba(148, 163, 184, 0.1);
+}
+
+/* Şarkı Düzenleme Modal Light Mode */
+body.light #sarkiDuzenleModal .modal-icerik {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  color: #1e293b;
+  box-shadow: 0 8px 40px rgba(148, 163, 184, 0.15);
+  border: 1px solid #e2e8f0;
+}
+
+body.light #sarkiDuzenleModal h2 {
+  color: #1e293b;
+}
+
+body.light #sarkiDuzenleModal input,
+body.light #sarkiDuzenleModal select {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  color: #1e293b;
+  border: 1px solid #cbd5e1;
+  box-shadow: 0 2px 4px rgba(148, 163, 184, 0.1);
+}
+
+body.light #sarkiDuzenleModal input:focus,
+body.light #sarkiDuzenleModal select:focus {
+  border: 1.5px solid #8b5cf6;
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+  background: #ffffff;
+}
+
+body.light #sarkiDuzenleModal input::placeholder {
+  color: #94a3b8;
+}
+
+/* Deezer Sonuçları Light Mode */
+body.light #deezerSonuclar li {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  color: #1e293b;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(148, 163, 184, 0.1);
+}
+
+body.light #deezerSonuclar li:hover {
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(148, 163, 184, 0.15);
+}
+
+body.light #deezerSonuclar .sarki-info {
+  color: #1e293b;
+}
+
+body.light #deezerSonuclar .ekle-btn {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.25);
+}
+
+body.light #deezerSonuclar .ekle-btn:hover {
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.35);
+}
+
+/* Form Row Light Mode Düzeltmeleri */
+body.light .form-row input,
+body.light .form-row select {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border: 1px solid #cbd5e1;
+  color: #1e293b;
+  padding: 12px 15px;
+  box-shadow: 0 2px 4px rgba(148, 163, 184, 0.1);
+}
+
+body.light .form-row select option {
+  background: #ffffff;
+  color: #1e293b;
+  padding: 8px;
+}
+
+body.light .form-row input:focus,
+body.light .form-row select:focus {
+  background: #ffffff;
+  border-color: #8b5cf6;
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+  color: #1e293b;
+}
+
+/* Kategori Silme Modal Light Mode */
+body.light .kategori-sil-content {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  color: #1e293b;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 8px 32px rgba(148, 163, 184, 0.15);
+}
+
+body.light .kategori-sil-title {
+  color: #1e293b;
+}
+
+body.light .kategori-sil-message {
+  color: #475569;
+}
+
+body.light .kategori-sil-btn.cancel {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  color: #475569;
+  border: 1px solid #cbd5e1;
+  box-shadow: 0 2px 4px rgba(148, 163, 184, 0.1);
+}
+
+body.light .kategori-sil-btn.cancel:hover {
+  background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(148, 163, 184, 0.15);
+}
+
+body.light .kategori-sil-btn.delete {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+}
+
+body.light .kategori-sil-btn.delete:hover {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(239, 68, 68, 0.35);
+}
+
+/* Modal Overlay Light Mode */
+body.light .modal-overlay {
+  background: rgba(148, 163, 184, 0.3);
+}
+
+body.light .modal-content {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  color: #1e293b;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 8px 32px rgba(148, 163, 184, 0.15);
+}
+
+body.light .modal-content h2 {
+  color: #1e293b;
+}
+
+body.light .modal-content input {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  color: #1e293b;
+  border: 1px solid #cbd5e1;
+  box-shadow: 0 2px 4px rgba(148, 163, 184, 0.1);
+}
+
+body.light .modal-content input:focus {
+  border: 1.5px solid #8b5cf6;
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+  background: #ffffff;
+}
+
+body.light .modal-content button {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
+}
+
+body.light .modal-content button:hover {
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(139, 92, 246, 0.35);
+}
+
+/* Deezer Results List Light Mode */
+body.light #deezerResultsList > div {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  color: #1e293b;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+body.light #deezerResultsList > div:hover {
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+}
+
+body.light #deezerResultsList .ekle-btn {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
+}
+
+body.light #deezerResultsList .ekle-btn:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
+}
+
+/* Batch Controls Light Mode */
+body.light .batch-controls {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.25);
+}
+
+body.light .btn-batch-delete {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  color: #8b5cf6;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(148, 163, 184, 0.1);
+}
+
+body.light .btn-batch-delete:hover {
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(148, 163, 184, 0.15);
+}
+
+body.light .btn-batch-cancel {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+body.light .btn-batch-cancel:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-1px);
+}
+
+/* Song Checkbox Light Mode */
+body.light .song-checkbox {
+  border: 2px solid #8b5cf6;
+  background: rgba(139, 92, 246, 0.1);
+}
+
+body.light .song-checkbox:checked {
+  background: #8b5cf6;
+  border-color: #8b5cf6;
+}
+
+body.light .song-checkbox:hover {
+  border-color: #7c3aed;
+  background: rgba(139, 92, 246, 0.2);
+}
+
+/* Confirm Dialog Light Mode */
+body.light .confirm-dialog {
+  background: rgba(148, 163, 184, 0.3);
+}
+
+body.light .dialog-content {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  color: #1e293b;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 8px 32px rgba(148, 163, 184, 0.15);
+}
+
+body.light .dialog-content h3 {
+  color: #1e293b;
+}
+
+body.light .dialog-content p {
+  color: #475569;
+}
+
+body.light .cancel-btn {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  color: #475569;
+  border: 1px solid #cbd5e1;
+  box-shadow: 0 2px 4px rgba(148, 163, 184, 0.1);
+}
+
+body.light .cancel-btn:hover {
+  background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(148, 163, 184, 0.15);
+}
+
+body.light .delete-btn {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+}
+
+body.light .delete-btn:hover {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(239, 68, 68, 0.35);
+}
+
+/* Popup Menu Light Mode */
+body.light .popup-menu {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 8px 32px rgba(148, 163, 184, 0.15);
+}
+
+body.light .popup-menu button {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.25);
+}
+
+body.light .popup-menu button:hover {
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.35);
+}
+
+/* Toplu Silme Menüsü Light Mode */
+body.light #topluSilMenu {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  color: #1e293b;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 8px 32px rgba(148, 163, 184, 0.15);
+}
+
+body.light .toplu-sil-btn {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  color: #8b5cf6;
+  border: 1px solid #cbd5e1;
+  box-shadow: 0 2px 8px rgba(148, 163, 184, 0.1);
+}
+
+body.light .toplu-sil-btn:hover {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
+}
+
+/* İşlem Kaydı Light Mode */
+body.light .islem-kaydi-ust {
+  color: #1e293b;
+}
+
+body.light #islemTopluSilBtn {
+  color: #ef4444;
+}
+
+body.light #islemTopluSilBtn:hover {
+  background: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
+}
+
+body.light .islem-kaydi-tarih {
+  color: #64748b;
+}
+
+/* Ayarlar Light Mode Ek Düzeltmeler */
+body.light .ayarlar-listesi {
+  color: #1e293b;
+}
+
+body.light .ayarlar-item:hover {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
+}
+
+/* Responsive Light Mode Düzeltmeleri */
+@media (max-width: 768px) {
+  body.light .kategori-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    min-height: auto;
+  }
+
+  body.light .kategori-info {
+    min-height: auto;
+  }
+
+  body.light .kategori-item {
+    padding: 12px;
+  }
+
+  body.light .kategori-actions {
+    opacity: 1;
+    margin-left: 0;
+    width: 100%;
+    justify-content: flex-end;
+    height: auto;
+  }
+
+  body.light .kategori-btn {
+    padding: 7px 10px;
+    font-size: 10px;
+    min-width: 50px;
   }
 }
