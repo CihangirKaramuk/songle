@@ -6,7 +6,14 @@ import { showSuccessToast, showGuncelleToast } from './utils.js'
 
 // Global function for Deezer JSONP callback
 window.deezerJsonpSonuc = function (response) {
-  const sonuclarUl = deezerResultsList
+  const sonuclarUl = document.getElementById('deezerResultsList')
+  const deezerResultsModal = document.getElementById('deezerResultsModal')
+
+  if (!sonuclarUl || !deezerResultsModal) {
+    console.error('Deezer modal elements not found')
+    return
+  }
+
   sonuclarUl.innerHTML = ''
   deezerResultsModal.style.display = 'flex'
 
@@ -77,7 +84,10 @@ window.deezerJsonpSonuc = function (response) {
           showGuncelleToast('Şarkı indirilirken hata oluştu!')
         })
 
-      deezerResultsModal.style.display = 'none'
+      const deezerResultsModal = document.getElementById('deezerResultsModal')
+      if (deezerResultsModal) {
+        deezerResultsModal.style.display = 'none'
+      }
     })
 
     sonuclarUl.appendChild(div)
@@ -86,7 +96,14 @@ window.deezerJsonpSonuc = function (response) {
 
 // Deezer'dan şarkı arama fonksiyonu
 async function deezerAra(sorgu) {
-  const sonuclarUl = deezerResultsList
+  const sonuclarUl = document.getElementById('deezerResultsList')
+  const deezerResultsModal = document.getElementById('deezerResultsModal')
+
+  if (!sonuclarUl || !deezerResultsModal) {
+    console.error('Deezer modal elements not found')
+    return
+  }
+
   sonuclarUl.innerHTML =
     "<div style='padding: 10px; color: #ccc;'>Aranıyor...</div>"
   deezerResultsModal.style.display = 'flex'

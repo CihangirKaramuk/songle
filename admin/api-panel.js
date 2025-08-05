@@ -19,15 +19,6 @@ window.aktifFiltre = GlobalVars.aktifFiltre
 window.secilenDeezerSarki = GlobalVars.secilenDeezerSarki
 window.dialogElements = GlobalVars.dialogElements
 
-// Create local references to global variables for use in this file
-let sarkiListesi = GlobalVars.sarkiListesi
-let currentPage = GlobalVars.currentPage
-let selectedSongIds = GlobalVars.selectedSongIds
-let tumKategoriler = GlobalVars.tumKategoriler
-let aktifFiltre = GlobalVars.aktifFiltre
-let secilenDeezerSarki = GlobalVars.secilenDeezerSarki
-let dialogElements = GlobalVars.dialogElements
-
 // Make utility functions available globally
 window.formatKategoriForDisplay = Utils.formatKategoriForDisplay
 window.showGuncelleToast = Utils.showGuncelleToast
@@ -78,7 +69,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Define applyFilters function globally
 function applyFilters() {
-  console.log('applyFilters called')
   // Expose for other scripts
   window.applySongFilters = applyFilters
   window.applyFilters = applyFilters
@@ -86,10 +76,6 @@ function applyFilters() {
   // Get current values from global variables
   const currentSarkiListesi = GlobalVars.sarkiListesi
   let currentPage = GlobalVars.currentPage
-
-  console.log('Current song list:', currentSarkiListesi)
-  console.log('Current page:', currentPage)
-  console.log('GlobalVars object:', GlobalVars)
 
   const searchInput = document.getElementById('searchInput')
   const filterKategori = document.getElementById('filterKategori')?.value || ''
@@ -492,18 +478,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Handle batch delete
   btnBatchDelete.addEventListener('click', async () => {
-    const checkboxes = document.querySelectorAll('.song-checkbox:checked')
-    if (checkboxes.length === 0) return
+    // Use global selection count instead of current page checkboxes
+    if (GlobalVars.selectedSongIds.size === 0) return
 
     // Show custom confirmation dialog
-    songCount.textContent = checkboxes.length
+    songCount.textContent = GlobalVars.selectedSongIds.size
     confirmDialog.style.display = 'flex'
   })
 
   // Handle batch cancel (vazgeç)
   btnBatchCancel.addEventListener('click', () => {
-    // Uncheck all checkboxes
-    const checkboxes = document.querySelectorAll('.song-checkbox:checked')
+    // Uncheck all checkboxes on all pages
+    const checkboxes = document.querySelectorAll('.song-checkbox')
     checkboxes.forEach((checkbox) => {
       checkbox.checked = false
     })
@@ -517,19 +503,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Confirm delete
   confirmDelete.addEventListener('click', async () => {
-    const checkboxes = document.querySelectorAll('.song-checkbox:checked')
     confirmDialog.style.display = 'none'
 
     try {
       const deletePromises = []
-      checkboxes.forEach((checkbox) => {
-        const songId = checkbox.dataset.id
-        const index = sarkiListesi.findIndex((song) => song.id == songId)
-        // dosyayı sil
-        const dosyaYolu = sarkiListesi[index].dosya
-        const kapakYolu = sarkiListesi[index].kapak
+      // Get current song list from global state
+      const currentSarkiListesi = GlobalVars.sarkiListesi
 
-        showSuccessToast('Şarkı başarıyla silindi')
+      // Use global selection instead of current page checkboxes
+      const selectedSongIds = Array.from(GlobalVars.selectedSongIds)
+      const deletedCount = selectedSongIds.length
+
+      selectedSongIds.forEach((songId) => {
+        const song = currentSarkiListesi.find((song) => song.id == songId)
+
+        if (!song) {
+          console.warn(`Song with ID ${songId} not found in current list`)
+          return
+        }
+
+        // dosyayı sil
+        const dosyaYolu = song.dosya
+        const kapakYolu = song.kapak
 
         // dosyayı sil
         const response = fetch('delete_file.php', {
@@ -546,12 +541,12 @@ document.addEventListener('DOMContentLoaded', () => {
       })
 
       await Promise.all(deletePromises)
-      showSuccessToast(`${checkboxes.length} şarkı başarıyla silindi`)
+      showSuccessToast(`${deletedCount} şarkı başarıyla silindi`)
 
       // Clear global selection tracking after successful deletion
       GlobalVars.selectedSongIds.clear()
 
-      await guncelleListe(currentPage)
+      await guncelleListe(GlobalVars.currentPage)
       batchControls.classList.remove('show')
     } catch (error) {
       console.error('Batch delete error:', error)
@@ -608,11 +603,8 @@ async function checkLogin() {
 // Sayfa yüklendiğinde listeyi güncelle
 document.addEventListener('DOMContentLoaded', async function () {
   await checkLogin()
-  console.log('Loading songs...')
   await guncelleListe()
-  console.log('Songs loaded, loading categories...')
   await getKategoriler()
-  console.log('Categories loaded, calling applyFilters...')
   // Call applyFilters to display the song list
   if (typeof applyFilters === 'function') {
     applyFilters()

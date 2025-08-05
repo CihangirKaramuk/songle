@@ -7,6 +7,7 @@ import {
   tumKategoriler,
   updateSarkiListesi,
   updateCurrentPage,
+  GlobalVars,
 } from './global-variables.js'
 import {
   formatKategoriForDisplay,
@@ -22,13 +23,11 @@ import { updateSubcategoriesForCategory } from './category-management.js'
 // Şarkı listesini güncelle
 async function guncelleListe(page = 1) {
   try {
-    console.log('guncelleListe called with page:', page)
     // Calculate starting number for current page
     const itemsPerPage = 10
     const startNumber = (page - 1) * itemsPerPage + 1
 
     const newSarkiListesi = await apiService.getSongs()
-    console.log('Songs loaded from API:', newSarkiListesi)
     updateSarkiListesi(newSarkiListesi)
     updateCurrentPage(page)
 
@@ -40,7 +39,6 @@ async function guncelleListe(page = 1) {
       window.applyFilters()
     }
   } catch (error) {
-    console.error('Error updating song list:', error)
     showGuncelleToast('Şarkı listesi güncellenirken hata oluştu')
   }
 }
@@ -67,35 +65,48 @@ async function sarkiSil(sarkiId) {
   if (!confirmed) return
 
   try {
-    const index = sarkiListesi.findIndex((song) => song.id == sarkiId)
-    const songId = sarkiListesi[index].id
+    // Get current song list from global state
+    const currentSarkiListesi = GlobalVars.sarkiListesi
+    const song = currentSarkiListesi.find((song) => song.id == sarkiId)
+
+    if (!song) {
+      console.warn(`Song with ID ${sarkiId} not found in current list`)
+      showGuncelleToast('Şarkı bulunamadı')
+      return
+    }
+
     // Burada API'den silme işlemi yapılacak
-    await apiService.deleteSong(songId)
+    await apiService.deleteSong(sarkiId)
+
     // dosyayı sil
-    const dosyaYolu = sarkiListesi[index].dosya
-    const kapakYolu = sarkiListesi[index].kapak
+    const dosyaYolu = song.dosya
+    const kapakYolu = song.kapak
 
     showSuccessToast('Şarkı başarıyla silindi')
 
     // dosyayı sil
-    const response = await fetch('delete_file.php', {
-      method: 'POST',
-      body: JSON.stringify({ filePath: dosyaYolu }),
-    })
+    if (dosyaYolu) {
+      const response = await fetch('delete_file.php', {
+        method: 'POST',
+        body: JSON.stringify({ filePath: dosyaYolu }),
+      })
+    }
 
-    // dosyayı sil
-    const response2 = await fetch('delete_file.php', {
-      method: 'POST',
-      body: JSON.stringify({ filePath: kapakYolu }),
-    })
+    // kapak dosyasını sil
+    if (kapakYolu) {
+      const response2 = await fetch('delete_file.php', {
+        method: 'POST',
+        body: JSON.stringify({ filePath: kapakYolu }),
+      })
+    }
 
     await guncelleListe()
 
     // If last item on page was deleted, go to previous page
     const listeDiv = document.getElementById('liste')
-    if (listeDiv.children.length === 0 && currentPage > 1) {
-      updateCurrentPage(currentPage - 1)
-      await guncelleListe(currentPage - 1)
+    if (listeDiv.children.length === 0 && GlobalVars.currentPage > 1) {
+      GlobalVars.updateCurrentPage(GlobalVars.currentPage - 1)
+      await guncelleListe(GlobalVars.currentPage - 1)
     }
   } catch (error) {
     console.error('Silme hatası:', error)

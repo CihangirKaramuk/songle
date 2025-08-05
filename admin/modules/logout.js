@@ -30,35 +30,12 @@ document.addEventListener('DOMContentLoaded', () => {
       }, 100)
     })
   }
-})
 
-// Simple Logout Confirmation
-document.addEventListener('DOMContentLoaded', function () {
-  const logoutBtn = document.getElementById('logoutBtn')
-  const confirmDialog = document.getElementById('logoutConfirmDialog')
-
-  if (logoutBtn && confirmDialog) {
-    logoutBtn.addEventListener('click', function (e) {
-      e.stopPropagation()
-      confirmDialog.style.display = 'flex'
-    })
-
-    document
-      .getElementById('logoutConfirmBtn')
-      .addEventListener('click', function () {
-        window.location.href = 'login.html'
-      })
-
-    document
-      .getElementById('logoutCancelBtn')
-      .addEventListener('click', function () {
-        confirmDialog.style.display = 'none'
-      })
-
-    // Close dialog when clicking outside
-    confirmDialog.addEventListener('click', function (e) {
-      if (e.target === confirmDialog) {
-        confirmDialog.style.display = 'none'
+  // Close dialog when clicking outside
+  if (logoutConfirmDialog) {
+    logoutConfirmDialog.addEventListener('click', function (e) {
+      if (e.target === logoutConfirmDialog) {
+        logoutConfirmDialog.style.display = 'none'
       }
     })
   }

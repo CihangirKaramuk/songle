@@ -9,6 +9,7 @@ import {
   showCenterAlert,
   showSuccessToast,
   showGuncelleToast,
+  showDeleteToast,
 } from './utils.js'
 
 // Global fonksiyonlar (onclick için)
@@ -83,7 +84,11 @@ window.kategoriSil = async function (kategoriId) {
   const handleConfirm = async () => {
     try {
       await apiService.deleteKategori(kategoriId)
-      tumKategoriler = tumKategoriler.filter((k) => k.id != kategoriId)
+      // Update global tumKategoriler using the update function
+      const updatedKategoriler = tumKategoriler.filter(
+        (k) => k.id != kategoriId
+      )
+      updateTumKategoriler(updatedKategoriler)
       kategorileriGoster()
 
       // Kategori seçim alanlarını güncelle
@@ -93,7 +98,6 @@ window.kategoriSil = async function (kategoriId) {
         'Kategori başarıyla silindi! Ana sayfada otomatik olarak kaldırılacak.'
       )
     } catch (error) {
-      console.error('Error deleting category:', error)
       showGuncelleToast('Kategori silinirken hata oluştu')
     } finally {
       modal.classList.remove('active')
@@ -160,7 +164,6 @@ window.kategoriKaydet = async function (kategoriId) {
       'Kategori başarıyla güncellendi! Ana sayfada otomatik olarak güncellenecek.'
     )
   } catch (error) {
-    console.error('Error updating category:', error)
     showGuncelleToast('Kategori güncellenirken hata oluştu')
   }
 }
@@ -202,7 +205,6 @@ async function getKategoriler() {
     // Kategori seçim alanlarını güncelle
     updateCategorySelects()
   } catch (error) {
-    console.error('Error fetching categories:', error)
     showGuncelleToast('Kategoriler alınamadı')
   }
 }
@@ -301,7 +303,6 @@ async function kategoriEkle() {
       'Kategori başarıyla eklendi! Ana sayfada otomatik olarak görünecek.'
     )
   } catch (error) {
-    console.error('Error adding category:', error)
     showGuncelleToast('Kategori eklenirken hata oluştu')
   }
 }

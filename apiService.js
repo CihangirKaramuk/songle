@@ -10,7 +10,6 @@ const apiService = {
       }
       return await response.json()
     } catch (error) {
-      console.error('Error fetching songs:', error)
       // Fallback to empty array if API fails
       return []
     }
@@ -39,7 +38,6 @@ const apiService = {
         return data // Eğer farklı format varsa direkt döndür
       }
     } catch (error) {
-      console.error('Error fetching categories:', error)
       // Fallback to empty array if API fails
       return []
     }
@@ -61,7 +59,6 @@ const apiService = {
 
       return await response.json()
     } catch (error) {
-      console.error('Error updating song:', error)
       throw error // Re-throw to handle in the calling code
     }
   },
@@ -83,7 +80,6 @@ const apiService = {
 
       return await response.json()
     } catch (error) {
-      console.error('Error adding song:', error)
       throw error // Re-throw to handle in the calling code
     }
   },
