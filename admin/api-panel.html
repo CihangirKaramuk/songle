@@ -6,6 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Songle Admin Panel (API)</title>
     <link rel="stylesheet" href="panel-style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
   </head>
   <body id="panelBody">
     <!-- Tema Değiştirici -->
@@ -243,6 +247,100 @@
                   <span class="bilgi-label">Toplam Kategori:</span>
                   <span class="bilgi-deger" id="toplamKategori">-</span>
                 </div>
+                <div class="bilgi-item">
+                  <span class="bilgi-label">Toplam Kullanıcı:</span>
+                  <span class="bilgi-deger" id="toplamKullanici">-</span>
+                </div>
+                <div class="bilgi-item">
+                  <span class="bilgi-label">Toplam İşlem Kaydı:</span>
+                  <span class="bilgi-deger" id="son7GunIslem">-</span>
+                </div>
+                <div class="bilgi-item">
+                  <span class="bilgi-label">Bugün Yapılan İşlem:</span>
+                  <span class="bilgi-deger" id="bugunIslem">-</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="ayarlar-secim">
+              <h3>İşlem Kayıtları</h3>
+              <div class="islem-kayitlari-container">
+                <div class="islem-kayitlari-header">
+                  <div class="islem-filtreler">
+                    <select id="islemTipiFiltre" class="filtre-select">
+                      <option value="">Tüm İşlemler</option>
+                      <option value="sarki_ekleme">Şarkı Ekleme</option>
+                      <option value="sarki_silme">Şarkı Silme</option>
+                      <option value="sarki_degistirme">Şarkı Değiştirme</option>
+                      <option value="kategori_ekleme">Kategori Ekleme</option>
+                      <option value="kategori_silme">Kategori Silme</option>
+                      <option value="kategori_degistirme">
+                        Kategori Değiştirme
+                      </option>
+                    </select>
+
+                    <button id="islemKayitlariYenile" class="islem-yenile-btn">
+                      <i class="fas fa-sync-alt"></i>
+                      <span>Yenile</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="islem-kayitlari-liste" id="islemKayitlariListe">
+                  <!-- İşlem kayıtları burada listelenecek -->
+                </div>
+
+                <!-- Dinamik Seçim Kontrolü -->
+                <div class="batch-controls" id="islemKayitlariBatchControls">
+                  <div class="selected-count" id="islemKayitlariSelectedCount">
+                    0 işlem kaydı seçildi
+                  </div>
+                  <div class="batch-buttons">
+                    <button
+                      class="btn-batch-delete"
+                      id="islemKayitlariBatchDelete"
+                    >
+                      Seçilenleri Sil
+                    </button>
+                    <button
+                      class="btn-batch-cancel"
+                      id="islemKayitlariBatchCancel"
+                    >
+                      Vazgeç
+                    </button>
+                  </div>
+                </div>
+
+                <div class="islem-kayitlari-pagination">
+                  <div class="pagination-container">
+                    <button
+                      id="oncekiSayfa"
+                      class="pagination-btn prev-btn"
+                      disabled
+                    >
+                      <i class="fas fa-chevron-left"></i>
+                      <span>Önceki</span>
+                    </button>
+
+                    <div class="pagination-info">
+                      <span id="sayfaBilgisi">Sayfa 1 / 1</span>
+                      <div class="pagination-dots">
+                        <span class="dot active"></span>
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                      </div>
+                    </div>
+
+                    <button
+                      id="sonrakiSayfa"
+                      class="pagination-btn next-btn"
+                      disabled
+                    >
+                      <span>Sonraki</span>
+                      <i class="fas fa-chevron-right"></i>
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -276,6 +374,21 @@
         <h2>Arama Sonuçları</h2>
         <div id="deezerResultsList" style="flex: 1; overflow-y: auto"></div>
         <button id="deezerResultsClose" style="margin-top: 15px">Kapat</button>
+      </div>
+    </div>
+
+    <!-- İşlem Kaydı Detay Modal -->
+    <div id="islemKayitDetayModal" class="modal-overlay">
+      <div class="modal-content islem-kayit-detay-modal">
+        <div class="modal-header">
+          <h2>İşlem Kaydı Detayı</h2>
+          <button id="islemKayitDetayKapat" class="modal-close">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body" id="islemKayitDetayIcerik">
+          <!-- İşlem kaydı detayları burada gösterilecek -->
+        </div>
       </div>
     </div>
 
@@ -386,6 +499,41 @@
           <button id="confirmDelete" class="dialog-btn delete-btn">Sil</button>
           <button id="confirmCancel" class="dialog-btn cancel-btn">
             Vazgeç
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- İşlem Kayıtları Silme Onay Modal -->
+    <div id="islemKayitlariSilModal" class="islem-kayitlari-sil-modal">
+      <div class="islem-kayitlari-sil-content">
+        <div class="islem-kayitlari-sil-header">
+          <div class="islem-kayitlari-sil-icon">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
+                fill="#f44336"
+              />
+            </svg>
+          </div>
+          <h3 class="islem-kayitlari-sil-title">İşlem Kayıtlarını Sil</h3>
+        </div>
+        <p class="islem-kayitlari-sil-message" id="islemKayitlariSilMessage">
+          Seçilen <span id="islemKayitlariCount">0</span> işlem kaydını silmek
+          istediğinizden emin misiniz?
+        </p>
+        <div class="islem-kayitlari-sil-buttons">
+          <button
+            class="islem-kayitlari-sil-btn cancel"
+            id="islemKayitlariSilCancel"
+          >
+            İptal
+          </button>
+          <button
+            class="islem-kayitlari-sil-btn delete"
+            id="islemKayitlariSilConfirm"
+          >
+            Sil
           </button>
         </div>
       </div>

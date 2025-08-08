@@ -21,9 +21,33 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   if (logoutConfirmBtn) {
-    logoutConfirmBtn.addEventListener('click', () => {
+    logoutConfirmBtn.addEventListener('click', async () => {
       isLoggingOut = true
       logoutConfirmDialog.style.display = 'none'
+
+      try {
+        // Backend'e logout isteği gönder
+        const response = await fetch(
+          'http://localhost/songle-backend/api/kullanicilar.php',
+          {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        )
+
+        if (response.ok) {
+          console.log('Logout successful')
+        }
+      } catch (error) {
+        console.error('Logout error:', error)
+      }
+
+      // Session storage'ı temizle
+      sessionStorage.removeItem('userInfo')
+      localStorage.removeItem('adminGiris')
+
       // Perform logout after hiding dialog
       setTimeout(() => {
         window.location.href = 'login.html'

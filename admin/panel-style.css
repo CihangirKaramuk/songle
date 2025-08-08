@@ -4,6 +4,65 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+/* Modern Genel Scrollbar Tasarımı - Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #8b5cf6 #2a2a4a;
+}
+
+/* Modern Genel Scrollbar Tasarımı - Webkit (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: linear-gradient(135deg, #2a2a4a 0%, #1e1e3c 100%);
+  border-radius: 12px;
+  border: 1px solid #4a4a6a;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  border-radius: 12px;
+  border: 1px solid #6d28d9;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.5);
+  transform: scale(1.05);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+  transform: scale(0.95);
+}
+
+::-webkit-scrollbar-corner {
+  background: #2a2a4a;
+  border-radius: 12px;
+}
+
+/* Horizontal scrollbar için özel stil */
+::-webkit-scrollbar:horizontal {
+  height: 10px;
+}
+
+::-webkit-scrollbar-thumb:horizontal {
+  background: linear-gradient(90deg, #8b5cf6 0%, #7c3aed 100%);
+  border-radius: 12px;
+  border: 1px solid #6d28d9;
+}
+
+::-webkit-scrollbar-thumb:horizontal:hover {
+  background: linear-gradient(90deg, #a855f7 0%, #9333ea 100%);
+}
+
 body {
   background-color: #121212;
   color: #fff;
@@ -12,6 +71,47 @@ body {
 body.light {
   background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
   color: #1e293b;
+}
+
+/* Light Mode Genel Scrollbar Tasarımı - Firefox */
+body.light * {
+  scrollbar-color: #8b5cf6 #f1f5f9;
+}
+
+/* Light Mode Genel Scrollbar Tasarımı - Webkit */
+body.light ::-webkit-scrollbar-track {
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  border: 1px solid #cbd5e1;
+  box-shadow: inset 0 2px 4px rgba(148, 163, 184, 0.1);
+}
+
+body.light ::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  border: 1px solid #6d28d9;
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.2);
+}
+
+body.light ::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+}
+
+body.light ::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+  box-shadow: inset 0 2px 4px rgba(148, 163, 184, 0.2);
+}
+
+body.light ::-webkit-scrollbar-corner {
+  background: #f1f5f9;
+}
+
+body.light ::-webkit-scrollbar-thumb:horizontal {
+  background: linear-gradient(90deg, #8b5cf6 0%, #7c3aed 100%);
+  border: 1px solid #6d28d9;
+}
+
+body.light ::-webkit-scrollbar-thumb:horizontal:hover {
+  background: linear-gradient(90deg, #a855f7 0%, #9333ea 100%);
 }
 
 .sidebar {
@@ -2187,6 +2287,290 @@ body.light .page-btn.last-btn:hover {
   display: flex;
 }
 
+/* İşlem kayıtları için özel batch controls */
+#islemKayitlariBatchControls {
+  display: none;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 20px !important;
+}
+
+#islemKayitlariBatchControls.show {
+  display: flex !important;
+}
+
+/* İşlem Kayıtları Silme Modal */
+.islem-kayitlari-sil-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(10px);
+}
+
+.islem-kayitlari-sil-modal.active {
+  display: flex;
+  animation: modalFadeIn 0.3s ease;
+}
+
+.islem-kayitlari-sil-content {
+  background: linear-gradient(135deg, #2a2a4a 0%, #1e1e3c 100%);
+  border-radius: 20px;
+  padding: 30px;
+  max-width: 450px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  border: 1px solid #4a4a6a;
+  position: relative;
+  overflow: hidden;
+}
+
+.islem-kayitlari-sil-content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #f44336, #ff5722);
+}
+
+.islem-kayitlari-sil-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.islem-kayitlari-sil-icon {
+  margin-bottom: 15px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.islem-kayitlari-sil-title {
+  color: #fff;
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.islem-kayitlari-sil-message {
+  color: #e0e0e0;
+  font-size: 16px;
+  line-height: 1.5;
+  margin: 20px 0;
+  padding: 0 10px;
+}
+
+.islem-kayitlari-sil-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin-top: 25px;
+}
+
+.islem-kayitlari-sil-btn {
+  padding: 12px 30px;
+  border-radius: 25px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  min-width: 120px;
+}
+
+.islem-kayitlari-sil-btn.cancel {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+}
+
+.islem-kayitlari-sil-btn.cancel:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.islem-kayitlari-sil-btn.delete {
+  background: linear-gradient(135deg, #f44336, #ff5722);
+  color: white;
+  box-shadow: 0 4px 15px rgba(244, 67, 54, 0.4);
+}
+
+.islem-kayitlari-sil-btn.delete:hover {
+  background: linear-gradient(135deg, #d32f2f, #e64a19);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(244, 67, 54, 0.6);
+}
+
+/* Light tema için işlem kayıtları silme modal */
+body.light .islem-kayitlari-sil-content {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  border: 1px solid #cbd5e1;
+}
+
+body.light .islem-kayitlari-sil-title {
+  color: #1e293b;
+}
+
+body.light .islem-kayitlari-sil-message {
+  color: #475569;
+}
+
+body.light .islem-kayitlari-sil-btn.cancel {
+  background: rgba(0, 0, 0, 0.1);
+  color: #333;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+body.light .islem-kayitlari-sil-btn.cancel:hover {
+  background: rgba(0, 0, 0, 0.15);
+  border-color: rgba(0, 0, 0, 0.3);
+}
+
+/* İşlem Kayıtları Yenile Butonu */
+.islem-yenile-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.islem-yenile-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.islem-yenile-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+}
+
+.islem-yenile-btn:hover::before {
+  left: 100%;
+}
+
+.islem-yenile-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+}
+
+.islem-yenile-btn i {
+  font-size: 16px;
+  transition: transform 0.3s ease;
+  display: inline-block;
+}
+
+.islem-yenile-btn.loading i {
+  animation: spin 1s linear infinite !important;
+  transform-origin: center;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.islem-yenile-btn span {
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* Light tema için yenile butonu */
+body.light .islem-yenile-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15);
+}
+
+body.light .islem-yenile-btn:hover {
+  background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.25);
+}
+
+/* Responsive tasarım */
+@media (max-width: 768px) {
+  .islem-kayitlari-sil-content {
+    padding: 25px;
+    margin: 20px;
+  }
+
+  .islem-kayitlari-sil-title {
+    font-size: 20px;
+  }
+
+  .islem-kayitlari-sil-message {
+    font-size: 14px;
+  }
+
+  .islem-kayitlari-sil-buttons {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .islem-kayitlari-sil-btn {
+    width: 100%;
+    padding: 15px 20px;
+  }
+
+  .islem-yenile-btn {
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+
+  .islem-yenile-btn i {
+    font-size: 14px;
+  }
+}
+
 .batch-buttons {
   display: flex;
   gap: 12px;
@@ -2921,4 +3305,743 @@ body.light .ayarlar-item:hover {
     font-size: 10px;
     min-width: 50px;
   }
+}
+
+/* İşlem Kayıtları Stilleri */
+.islem-kayitlari-container {
+  background: linear-gradient(135deg, #1e1e3c 0%, #2a2a4a 100%);
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.islem-kayitlari-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.islem-filtreler {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.filtre-select {
+  background: linear-gradient(135deg, #2a2a4a 0%, #1e1e3c 100%);
+  border: 1px solid #4a4a6a;
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: #fff;
+  font-size: 14px;
+  min-width: 150px;
+  transition: all 0.3s ease;
+}
+
+.filtre-select option {
+  background: #2a2a4a;
+  color: #fff;
+  padding: 8px 12px;
+}
+
+.filtre-select:focus {
+  outline: none;
+  border-color: #8b5cf6;
+  box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.25);
+}
+
+.filtre-select:hover {
+  border-color: #6d28d9;
+}
+
+.islem-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.islem-kayitlari-liste {
+  max-height: 400px;
+  overflow-y: auto;
+  margin-bottom: 20px;
+  scrollbar-width: thin;
+  scrollbar-color: #8b5cf6 #2a2a4a;
+}
+
+/* Modern Scrollbar Tasarımı - Webkit (Chrome, Safari, Edge) */
+.islem-kayitlari-liste::-webkit-scrollbar {
+  width: 8px;
+}
+
+.islem-kayitlari-liste::-webkit-scrollbar-track {
+  background: linear-gradient(135deg, #2a2a4a 0%, #1e1e3c 100%);
+  border-radius: 10px;
+  border: 1px solid #4a4a6a;
+}
+
+.islem-kayitlari-liste::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  border-radius: 10px;
+  border: 1px solid #6d28d9;
+  transition: all 0.3s ease;
+}
+
+.islem-kayitlari-liste::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%);
+  box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+  transform: scale(1.1);
+}
+
+.islem-kayitlari-liste::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.islem-kayitlari-liste::-webkit-scrollbar-corner {
+  background: #2a2a4a;
+}
+
+.islem-kayit-item {
+  background: linear-gradient(135deg, #2a2a4a 0%, #1e1e3c 100%);
+  border: 1px solid #4a4a6a;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.islem-kayit-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(139, 92, 246, 0.2);
+  border-color: #8b5cf6;
+}
+
+.islem-kayit-item.selected {
+  /* Tüm item'ın seçili görünmesini kaldır */
+}
+
+.islem-kayit-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.islem-kayit-tip {
+  font-weight: 600;
+  font-size: 14px;
+  color: #8b5cf6;
+}
+
+.islem-kayit-item.selected .islem-kayit-tip {
+  /* Tip rengini değiştirme */
+}
+
+.islem-kayit-tarih {
+  font-size: 12px;
+  color: #a1a1aa;
+}
+
+.islem-kayit-item.selected .islem-kayit-tarih {
+  /* Tarih rengini değiştirme */
+}
+
+.islem-kayit-detay {
+  font-size: 13px;
+  color: #d1d5db;
+  line-height: 1.4;
+}
+
+.islem-kayit-item.selected .islem-kayit-detay {
+  /* Detay rengini değiştirme */
+}
+
+.islem-kayit-kullanici {
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 5px;
+}
+
+.islem-kayit-item.selected .islem-kayit-kullanici {
+  /* Kullanıcı rengini değiştirme */
+}
+
+/* İşlem Kayıtları Checkbox Tasarımı */
+.islem-kayit-checkbox {
+  position: absolute;
+  top: 45px;
+  right: 10px;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.3s ease;
+  z-index: 20;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: transparent;
+  border: none;
+  outline: none;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.islem-kayit-item:hover .islem-kayit-checkbox {
+  opacity: 1;
+}
+
+.islem-kayit-item.selected .islem-kayit-checkbox {
+  opacity: 1;
+}
+
+/* Checkbox'ın her zaman görünür olması için */
+.islem-kayit-checkbox:checked {
+  opacity: 1;
+}
+
+/* Custom Checkbox Tasarımı */
+.islem-kayit-item {
+  position: relative;
+}
+
+/* Checkbox kutusu görünür hale getir */
+.islem-kayit-item::after {
+  content: '';
+  position: absolute;
+  top: 45px;
+  right: 10px;
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #2a2a4a 0%, #1e1e3c 100%);
+  border: 2px solid #4a4a6a;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 15;
+  pointer-events: none;
+  /* Tam üst üste binmesi için */
+  box-sizing: border-box;
+}
+
+.islem-kayit-item:hover::after {
+  border-color: #8b5cf6;
+  box-shadow: 0 0 10px rgba(139, 92, 246, 0.3);
+}
+
+.islem-kayit-item.checked::after {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  border-color: #8b5cf6;
+  box-shadow: 0 0 15px rgba(139, 92, 246, 0.5);
+}
+
+.islem-kayit-item.checked::before {
+  content: '✓';
+  position: absolute;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  z-index: 16;
+  animation: checkmark 0.3s ease;
+  pointer-events: none;
+  top: 45px;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+}
+
+@keyframes checkmark {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.islem-kayitlari-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 25px;
+  padding: 20px 0;
+}
+
+.pagination-container {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: linear-gradient(145deg, #2a2a4a, #1e1e3c);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 16px 24px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.pagination-container:hover {
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+  transform: translateY(-2px);
+}
+
+.pagination-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(145deg, #3a3a5a, #2a2a4a);
+  color: #d1d5db;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background: linear-gradient(145deg, #4a4a6a, #3a3a5a);
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+}
+
+.pagination-btn:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: linear-gradient(145deg, #2a2a3a, #1e1e2a);
+  color: #666;
+}
+
+.pagination-btn i {
+  font-size: 12px;
+  transition: transform 0.3s ease;
+}
+
+.pagination-btn:hover:not(:disabled) i {
+  transform: scale(1.1);
+}
+
+.pagination-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+#sayfaBilgisi {
+  color: #d1d5db;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  background: linear-gradient(145deg, #3a3a5a, #2a2a4a);
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.pagination-dots {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+}
+
+.dot.active {
+  background: #8b5cf6;
+  box-shadow: 0 0 8px rgba(139, 92, 246, 0.5);
+  transform: scale(1.2);
+}
+
+/* İşlem Kaydı Detay Modal */
+.islem-kayit-detay-modal {
+  width: 600px;
+  max-width: 90vw;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #4a4a6a;
+  margin-bottom: 20px;
+}
+
+.modal-header h2 {
+  margin: 0;
+  color: #fff;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  color: #a1a1aa;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.modal-close:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.modal-body {
+  color: #d1d5db;
+}
+
+.islem-detay-grup {
+  margin-bottom: 20px;
+}
+
+.islem-detay-baslik {
+  font-size: 16px;
+  font-weight: 600;
+  color: #8b5cf6;
+  margin-bottom: 10px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #4a4a6a;
+}
+
+.islem-detay-satir {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(74, 74, 106, 0.3);
+}
+
+.islem-detay-satir:last-child {
+  border-bottom: none;
+}
+
+.islem-detay-label {
+  font-weight: 500;
+  color: #a1a1aa;
+  min-width: 120px;
+}
+
+.islem-detay-deger {
+  color: #fff;
+  text-align: right;
+  flex: 1;
+  margin-left: 15px;
+}
+
+.islem-detay-aciklama {
+  background: linear-gradient(135deg, #2a2a4a 0%, #1e1e3c 100%);
+  border: 1px solid #4a4a6a;
+  border-radius: 8px;
+  padding: 15px;
+  margin-top: 10px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* Light Mode İşlem Kayıtları */
+body.light .islem-kayitlari-container {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  box-shadow: 0 8px 32px rgba(148, 163, 184, 0.15);
+}
+
+body.light .filtre-select {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  border: 1px solid #cbd5e1;
+  color: #1e293b;
+}
+
+body.light .filtre-select option {
+  background: #f8fafc;
+  color: #1e293b;
+  padding: 8px 12px;
+}
+
+body.light .filtre-select:focus {
+  border-color: #8b5cf6;
+  box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.25);
+}
+
+body.light .filtre-select:hover {
+  border-color: #6d28d9;
+}
+
+body.light .islem-kayit-item {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  border: 1px solid #cbd5e1;
+  color: #1e293b;
+}
+
+body.light .islem-kayit-item:hover {
+  box-shadow: 0 8px 25px rgba(139, 92, 246, 0.15);
+  border-color: #8b5cf6;
+}
+
+body.light .islem-kayit-item.selected {
+  /* Tüm item'ın seçili görünmesini kaldır */
+}
+
+/* Light mode checkbox kutusu */
+body.light .islem-kayit-item::after {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  border-color: #cbd5e1;
+}
+
+body.light .islem-kayit-item:hover::after {
+  border-color: #8b5cf6;
+  box-shadow: 0 0 10px rgba(139, 92, 246, 0.2);
+}
+
+body.light .islem-kayit-item.checked::after {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  border-color: #8b5cf6;
+  box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
+}
+
+body.light .islem-kayit-item.checked::before {
+  content: '✓';
+  position: absolute;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  z-index: 16;
+  animation: checkmark 0.3s ease;
+  pointer-events: none;
+  top: 46px;
+  right: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+}
+
+body.light .islem-kayit-tip {
+  color: #8b5cf6;
+}
+
+body.light .islem-kayit-tarih {
+  color: #64748b;
+}
+
+body.light .islem-kayit-detay {
+  color: #475569;
+}
+
+body.light .islem-kayit-kullanici {
+  color: #94a3b8;
+}
+
+body.light .islem-kayit-item.selected .islem-kayit-tip,
+body.light .islem-kayit-item.selected .islem-kayit-tarih,
+body.light .islem-kayit-item.selected .islem-kayit-detay,
+body.light .islem-kayit-item.selected .islem-kayit-kullanici {
+  /* Text renklerini değiştirme */
+}
+
+/* Light Mode Scrollbar Tasarımı */
+body.light .islem-kayitlari-liste {
+  scrollbar-color: #8b5cf6 #f1f5f9;
+}
+
+body.light .islem-kayitlari-liste::-webkit-scrollbar-track {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  border: 1px solid #cbd5e1;
+}
+
+body.light .islem-kayitlari-liste::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  border: 1px solid #6d28d9;
+}
+
+body.light .islem-kayitlari-liste::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%);
+  box-shadow: 0 0 10px rgba(139, 92, 246, 0.3);
+}
+
+body.light .islem-kayitlari-liste::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+body.light .islem-kayitlari-liste::-webkit-scrollbar-corner {
+  background: #f8fafc;
+}
+
+body.light #sayfaBilgisi {
+  color: #475569;
+}
+
+body.light .modal-header {
+  border-bottom: 1px solid #e2e8f0;
+}
+
+body.light .modal-header h2 {
+  color: #1e293b;
+}
+
+body.light .modal-close {
+  color: #64748b;
+}
+
+body.light .modal-close:hover {
+  color: #1e293b;
+  background: rgba(15, 23, 42, 0.1);
+}
+
+body.light .modal-body {
+  color: #475569;
+}
+
+body.light .islem-detay-baslik {
+  color: #8b5cf6;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+body.light .islem-detay-satir {
+  border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+}
+
+body.light .islem-detay-label {
+  color: #64748b;
+}
+
+body.light .islem-detay-deger {
+  color: #1e293b;
+}
+
+body.light .islem-detay-aciklama {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  border: 1px solid #cbd5e1;
+  color: #475569;
+}
+
+/* Responsive İşlem Kayıtları */
+@media (max-width: 768px) {
+  .islem-kayitlari-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .islem-filtreler {
+    justify-content: center;
+  }
+
+  .islem-actions {
+    justify-content: center;
+  }
+
+  .filtre-select {
+    min-width: 120px;
+    font-size: 13px;
+  }
+
+  .islem-kayit-item {
+    padding: 12px;
+  }
+
+  .islem-kayit-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+
+  .islem-kayit-detay-modal {
+    width: 95vw;
+    margin: 10px;
+  }
+
+  .islem-detay-satir {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+
+  .islem-detay-label {
+    min-width: auto;
+  }
+
+  .islem-detay-deger {
+    text-align: left;
+    margin-left: 0;
+  }
+}
+
+/* Light tema için sayfalama stilleri */
+body.light .pagination-container {
+  background: linear-gradient(145deg, #f8fafc, #e2e8f0);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+body.light .pagination-container:hover {
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+body.light .pagination-btn {
+  background: linear-gradient(145deg, #e2e8f0, #cbd5e1);
+  color: #475569;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+body.light .pagination-btn:hover:not(:disabled) {
+  background: linear-gradient(145deg, #cbd5e1, #94a3b8);
+  color: #1e293b;
+}
+
+body.light .pagination-btn:disabled {
+  background: linear-gradient(145deg, #f1f5f9, #e2e8f0);
+  color: #94a3b8;
+}
+
+body.light #sayfaBilgisi {
+  background: linear-gradient(145deg, #e2e8f0, #cbd5e1);
+  color: #475569;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+body.light .dot {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+body.light .dot.active {
+  background: #8b5cf6;
+  box-shadow: 0 0 8px rgba(139, 92, 246, 0.3);
 }

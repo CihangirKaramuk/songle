@@ -6,10 +6,14 @@ const apiService = {
     try {
       const response = await fetch(`${API_BASE_URL}/songs.php`)
       if (!response.ok) {
-        throw new Error('Failed to fetch songs')
+        throw new Error(
+          `Failed to fetch songs: ${response.status} ${response.statusText}`
+        )
       }
+
       return await response.json()
     } catch (error) {
+      console.error('Get songs error:', error)
       // Fallback to empty array if API fails
       return []
     }
@@ -54,11 +58,14 @@ const apiService = {
       })
 
       if (!response.ok) {
-        throw new Error('Failed to update song')
+        throw new Error(
+          `Failed to update song: ${response.status} ${response.statusText}`
+        )
       }
 
       return await response.json()
     } catch (error) {
+      console.error('Update song error:', error)
       throw error // Re-throw to handle in the calling code
     }
   },
@@ -75,11 +82,14 @@ const apiService = {
       })
 
       if (!response.ok) {
-        throw new Error('Failed to add song')
+        throw new Error(
+          `Failed to add song: ${response.status} ${response.statusText}`
+        )
       }
 
       return await response.json()
     } catch (error) {
+      console.error('Add song error:', error)
       throw error // Re-throw to handle in the calling code
     }
   },
@@ -263,6 +273,35 @@ const apiService = {
     } catch (error) {
       console.error('Error saving settings:', error)
       throw error
+    }
+  },
+
+  // Get system information
+  async getSistemBilgileri() {
+    try {
+      const response = await fetch(`${API_BASE_URL}/sistem-bilgileri.php`)
+      if (!response.ok) {
+        throw new Error(
+          `Failed to fetch system info: ${response.status} ${response.statusText}`
+        )
+      }
+
+      const data = await response.json()
+      if (data.success && data.data) {
+        return data.data
+      } else {
+        throw new Error('Invalid system info response format')
+      }
+    } catch (error) {
+      console.error('Get system info error:', error)
+      // Return default values if API fails
+      return {
+        toplam_sarki: 0,
+        toplam_kategori: 0,
+        toplam_kullanici: 0,
+        son_7_gun_islem: 0,
+        bugun_islem: 0,
+      }
     }
   },
 }

@@ -326,6 +326,17 @@ function getCurrentUserId() {
   return 1 // Varsayılan kullanıcı ID
 }
 
+// Kullanıcı adını almak için yardımcı fonksiyon
+function getCurrentUserName() {
+  // Session storage'dan kullanıcı bilgisini al
+  const userInfo = sessionStorage.getItem('userInfo')
+  if (userInfo) {
+    const user = JSON.parse(userInfo)
+    return user.kullanici_adi || 'admin' // Varsayılan olarak admin döndür
+  }
+  return 'admin' // Varsayılan kullanıcı adı
+}
+
 export {
   formatKategoriForDisplay,
   showGuncelleToast,
@@ -334,4 +345,5 @@ export {
   showCenterAlert,
   showModernAlert,
   getCurrentUserId,
+  getCurrentUserName,
 }

@@ -26,6 +26,8 @@ window.showSuccessToast = Utils.showSuccessToast
 window.showDeleteToast = Utils.showDeleteToast
 window.showCenterAlert = Utils.showCenterAlert
 window.showModernAlert = Utils.showModernAlert
+window.getCurrentUserId = Utils.getCurrentUserId
+window.getCurrentUserName = Utils.getCurrentUserName
 
 // Make song management functions available globally
 window.guncelleListe = SongManagement.guncelleListe
@@ -54,6 +56,14 @@ window.loadAyarlar = Settings.loadAyarlar
 window.saveAyarlar = Settings.saveAyarlar
 window.updateSistemBilgileri = Settings.updateSistemBilgileri
 window.updatePageSizeAndRefresh = Settings.updatePageSizeAndRefresh
+
+// Make islem kayitlari functions available globally
+window.loadIslemKayitlari = Settings.loadIslemKayitlari
+window.initIslemKayitlari = Settings.initIslemKayitlari
+window.showIslemKayitDetay = Settings.showIslemKayitDetay
+window.deleteSeciliKayitlar = Settings.deleteSeciliKayitlar
+window.clearIslemKayitlariSelections = Settings.clearIslemKayitlariSelections
+window.testIslemKaydiOlustur = Settings.testIslemKaydiOlustur
 
 // Initialize dialog elements when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
@@ -899,6 +909,11 @@ menuItems2.forEach((item) => {
     // Clear selections when switching sections
     clearSongSelections()
 
+    // İşlem kayıtları seçimlerini de temizle
+    if (typeof clearIslemKayitlariSelections === 'function') {
+      clearIslemKayitlariSelections()
+    }
+
     // Rest of existing click handler...
     document
       .querySelectorAll('.menu-item')
@@ -958,6 +973,8 @@ document.addEventListener('DOMContentLoaded', () => {
     ayarlarMenuItem.addEventListener('click', () => {
       setTimeout(() => {
         loadAyarlar()
+        // İşlem kayıtlarını da başlat
+        initIslemKayitlari()
       }, 100)
     })
   }
