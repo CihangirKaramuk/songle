@@ -146,48 +146,58 @@ let islemKayitlari = []
 let seciliKayitlar = []
 let currentPage = 1
 const itemsPerPage = 10
+let serverSidePagination = true
+let lastTotalPages = 1
+let lastTotalRecords = 0
 
-// İşlem kayıtlarını yükle
+// Basit XSS koruması için HTML kaçış fonksiyonu
+function escapeHtml(value) {
+  if (value === null || value === undefined) return ''
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;')
+}
+
+// İşlem kayıtlarını yükle (server-side pagination destekli)
 async function loadIslemKayitlari() {
   try {
-    // API'den işlem kayıtlarını al
+    // API'den işlem kayıtlarını al (server-side pagination)
     const islemTipiFiltre =
       document.getElementById('islemTipiFiltre')?.value || ''
-
-    // Filtreleme parametrelerini URL'e ekle
     const params = new URLSearchParams()
     if (islemTipiFiltre) params.append('islem_tipi', islemTipiFiltre)
-    // Tüm kayıtları al, sayfalama frontend'de yapılacak
-    params.append('limit', 1000) // Büyük bir sayı ile tüm kayıtları al
+    params.append('sayfa', currentPage.toString())
+    params.append('limit', itemsPerPage.toString())
 
     const response = await fetch(
       `http://localhost/songle-backend/api/islem-kayitlari.php?${params.toString()}`
     )
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
-    }
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
 
     const result = await response.json()
+    if (!result.success) throw new Error(result.error || 'API hatası')
 
-    if (result.success) {
-      islemKayitlari = result.data
-      // Toplam kayıt sayısını global değişkene kaydet (tüm kayıtlar artık frontend'de)
-      window.totalIslemKayitlari = result.data?.length || 0
-      // Sayfalama bilgilerini güncelle
-      updatePagination(window.totalIslemKayitlari)
-    } else {
-      throw new Error(result.error || 'API hatası')
-    }
+    islemKayitlari = result.data || []
+    const totalRecords =
+      result.pagination?.total_records ?? islemKayitlari.length
+    lastTotalRecords = totalRecords
+    lastTotalPages = Math.max(1, Math.ceil(totalRecords / itemsPerPage))
+    updatePagination(totalRecords)
 
-    // Filtreleri uygula ve listeyi güncelle
+    // Listeyi render et
     applyIslemKayitlariFilters()
+    serverSidePagination = true
   } catch (error) {
     console.error('İşlem kayıtları yüklenirken hata:', error)
-    // Hata durumunda örnek veriler göster
+    // Hata durumunda örnek veriler ve local pagination
     islemKayitlari = getSampleIslemKayitlari()
-    window.totalIslemKayitlari = islemKayitlari.length
+    updatePagination(islemKayitlari.length)
     applyIslemKayitlariFilters()
+    serverSidePagination = false
   }
 }
 
@@ -261,10 +271,13 @@ function renderIslemKayitlari(kayitlar) {
   const listeContainer = document.getElementById('islemKayitlariListe')
   if (!listeContainer) return
 
-  // Tüm kayıtlardan mevcut sayfa için olanları al
-  const startIndex = (currentPage - 1) * itemsPerPage
-  const endIndex = startIndex + itemsPerPage
-  const paginatedKayitlar = kayitlar.slice(startIndex, endIndex)
+  // Server-side modda gelen sayfa hazır; local modda slice uygula
+  let paginatedKayitlar = kayitlar
+  if (!serverSidePagination) {
+    const startIndex = (currentPage - 1) * itemsPerPage
+    const endIndex = startIndex + itemsPerPage
+    paginatedKayitlar = kayitlar.slice(startIndex, endIndex)
+  }
 
   listeContainer.innerHTML = paginatedKayitlar
     .map(
@@ -277,18 +290,27 @@ function renderIslemKayitlari(kayitlar) {
       }" ${seciliKayitlar.includes(kayit.id) ? 'checked' : ''}>
       <div class="islem-kayit-header">
         <span class="islem-kayit-tip">${getIslemTipiText(
-          kayit.islem_tipi
+          escapeHtml(kayit.islem_tipi)
         )}</span>
-        <span class="islem-kayit-tarih">${formatTarih(kayit.tarih)}</span>
+        <span class="islem-kayit-tarih">${escapeHtml(
+          formatTarih(kayit.tarih)
+        )}</span>
       </div>
-      <div class="islem-kayit-detay">${kayit.detay}</div>
-      <div class="islem-kayit-kullanici">Kullanıcı: ${kayit.kullanici_adi}</div>
+      <div class="islem-kayit-detay">${escapeHtml(kayit.detay)}</div>
+      <div class="islem-kayit-kullanici">Kullanıcı: ${escapeHtml(
+        kayit.kullanici_adi
+      )}</div>
     </div>
   `
     )
     .join('')
 
-  updatePagination(kayitlar.length) // Tüm kayıtların sayısını kullan
+  // Sayfalama bilgisini güncelle: server-side ise toplam kayıt sayısını, yoksa local uzunluğu kullan
+  if (serverSidePagination) {
+    updatePagination(lastTotalRecords)
+  } else {
+    updatePagination(kayitlar.length)
+  }
   updateSeciliKayitlarButton()
 }
 
@@ -319,6 +341,8 @@ function formatTarih(tarih) {
 // Sayfalama güncelle
 function updatePagination(totalItems) {
   const totalPages = Math.ceil(totalItems / itemsPerPage)
+  lastTotalPages = Math.max(1, totalPages)
+  lastTotalRecords = totalItems
   const sayfaBilgisi = document.getElementById('sayfaBilgisi')
   const oncekiBtn = document.getElementById('oncekiSayfa')
   const sonrakiBtn = document.getElementById('sonrakiSayfa')
@@ -387,27 +411,31 @@ function showIslemKayitDetay(kayitId) {
       <div class="islem-detay-baslik">İşlem Bilgileri</div>
       <div class="islem-detay-satir">
         <span class="islem-detay-label">İşlem Tipi:</span>
-        <span class="islem-detay-deger">${getIslemTipiText(
-          kayit.islem_tipi
+        <span class="islem-detay-deger">${escapeHtml(
+          getIslemTipiText(kayit.islem_tipi)
         )}</span>
       </div>
       <div class="islem-detay-satir">
         <span class="islem-detay-label">Kaynak:</span>
-        <span class="islem-detay-deger">${
+        <span class="islem-detay-deger">${escapeHtml(
           kayit.kaynak === 'deezer'
             ? 'Deezer'
             : kayit.kaynak === 'mp3'
             ? 'MP3 Dosya'
             : 'Manuel'
-        }</span>
+        )}</span>
       </div>
       <div class="islem-detay-satir">
         <span class="islem-detay-label">Kullanıcı:</span>
-        <span class="islem-detay-deger">${kayit.kullanici_adi}</span>
+        <span class="islem-detay-deger">${escapeHtml(
+          kayit.kullanici_adi
+        )}</span>
       </div>
       <div class="islem-detay-satir">
         <span class="islem-detay-label">Tarih:</span>
-        <span class="islem-detay-deger">${formatTarih(kayit.tarih)}</span>
+        <span class="islem-detay-deger">${escapeHtml(
+          formatTarih(kayit.tarih)
+        )}</span>
       </div>
     </div>
     
@@ -418,15 +446,15 @@ function showIslemKayitDetay(kayitId) {
       <div class="islem-detay-baslik">Şarkı Bilgileri</div>
       <div class="islem-detay-satir">
         <span class="islem-detay-label">Şarkı Adı:</span>
-        <span class="islem-detay-deger">${kayit.sarki_adi}</span>
+        <span class="islem-detay-deger">${escapeHtml(kayit.sarki_adi)}</span>
       </div>
       <div class="islem-detay-satir">
         <span class="islem-detay-label">Sanatçı:</span>
-        <span class="islem-detay-deger">${kayit.sanatci}</span>
+        <span class="islem-detay-deger">${escapeHtml(kayit.sanatci)}</span>
       </div>
       <div class="islem-detay-satir">
         <span class="islem-detay-label">Kategori:</span>
-        <span class="islem-detay-deger">${kayit.kategori}</span>
+        <span class="islem-detay-deger">${escapeHtml(kayit.kategori)}</span>
       </div>
     </div>
     `
@@ -440,7 +468,7 @@ function showIslemKayitDetay(kayitId) {
       <div class="islem-detay-baslik">Kategori Bilgileri</div>
       <div class="islem-detay-satir">
         <span class="islem-detay-label">Kategori Adı:</span>
-        <span class="islem-detay-deger">${kayit.kategori_adi}</span>
+        <span class="islem-detay-deger">${escapeHtml(kayit.kategori_adi)}</span>
       </div>
     </div>
     `
@@ -449,7 +477,7 @@ function showIslemKayitDetay(kayitId) {
     
     <div class="islem-detay-grup">
       <div class="islem-detay-baslik">Detay</div>
-      <div class="islem-detay-aciklama">${kayit.detay}</div>
+      <div class="islem-detay-aciklama">${escapeHtml(kayit.detay)}</div>
     </div>
   `
 
@@ -534,6 +562,8 @@ function setupIslemKayitlariEventListeners() {
     })
   }
 
+  // Kaynak filtresi kaldırıldı
+
   // Yenile butonu
   const yenileBtn = document.getElementById('islemKayitlariYenile')
   if (yenileBtn) {
@@ -590,20 +620,19 @@ function setupIslemKayitlariEventListeners() {
     oncekiBtn.addEventListener('click', () => {
       if (currentPage > 1) {
         currentPage--
-        // Sadece render et, API çağrısı yapma
-        applyIslemKayitlariFilters()
+        loadIslemKayitlari()
       }
     })
   }
 
   if (sonrakiBtn) {
     sonrakiBtn.addEventListener('click', () => {
-      // Toplam sayfa sayısını hesapla (tüm kayıtlar artık frontend'de)
-      const totalPages = Math.ceil(islemKayitlari.length / itemsPerPage)
+      const totalPages = serverSidePagination
+        ? lastTotalPages
+        : Math.ceil(islemKayitlari.length / itemsPerPage)
       if (currentPage < totalPages) {
         currentPage++
-        // Sadece render et, API çağrısı yapma
-        applyIslemKayitlariFilters()
+        loadIslemKayitlari()
       }
     })
   }
@@ -778,3 +807,369 @@ export {
   clearIslemKayitlariSelections,
   testIslemKaydiOlustur,
 }
+
+// ------------------- Yetkili Ekle -------------------
+document.addEventListener('DOMContentLoaded', () => {
+  const ekleBtn = document.getElementById('yetkiliEkleBtn')
+  if (!ekleBtn) return
+
+  ekleBtn.addEventListener('click', async () => {
+    const kullaniciAdi = document
+      .getElementById('yetkiliKullaniciAdi')
+      ?.value.trim()
+    const sifre = document.getElementById('yetkiliSifre')?.value || ''
+    const sifreTekrar =
+      document.getElementById('yetkiliSifreTekrar')?.value || ''
+
+    if (!kullaniciAdi || !sifre || !sifreTekrar) {
+      showModernAlert('Lütfen tüm alanları doldurun', 'warning')
+      return
+    }
+    if (sifre.length < 8) {
+      showModernAlert('Şifre en az 8 karakter olmalı', 'warning')
+      return
+    }
+    if (sifre !== sifreTekrar) {
+      showModernAlert('Şifreler uyuşmuyor', 'warning')
+      return
+    }
+
+    try {
+      const resp = await fetch(
+        'http://localhost/songle-backend/api/kullanicilar.php',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            op: 'create',
+            kullanici_adi: kullaniciAdi,
+            sifre,
+            yetki: 1,
+          }),
+        }
+      )
+      const data = await resp.json()
+      if (!resp.ok || !data.success) {
+        throw new Error(data.message || data.error || 'Kullanıcı eklenemedi')
+      }
+      showSuccessToast('Yetkili eklendi')
+      ;(document.getElementById('yetkiliKullaniciAdi').value = ''),
+        (document.getElementById('yetkiliSifre').value = ''),
+        (document.getElementById('yetkiliSifreTekrar').value = '')
+    } catch (e) {
+      console.error(e)
+      showModernAlert('Yetkili eklenemedi: ' + e.message, 'error')
+    }
+  })
+})
+
+// ------------------- Yetkililer Liste / Güncelle / Sil -------------------
+document.addEventListener('DOMContentLoaded', () => {
+  const listeDiv = document.getElementById('kullanicilarListe')
+  const yenileBtn = document.getElementById('kullanicilariYenile')
+  const araInput = document.getElementById('kullaniciAra')
+  if (!listeDiv || !yenileBtn) return
+
+  async function loadUsers(query = '') {
+    const qs = new URLSearchParams()
+    if (query) qs.append('kullanici_adi', query)
+    const resp = await fetch(
+      `http://localhost/songle-backend/api/kullanicilar.php?${qs.toString()}`
+    )
+    const data = await resp.json()
+    if (!resp.ok || !data.success) {
+      throw new Error(data.error || 'Kullanıcılar yüklenemedi')
+    }
+    renderUsers(data.data || [])
+  }
+
+  function renderUsers(users) {
+    listeDiv.innerHTML = users
+      .map((u) => {
+        const id = u.id
+        const uname = escapeHtml(u.kullanici_adi)
+        const yetkiBadge = parseInt(u.yetki) === 1 ? 'Admin' : 'Kullanıcı'
+        return `
+        <div class="kullanici-kart" data-id="${id}">
+          <div class="kart-header">
+            <span class="kullanici-adi" contenteditable="true" data-initial="${uname}">${uname}</span>
+            <span class="rol-badge">${yetkiBadge}</span>
+          </div>
+          <div class="kart-actions">
+            <button class="btn-ghost btn-sifre" data-id="${id}">Şifre Sıfırla</button>
+            <button class="btn-ghost btn-rol" data-id="${id}" data-current="${parseInt(
+          u.yetki
+        )}">Rol Değiştir</button>
+            <button class="btn-ghost btn-sil" data-id="${id}">Sil</button>
+          </div>
+        </div>`
+      })
+      .join('')
+
+    // Inline edit: blur veya Enter ile kaydet
+    listeDiv.querySelectorAll('.kullanici-adi').forEach((el) => {
+      el.addEventListener('keydown', (ev) => {
+        if (ev.key === 'Enter') {
+          ev.preventDefault()
+          el.blur()
+        }
+      })
+      el.addEventListener('blur', async () => {
+        const card = el.closest('.kullanici-kart')
+        const id = parseInt(card.dataset.id)
+        const initial = el.getAttribute('data-initial') || ''
+        const yeniAd = el.textContent.trim()
+        if (!yeniAd || yeniAd === initial) return
+        try {
+          await userUpdate({ id, kullanici_adi: yeniAd })
+          el.setAttribute('data-initial', yeniAd)
+          showSuccessToast('Kullanıcı adı güncellendi')
+        } catch (e) {
+          el.textContent = initial
+          showModernAlert(e.message || 'Güncellenemedi', 'error')
+        }
+      })
+    })
+  }
+
+  yenileBtn.addEventListener('click', async () => {
+    yenileBtn.classList.add('loading')
+    yenileBtn.disabled = true
+    const icon = yenileBtn.querySelector('i')
+    if (icon) icon.classList.add('fa-spin')
+    try {
+      await Promise.all([
+        loadUsers(araInput?.value?.trim() || ''),
+        new Promise((resolve) => setTimeout(resolve, 1000)), // min animasyon süresi
+      ])
+    } catch (e) {
+      showModernAlert(e.message, 'error')
+    } finally {
+      yenileBtn.classList.remove('loading')
+      yenileBtn.disabled = false
+      if (icon) icon.classList.remove('fa-spin')
+    }
+  })
+
+  if (araInput) {
+    let t
+    araInput.addEventListener('input', () => {
+      clearTimeout(t)
+      t = setTimeout(() => loadUsers(araInput.value.trim()), 300)
+    })
+  }
+
+  // Kart actionları
+  document.addEventListener('click', async (e) => {
+    const sifreBtn = e.target.closest('.btn-sifre')
+    const rolBtn = e.target.closest('.btn-rol')
+    const silBtn = e.target.closest('.btn-sil')
+    if (!sifreBtn && !rolBtn && !silBtn) return
+
+    const id = parseInt((sifreBtn || rolBtn || silBtn).dataset.id)
+    if (!id) return
+
+    try {
+      if (sifreBtn) {
+        openPasswordModal(async (newPass) => {
+          await userUpdate({ id, yeni_sifre: newPass })
+          showSuccessToast('Şifre güncellendi')
+          await loadUsers(araInput?.value?.trim() || '')
+        })
+      } else if (rolBtn) {
+        openRoleModal(parseInt(rolBtn.dataset.current), async (newRole) => {
+          await userUpdate({ id, yetki: newRole })
+          showSuccessToast('Rol güncellendi')
+          await loadUsers(araInput?.value?.trim() || '')
+        })
+      } else if (silBtn) {
+        // Kendi hesabını silme koruması (frontend)
+        const currentId = parseInt(getCurrentUserId && getCurrentUserId()) || 0
+        if (id === currentId) {
+          showModernAlert('Kendi hesabınızı silemezsiniz', 'warning')
+          return
+        }
+        // Panel içi onay modalını aç
+        openUserDeleteModal(id)
+      }
+      await loadUsers(araInput?.value?.trim() || '')
+    } catch (err) {
+      console.error(err)
+      showModernAlert(err.message || 'İşlem başarısız', 'error')
+    }
+  })
+
+  async function userUpdate(payload) {
+    const resp = await fetch(
+      'http://localhost/songle-backend/api/kullanicilar.php',
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ op: 'update', ...payload }),
+      }
+    )
+    const data = await resp.json()
+    if (!resp.ok || !data.success) throw new Error(data.message || data.error)
+  }
+
+  async function userDelete(id) {
+    const resp = await fetch(
+      'http://localhost/songle-backend/api/kullanicilar.php',
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ op: 'delete', id }),
+      }
+    )
+    const data = await resp.json()
+    if (!resp.ok || !data.success) throw new Error(data.message || data.error)
+  }
+
+  // İlk yükleme
+  loadUsers().catch((e) => console.error(e))
+})
+
+// Şifre sıfırlama modal helper
+function openPasswordModal(onConfirm) {
+  const modal = document.getElementById('sifreSifirlaModal')
+  const kapat = document.getElementById('sifreSifirlaKapat')
+  const iptal = document.getElementById('sifreIptal')
+  const kaydet = document.getElementById('sifreKaydet')
+  const p1 = document.getElementById('sifreYeni')
+  const p2 = document.getElementById('sifreYeniTekrar')
+  if (!modal || !kapat || !iptal || !kaydet || !p1 || !p2) return
+
+  function close() {
+    modal.style.display = 'none'
+    p1.value = ''
+    p2.value = ''
+  }
+  function confirm() {
+    const pass1 = p1.value
+    const pass2 = p2.value
+    if (!pass1 || !pass2) {
+      showModernAlert('Lütfen tüm alanları doldurun', 'warning')
+      return
+    }
+    if (pass1.length < 8) {
+      showModernAlert('Şifre en az 8 karakter olmalı', 'warning')
+      return
+    }
+    if (pass1 !== pass2) {
+      showModernAlert('Şifreler uyuşmuyor', 'warning')
+      return
+    }
+    onConfirm(pass1)
+    close()
+  }
+  modal.style.display = 'flex'
+  kapat.onclick = close
+  iptal.onclick = close
+  kaydet.onclick = confirm
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) close()
+  })
+}
+
+// Kullanıcı silme onay modal helper
+function openUserDeleteModal(userId) {
+  const modal = document.getElementById('kullaniciSilModal')
+  const cancelBtn = document.getElementById('kullaniciSilCancel')
+  const confirmBtn = document.getElementById('kullaniciSilConfirm')
+  const nameEl = document.getElementById('kullaniciSilAdi')
+  // Karttan kullanıcı adını çek
+  const card = document.querySelector(`.kullanici-kart[data-id="${userId}"]`)
+  const uname = card?.querySelector('.kullanici-adi')?.textContent?.trim() || ''
+  if (nameEl) nameEl.textContent = uname
+  if (!modal || !cancelBtn || !confirmBtn) return
+  function close() {
+    modal.style.display = 'none'
+    confirmBtn.onclick = null
+    cancelBtn.onclick = null
+  }
+  cancelBtn.onclick = close
+  confirmBtn.onclick = async () => {
+    try {
+      await apiUserDelete(userId)
+      showSuccessToast('Kullanıcı silindi')
+      // Listeyi tazele
+      const search =
+        document.getElementById('kullaniciAra')?.value?.trim() || ''
+      const yenileBtn = document.getElementById('kullanicilariYenile')
+      if (yenileBtn) yenileBtn.click()
+    } catch (e) {
+      showModernAlert(e.message || 'Silinemedi', 'error')
+    } finally {
+      close()
+    }
+  }
+  modal.onclick = (e) => {
+    if (e.target === modal) close()
+  }
+  modal.style.display = 'flex'
+}
+
+// API kullanıcı sil helper (global)
+async function apiUserDelete(id) {
+  const resp = await fetch(
+    'http://localhost/songle-backend/api/kullanicilar.php',
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ op: 'delete', id }),
+    }
+  )
+  const data = await resp.json()
+  if (!resp.ok || !data.success) throw new Error(data.message || data.error)
+}
+
+// Rol değiştir modal helper
+function openRoleModal(current, onConfirm) {
+  const modal = document.getElementById('rolDegistirModal')
+  const kapat = document.getElementById('rolModalKapat')
+  const iptal = document.getElementById('rolIptal')
+  const kaydet = document.getElementById('rolKaydet')
+  const select = document.getElementById('rolSelect')
+  if (!modal || !kapat || !iptal || !kaydet || !select) return
+  select.value = String(current === 1 ? 1 : 0)
+  function close() {
+    modal.style.display = 'none'
+  }
+  function confirm() {
+    const val = parseInt(select.value)
+    onConfirm(val)
+    close()
+  }
+  modal.style.display = 'flex'
+  kapat.onclick = close
+  iptal.onclick = close
+  kaydet.onclick = confirm
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) close()
+  })
+}
+
+// Göz ikonları (create & reset modallarında)
+document.addEventListener('DOMContentLoaded', () => {
+  const pairs = [
+    ['toggleEyeCreate1', 'yetkiliSifre'],
+    ['toggleEyeCreate2', 'yetkiliSifreTekrar'],
+    ['toggleEyeReset1', 'sifreYeni'],
+    ['toggleEyeReset2', 'sifreYeniTekrar'],
+  ]
+  pairs.forEach(([btnId, inputId]) => {
+    const btn = document.getElementById(btnId)
+    const inp = document.getElementById(inputId)
+    if (!btn || !inp) return
+    btn.addEventListener('click', () => {
+      const isPass = inp.type === 'password'
+      inp.type = isPass ? 'text' : 'password'
+      const icon = btn.querySelector('i')
+      if (icon) {
+        icon.className = isPass
+          ? 'fa-regular fa-eye-slash'
+          : 'fa-regular fa-eye'
+      }
+    })
+  })
+})

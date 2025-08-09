@@ -201,6 +201,65 @@ button {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
+/* Login tarzı şifre alanı wrap */
+.password-wrapper {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+.password-wrapper input[type='password'],
+.password-wrapper input[type='text'] {
+  padding-right: 40px;
+}
+.ayarlar-form .password-wrapper {
+  display: block;
+  position: relative;
+}
+.ayarlar-form .password-wrapper input {
+  width: 100%;
+  padding-right: 76px; /* göz ikonunu ortaya doğru kaydırınca metin üstüne binmesin */
+}
+.ayarlar-form .password-wrapper .toggle-password {
+  right: 40px; /* sola doğru belirgin kaydırma */
+  top: 40%; /* biraz yukarı al */
+  transform: translateY(-50%);
+  margin: 0;
+}
+.toggle-password {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #cbd5e1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  z-index: 2;
+}
+.toggle-password:hover {
+  color: #fff;
+}
+
+body.light .toggle-password {
+  color: #475569;
+}
+body.light .toggle-password:hover {
+  color: #0f172a;
+}
+
+/* Modal (Şifre Sıfırla) göz ikonları ve padding ayarı */
+#sifreSifirlaModal .password-wrapper input[type='password'],
+#sifreSifirlaModal .password-wrapper input[type='text'] {
+  padding-right: 76px;
+}
+#sifreSifirlaModal .password-wrapper .toggle-password {
+  right: 8px; /* hafif sağ */
+  top: 35%; /* hafif yukarı */
+}
+
 input,
 select {
   background-color: #1e1e1e;
@@ -1893,17 +1952,17 @@ body.light .kategori-modal-btn.cancel:hover {
 
 .ayarlar-secim h3 {
   color: #fff;
-  margin-bottom: 20px;
+  margin-bottom: 14px;
   font-size: 18px;
   font-weight: 600;
   border-bottom: 2px solid #6c5ce7;
-  padding-bottom: 10px;
+  padding-bottom: 8px;
 }
 
 .ayarlar-form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 10px; /* küçük boşaltma: uyarı yazısı kalktığı için alanı sıkılaştır */
 }
 
 /* Responsive Tasarım */
@@ -3308,6 +3367,113 @@ body.light .ayarlar-item:hover {
 }
 
 /* İşlem Kayıtları Stilleri */
+/* Yetkililer listesi */
+.kullanicilar-liste {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+  padding-right: 4px; /* Scrollbar için hafif boşluk */
+}
+.kullanici-kart {
+  background: linear-gradient(135deg, #2a2a4a 0%, #1e1e3c 100%);
+  border: 1px solid #4a4a6a;
+  border-radius: 10px;
+  padding: 14px;
+  color: #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.kullanici-kart:hover {
+  transform: translateY(-2px);
+  border-color: #8b5cf6;
+  box-shadow: 0 8px 20px rgba(139, 92, 246, 0.2);
+}
+.kullanici-kart .kart-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.kullanici-kart .kullanici-adi {
+  font-weight: 600;
+  color: #fff;
+}
+.kullanici-kart .rol-badge {
+  font-size: 12px;
+  background: rgba(139, 92, 246, 0.15);
+  color: #c4b5fd;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(139, 92, 246, 0.35);
+}
+.kullanici-kart .kart-actions {
+  display: flex;
+  gap: 8px;
+}
+.btn-ghost {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #e5e7eb;
+}
+.btn-ghost:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+body.light .kullanici-kart {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  border: 1px solid #cbd5e1;
+  color: #1e293b;
+}
+body.light .kullanici-kart .kullanici-adi {
+  color: #0f172a;
+}
+body.light .kullanici-kart .rol-badge {
+  background: rgba(139, 92, 246, 0.1);
+  color: #6d28d9;
+  border-color: rgba(139, 92, 246, 0.25);
+}
+
+/* Kapsayıcı sabit yükseklikte, liste scroll yapsın */
+.kullanicilar-container {
+  display: flex;
+  flex-direction: column;
+  height: auto; /* kapsayıcı serbest */
+  overflow: visible; /* scroll listeye */
+}
+.kullanicilar-container .kullanicilar-liste {
+  flex: 1;
+  max-height: 160px; /* ilk kullanıcıdan sonra scroll başlasın */
+  overflow-y: auto;
+}
+
+/* Yetkililer listesi - scrollbar stili (karanlık tema) */
+.kullanicilar-liste::-webkit-scrollbar {
+  width: 8px;
+}
+.kullanicilar-liste::-webkit-scrollbar-track {
+  background: linear-gradient(135deg, #2a2a4a 0%, #1e1e3c 100%);
+  border-radius: 10px;
+  border: 1px solid #4a4a6a;
+}
+.kullanicilar-liste::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  border-radius: 10px;
+  border: 1px solid #6d28d9;
+}
+.kullanicilar-liste::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%);
+}
+
+/* Yetkililer listesi - scrollbar stili (açık tema) */
+body.light .kullanicilar-liste::-webkit-scrollbar-track {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  border: 1px solid #cbd5e1;
+}
+body.light .kullanicilar-liste::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  border: 1px solid #6d28d9;
+}
 .islem-kayitlari-container {
   background: linear-gradient(135deg, #1e1e3c 0%, #2a2a4a 100%);
   border-radius: 12px;

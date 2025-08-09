@@ -1,56 +1,74 @@
 <?php
 header('Content-Type: application/json');
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: POST, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type');
 
-// Hata raporlamayı aç
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+  http_response_code(204);
+  exit;
+}
 
-// CORS başlıklarını ayarla
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: POST");
-header("Access-Control-Allow-Headers: Content-Type");
+$maxFileSizeBytes = 5 * 1024 * 1024; // 5MB
+$allowedExt = ['jpg', 'jpeg', 'png', 'webp'];
+$allowedMime = ['image/jpeg', 'image/png', 'image/webp'];
 
-// FormData'dan gelen verileri al
 $song_id = $_POST['song_id'] ?? null;
 $file = $_FILES['file'] ?? null;
 
 if (!$song_id || !$file) {
-    http_response_code(400);
-    echo json_encode(['error' => 'Eksik parametreler']);
-    exit;
+  http_response_code(400);
+  echo json_encode(['error' => 'Eksik parametreler']);
+  exit;
 }
 
-// Hedef klasör yolu (bir üst dizindeki kapaklar klasörü)
+if ($file['error'] !== UPLOAD_ERR_OK) {
+  http_response_code(400);
+  echo json_encode(['error' => 'Yükleme hatası: ' . $file['error']]);
+  exit;
+}
+
+if ($file['size'] > $maxFileSizeBytes) {
+  http_response_code(400);
+  echo json_encode(['error' => 'Dosya çok büyük (5MB sınır)']);
+  exit;
+}
+
 $targetDir = dirname(__DIR__) . '/kapaklar/';
-
-// Klasör yoksa oluştur
 if (!file_exists($targetDir)) {
-    if (!mkdir($targetDir, 0777, true)) {
-        http_response_code(500);
-        echo json_encode(['error' => 'Klasör oluşturulamadı']);
-        exit;
-    }
+  if (!mkdir($targetDir, 0755, true)) {
+    http_response_code(500);
+    echo json_encode(['error' => 'Klasör oluşturulamadı']);
+    exit;
+  }
 }
 
-// Dosya uzantısını al
-$fileExt = pathinfo($file['name'], PATHINFO_EXTENSION);
-$fileName = 'song_' . $song_id . '.' . $fileExt;
+$ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+if (!in_array($ext, $allowedExt, true)) {
+  http_response_code(400);
+  echo json_encode(['error' => 'Geçersiz dosya uzantısı']);
+  exit;
+}
+
+$finfo = new finfo(FILEINFO_MIME_TYPE);
+$mime = $finfo->file($file['tmp_name']);
+if (!in_array($mime, $allowedMime, true)) {
+  http_response_code(400);
+  echo json_encode(['error' => 'Geçersiz dosya tipi']);
+  exit;
+}
+
+$fileName = 'song_' . preg_replace('/[^0-9]/', '', (string)$song_id) . '.' . $ext;
 $targetFile = $targetDir . $fileName;
 
-// Dosyayı kaydet
 if (!move_uploaded_file($file['tmp_name'], $targetFile)) {
-    http_response_code(500);
-    echo json_encode(['error' => 'Dosya kaydedilemedi']);
-    exit;
+  http_response_code(500);
+  echo json_encode(['error' => 'Dosya kaydedilemedi']);
+  exit;
 }
 
-// Başarılı yanıt döndür
 echo json_encode([
-    'id' => $song_id,
-    'kategori' => '', // Bu bilgiyi veritabanından alabilirsiniz
-    'cevap' => '', // Bu bilgiyi veritabanından alabilirsiniz
-    'sarki' => '', // Bu bilgiyi veritabanından alabilirsiniz
-    'dosya' => '', // Bu bilgiyi veritabanından alabilirsiniz
-    'kapak' => 'kapaklar/' . $fileName,
-    'created_at' => date('Y-m-d H:i:s')
+  'id' => (int)$song_id,
+  'kapak' => 'kapaklar/' . $fileName,
+  'created_at' => date('Y-m-d H:i:s')
 ]);

@@ -343,6 +343,87 @@
                 </div>
               </div>
             </div>
+
+            <div class="ayarlar-secim">
+              <h3>Yetkili Yönetimi</h3>
+              <div class="ayarlar-form" style="margin-bottom: 16px">
+                <h4 style="margin: 0 0 8px 0; font-size: 15px; opacity: 0.9">
+                  Yetkili Ekle
+                </h4>
+                <div class="ayarlar-grup">
+                  <label for="yetkiliKullaniciAdi">Kullanıcı Adı:</label>
+                  <input
+                    type="text"
+                    id="yetkiliKullaniciAdi"
+                    placeholder="Örn: admin2"
+                  />
+                </div>
+                <div class="ayarlar-grup">
+                  <label for="yetkiliSifre">Şifre:</label>
+                  <div class="password-wrapper">
+                    <input
+                      type="password"
+                      id="yetkiliSifre"
+                      placeholder="En az 8 karakter"
+                    />
+                    <span
+                      id="toggleEyeCreate1"
+                      class="toggle-password"
+                      aria-label="Göster/Gizle"
+                    >
+                      <i class="fa-regular fa-eye"></i>
+                    </span>
+                  </div>
+                </div>
+                <div class="ayarlar-grup">
+                  <label for="yetkiliSifreTekrar">Şifre (Tekrar):</label>
+                  <div class="password-wrapper">
+                    <input
+                      type="password"
+                      id="yetkiliSifreTekrar"
+                      placeholder="Şifreyi tekrar girin"
+                    />
+                    <span
+                      id="toggleEyeCreate2"
+                      class="toggle-password"
+                      aria-label="Göster/Gizle"
+                    >
+                      <i class="fa-regular fa-eye"></i>
+                    </span>
+                  </div>
+                </div>
+                <button id="yetkiliEkleBtn" class="btn-primary">
+                  Yetkiliyi Ekle
+                </button>
+              </div>
+
+              <div
+                class="kullanicilar-container"
+                id="kullanicilarContainer"
+                style="margin-top: 10px"
+              >
+                <div
+                  style="
+                    display: flex;
+                    gap: 10px;
+                    flex-wrap: wrap;
+                    margin-bottom: 10px;
+                  "
+                >
+                  <input
+                    type="text"
+                    id="kullaniciAra"
+                    placeholder="Kullanıcı ara..."
+                    style="flex: 1; min-width: 200px"
+                  />
+                  <button id="kullanicilariYenile" class="islem-yenile-btn">
+                    <i class="fas fa-sync-alt"></i>
+                    <span>Yenile</span>
+                  </button>
+                </div>
+                <div id="kullanicilarListe" class="kullanicilar-liste"></div>
+              </div>
+            </div>
           </div>
         </section>
       </div>
@@ -405,6 +486,143 @@
         </div>
         <div class="modal-body" id="islemKayitDetayIcerik">
           <!-- İşlem kaydı detayları burada gösterilecek -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Şifre Sıfırla Modal -->
+    <div id="sifreSifirlaModal" class="modal-overlay" style="display: none">
+      <div class="modal-content" style="max-width: 420px">
+        <div class="modal-header">
+          <h2>Şifre Sıfırla</h2>
+          <button id="sifreSifirlaKapat" class="modal-close" aria-label="Kapat">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+            >
+              <path
+                d="M6 6l12 12M18 6L6 18"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="password-wrapper">
+            <input
+              type="password"
+              id="sifreYeni"
+              placeholder="Yeni şifre (min 8)"
+            />
+            <span
+              id="toggleEyeReset1"
+              class="toggle-password"
+              aria-label="Göster/Gizle"
+            >
+              <i class="fa-regular fa-eye"></i>
+            </span>
+          </div>
+          <div class="password-wrapper" style="margin-top: 8px">
+            <input
+              type="password"
+              id="sifreYeniTekrar"
+              placeholder="Yeni şifre (tekrar)"
+            />
+            <span
+              id="toggleEyeReset2"
+              class="toggle-password"
+              aria-label="Göster/Gizle"
+            >
+              <i class="fa-regular fa-eye"></i>
+            </span>
+          </div>
+          <div
+            style="
+              display: flex;
+              gap: 10px;
+              justify-content: flex-end;
+              margin-top: 10px;
+            "
+          >
+            <button id="sifreIptal" class="btn-ghost">İptal</button>
+            <button id="sifreKaydet" class="btn-primary">Kaydet</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rol Değiştir Modal -->
+    <div id="rolDegistirModal" class="modal-overlay" style="display: none">
+      <div class="modal-content" style="max-width: 380px">
+        <div class="modal-header">
+          <h2>Rol Değiştir</h2>
+          <button id="rolModalKapat" class="modal-close" aria-label="Kapat">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+            >
+              <path
+                d="M6 6l12 12M18 6L6 18"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <select id="rolSelect" class="filtre-select" style="min-width: 200px">
+            <option value="1">Admin</option>
+            <option value="0">Kullanıcı</option>
+          </select>
+          <div
+            style="
+              display: flex;
+              gap: 10px;
+              justify-content: flex-end;
+              margin-top: 12px;
+            "
+          >
+            <button id="rolIptal" class="btn-ghost">İptal</button>
+            <button id="rolKaydet" class="btn-primary">Kaydet</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Kullanıcı Silme Onay Modal -->
+    <div id="kullaniciSilModal" class="kategori-sil-modal">
+      <div class="kategori-sil-content">
+        <div class="kategori-sil-header">
+          <div class="kategori-sil-icon">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
+                fill="#f44336"
+              />
+            </svg>
+          </div>
+          <h3 class="kategori-sil-title">Kullanıcıyı Sil</h3>
+        </div>
+        <p class="kategori-sil-message" id="kullaniciSilMessage">
+          <strong id="kullaniciSilAdi">-</strong> kullanıcısını silmek
+          istediğinize emin misiniz?
+        </p>
+        <div class="kategori-sil-buttons">
+          <button class="kategori-sil-btn cancel" id="kullaniciSilCancel">
+            İptal
+          </button>
+          <button class="kategori-sil-btn delete" id="kullaniciSilConfirm">
+            Sil
+          </button>
         </div>
       </div>
     </div>
