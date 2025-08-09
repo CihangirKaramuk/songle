@@ -4,7 +4,7 @@
     <link rel="icon" type="image/svg+xml" href="../favicon.svg" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Songle Admin Panel (API)</title>
+    <title>Songle Admin Panel</title>
     <link rel="stylesheet" href="panel-style.css" />
     <link
       rel="stylesheet"
@@ -382,8 +382,25 @@
       <div class="modal-content islem-kayit-detay-modal">
         <div class="modal-header">
           <h2>İşlem Kaydı Detayı</h2>
-          <button id="islemKayitDetayKapat" class="modal-close">
-            <i class="fas fa-times"></i>
+          <button
+            id="islemKayitDetayKapat"
+            class="modal-close"
+            aria-label="Kapat"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+            >
+              <path
+                d="M6 6l12 12M18 6L6 18"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
           </button>
         </div>
         <div class="modal-body" id="islemKayitDetayIcerik">
