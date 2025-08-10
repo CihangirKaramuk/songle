@@ -196,7 +196,7 @@ button {
   border-radius: 8px;
   border: none;
   width: 100%;
-  max-width: 400px;
+  max-width: 100%;
   transition: all 0.3s ease;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
@@ -215,12 +215,20 @@ button {
   display: block;
   position: relative;
 }
+
+:scope {
+  --toggle-password-width: 28px;
+  --toggle-password-height: 28px;
+}
+
 .ayarlar-form .password-wrapper input {
   width: 100%;
-  padding-right: 76px; /* göz ikonunu ortaya doğru kaydırınca metin üstüne binmesin */
+  padding-right: calc(
+    var(--toggle-password-width) * 2
+  ); /* göz ikonunu ortaya doğru kaydırınca metin üstüne binmesin */
 }
 .ayarlar-form .password-wrapper .toggle-password {
-  right: 40px; /* sola doğru belirgin kaydırma */
+  right: 8px; /* sola doğru belirgin kaydırma */
   top: 40%; /* biraz yukarı al */
   transform: translateY(-50%);
   margin: 0;
@@ -235,8 +243,8 @@ button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  width: var(--toggle-password-width);
+  height: var(--toggle-password-height);
   z-index: 2;
 }
 .toggle-password:hover {
@@ -804,7 +812,7 @@ body.light .toast-guncelle {
   flex-direction: column;
   align-items: flex-start;
   gap: 0px;
-  max-width: 400px;
+  max-width: 100%;
 }
 
 /* Tüm input, select ve butonları eşitle */
@@ -821,7 +829,7 @@ button,
 #duzenleKategori,
 #kategoriFiltre {
   width: 100%;
-  max-width: 400px;
+  max-width: 100%;
   min-width: 0;
   box-sizing: border-box;
   padding: 12px 15px;
@@ -1161,7 +1169,7 @@ body.light .islem-kaydi-panel {
   color: #fff;
   padding: 32px 24px 26px 24px;
   border-radius: 24px;
-  max-width: 400px;
+  max-width: 100%;
   width: 95%;
   text-align: center;
   display: flex;
@@ -1697,7 +1705,7 @@ body.light .kategori-btn:hover {
   color: #fff;
   padding: 32px 24px 26px 24px;
   border-radius: 24px;
-  max-width: 400px;
+  max-width: 100%;
   width: 95%;
   text-align: center;
   display: flex;
