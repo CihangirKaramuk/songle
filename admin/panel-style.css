@@ -1167,10 +1167,10 @@ body.light .islem-kaydi-panel {
 #sarkiDuzenleModal .modal-icerik {
   background: #242043;
   color: #fff;
-  padding: 32px 24px 26px 24px;
-  border-radius: 24px;
-  max-width: 100%;
-  width: 95%;
+  padding: 24px 20px 20px 20px;
+  border-radius: 16px;
+  max-width: 500px;
+  width: 90%;
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -1400,22 +1400,91 @@ body.light .form-row select:focus {
 }
 
 .btn-primary {
-  background: linear-gradient(145deg, #6a1b9a, #8e24aa);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: #fff;
   border: none;
-  padding: 12px 25px;
-  border-radius: 10px;
+  padding: 16px 32px;
+  border-radius: 50px;
   font-weight: 600;
+  font-size: 14px;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(106, 27, 154, 0.3);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
   align-self: flex-start;
+  position: relative;
+  overflow: hidden;
+  letter-spacing: 0.5px;
+  text-transform: none;
+  min-width: 180px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.6s ease;
+}
+
+/* Kategori ekle butonu için özel icon */
+.btn-primary::after {
+  content: '+';
+  font-size: 18px;
+  font-weight: bold;
+  margin-left: 8px;
+  opacity: 0.9;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover::after {
+  transform: rotate(90deg) scale(1.1);
+  opacity: 1;
 }
 
 .btn-primary:hover {
-  background: linear-gradient(145deg, #8e24aa, #ab47bc);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(106, 27, 154, 0.4);
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+}
+
+.btn-primary:hover::before {
+  left: 100%;
+}
+
+.btn-primary:active {
+  transform: translateY(-1px) scale(0.98);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+}
+
+/* Light Mode için btn-primary stilleri */
+body.light .btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.25);
+  border: 1px solid rgba(102, 126, 234, 0.2);
+}
+
+body.light .btn-primary:hover {
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  box-shadow: 0 15px 35px rgba(102, 126, 234, 0.35);
+}
+
+body.light .btn-primary:active {
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.25);
 }
 
 .kategoriler-container {
@@ -1439,6 +1508,14 @@ body.light .kategoriler-container {
   margin-bottom: 25px;
   flex-wrap: wrap;
   gap: 15px;
+}
+
+/* Kategori ekle butonu için özel konumlandırma */
+.kategoriler-header .btn-primary {
+  order: 2;
+  margin-left: auto;
+  position: relative;
+  z-index: 10;
 }
 
 .kategoriler-header h3 {
@@ -1703,10 +1780,10 @@ body.light .kategori-btn:hover {
 .kategori-modal-content {
   background: #242043;
   color: #fff;
-  padding: 32px 24px 26px 24px;
-  border-radius: 24px;
-  max-width: 100%;
-  width: 95%;
+  padding: 24px 20px 20px 20px;
+  border-radius: 16px;
+  max-width: 450px;
+  width: 90%;
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -1720,6 +1797,10 @@ body.light .kategori-modal-content {
   color: #1e293b;
   box-shadow: 0 8px 40px 0 rgba(148, 163, 184, 0.15);
   border: 1px solid #e2e8f0;
+  max-width: 450px;
+  width: 90%;
+  padding: 24px 20px 20px 20px;
+  border-radius: 16px;
 }
 
 .kategori-modal h3 {
@@ -1945,9 +2026,15 @@ body.light .kategori-modal-btn.cancel:hover {
 /* Ayarlar Sayfası Stilleri */
 .ayarlar-container {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, 1fr);
   gap: 30px;
   max-width: 1000px;
+  width: 100%;
+}
+
+.ayarlar-container > * {
+  width: 100%;
+  min-width: 0;
 }
 
 .ayarlar-secim {
@@ -1956,6 +2043,9 @@ body.light .kategori-modal-btn.cancel:hover {
   padding: 25px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.1);
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 .ayarlar-secim h3 {
@@ -2518,21 +2608,23 @@ body.light .islem-kayitlari-sil-btn.cancel:hover {
 
 /* İşlem Kayıtları Yenile Butonu */
 .islem-yenile-btn {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
   color: white;
   border: none;
-  padding: 12px 20px;
-  border-radius: 25px;
+  padding: 10px 18px;
+  border-radius: 12px;
   cursor: pointer;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 15px;
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
   gap: 8px;
-  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
   position: relative;
   overflow: hidden;
+  min-width: 100px;
+  max-width: 130px;
 }
 
 .islem-yenile-btn::before {
@@ -2630,7 +2722,7 @@ body.light .islem-yenile-btn:hover {
 
   .islem-yenile-btn {
     padding: 10px 16px;
-    font-size: 13px;
+    font-size: 15px;
   }
 
   .islem-yenile-btn i {
@@ -2995,6 +3087,10 @@ body.light #sarkiDuzenleModal .modal-icerik {
   color: #1e293b;
   box-shadow: 0 8px 40px rgba(148, 163, 184, 0.15);
   border: 1px solid #e2e8f0;
+  max-width: 500px;
+  width: 90%;
+  padding: 24px 20px 20px 20px;
+  border-radius: 16px;
 }
 
 body.light #sarkiDuzenleModal h2 {
@@ -3503,7 +3599,7 @@ body.light .kullanicilar-liste::-webkit-scrollbar-thumb {
   display: flex;
   gap: 10px;
   align-items: center;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 }
 
 .filtre-select {
@@ -3513,7 +3609,8 @@ body.light .kullanicilar-liste::-webkit-scrollbar-thumb {
   padding: 8px 12px;
   color: #fff;
   font-size: 14px;
-  min-width: 150px;
+  min-width: 250px;
+  max-width: 300px;
   transition: all 0.3s ease;
 }
 
@@ -4177,9 +4274,11 @@ body.light .islem-detay-aciklama {
   }
 
   .filtre-select {
-    min-width: 120px;
+    min-width: 220px;
+    max-width: 250px;
     font-size: 13px;
   }
+}
 
   .islem-kayit-item {
     padding: 12px;
@@ -4252,4 +4351,686 @@ body.light .dot {
 body.light .dot.active {
   background: #8b5cf6;
   box-shadow: 0 0 8px rgba(139, 92, 246, 0.3);
+}
+
+/* Modal butonları için özel stiller - eşit boyut ve bağımsız stil */
+.modal-btn-group {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+.modal-btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 80px;
+  text-align: center;
+  border: none;
+}
+
+.modal-btn-cancel {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #e5e7eb;
+}
+
+.modal-btn-cancel:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.modal-btn-save {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.modal-btn-save:hover {
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+/* Light mode için modal butonları */
+body.light .modal-btn-cancel {
+  border: 1px solid #cbd5e1;
+  color: #64748b;
+}
+
+body.light .modal-btn-cancel:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+}
+
+body.light .modal-btn-save {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+}
+
+body.light .modal-btn-save:hover {
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+}
+
+/* Kategori ekle butonu için özel stil - modern ve şık tasarım */
+.btn-kategori-ekle {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  min-width: 120px;
+  max-width: 160px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  position: relative;
+  overflow: hidden;
+  letter-spacing: 0.3px;
+}
+
+.btn-kategori-ekle::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.btn-kategori-ekle::after {
+  content: '+';
+  font-size: 16px;
+  font-weight: bold;
+  opacity: 0.9;
+  transition: all 0.3s ease;
+  z-index: 1;
+}
+
+.btn-kategori-ekle:hover {
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.btn-kategori-ekle:hover::before {
+  left: 100%;
+}
+
+.btn-kategori-ekle:hover::after {
+  transform: rotate(90deg) scale(1.1);
+  opacity: 1;
+}
+
+.btn-kategori-ekle:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 10px rgba(102, 126, 234, 0.3);
+}
+
+/* Light Mode için kategori ekle butonu */
+body.light .btn-kategori-ekle {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.25);
+  border: 1px solid rgba(102, 126, 234, 0.2);
+}
+
+body.light .btn-kategori-ekle:hover {
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.35);
+  border-color: rgba(102, 126, 234, 0.3);
+}
+
+body.light .btn-kategori-ekle:active {
+  box-shadow: 0 2px 10px rgba(102, 126, 234, 0.25);
+}
+
+/* Kategori ekle butonu için özel konumlandırma */
+.kategoriler-header .btn-kategori-ekle {
+  order: 2;
+  margin-left: auto;
+  position: relative;
+  z-index: 10;
+  align-self: center;
+}
+
+/* Kategori ekle butonu için özel konumlandırma */
+.kategori-form .btn-kategori-ekle {
+  align-self: flex-start;
+  margin-top: 10px;
+  position: relative;
+  z-index: 10;
+}
+
+/* Kategori form container'ı için düzenleme */
+.kategori-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  align-items: flex-start;
+}
+
+.kategori-form .form-row {
+  display: flex;
+  gap: 15px;
+  width: 100%;
+  align-items: center;
+}
+
+.kategori-form .form-row input,
+.kategori-form .form-row select {
+  flex: 1;
+  min-width: 200px;
+}
+
+/* Şarkı Ekle Butonları - Modern ve Şık Tasarım */
+.sarki-ekle-buttons {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.btn-deezer-ara,
+.btn-dosya-yukle,
+.btn-sarki-ekle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 24px;
+  border: none;
+  border-radius: 16px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  min-width: 140px;
+  backdrop-filter: blur(10px);
+  letter-spacing: 0.3px;
+  text-transform: none;
+}
+
+/* Deezer'dan Ara Butonu */
+.btn-deezer-ara {
+  background: linear-gradient(135deg, #00b4db 0%, #0083b0 100%);
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(0, 180, 219, 0.3);
+  border: 1px solid rgba(0, 180, 219, 0.2);
+}
+
+.btn-deezer-ara::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.6s ease;
+}
+
+.btn-deezer-ara:hover {
+  background: linear-gradient(135deg, #0083b0 0%, #00b4db 100%);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 30px rgba(0, 180, 219, 0.4);
+  border-color: rgba(0, 180, 219, 0.3);
+}
+
+.btn-deezer-ara:hover::before {
+  left: 100%;
+}
+
+.btn-deezer-ara:active {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(0, 180, 219, 0.3);
+}
+
+/* Dosya Yükle Butonu */
+.btn-dosya-yukle {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+  border: 1px solid rgba(102, 126, 234, 0.2);
+}
+
+.btn-dosya-yukle::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.6s ease;
+}
+
+.btn-dosya-yukle:hover {
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 30px rgba(102, 126, 234, 0.4);
+  border-color: rgba(102, 126, 234, 0.3);
+}
+
+.btn-dosya-yukle:hover::before {
+  left: 100%;
+}
+
+.btn-dosya-yukle:active {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+}
+
+/* Şarkıyı Ekle Butonu */
+.btn-sarki-ekle {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(240, 147, 251, 0.3);
+  border: 1px solid rgba(240, 147, 251, 0.2);
+  margin-top: 10px;
+  width: 100%;
+  max-width: 300px;
+}
+
+.btn-sarki-ekle::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.6s ease;
+}
+
+.btn-sarki-ekle:hover {
+  background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 30px rgba(240, 147, 251, 0.4);
+  border-color: rgba(240, 147, 251, 0.3);
+}
+
+.btn-sarki-ekle:hover::before {
+  left: 100%;
+}
+
+.btn-sarki-ekle:active {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(240, 147, 251, 0.3);
+}
+
+/* Buton İkonları */
+.btn-deezer-ara i,
+.btn-dosya-yukle i,
+.btn-sarki-ekle i {
+  font-size: 16px;
+  transition: transform 0.3s ease;
+}
+
+.btn-deezer-ara:hover i,
+.btn-dosya-yukle:hover i,
+.btn-sarki-ekle:hover i {
+  transform: scale(1.1);
+}
+
+/* Light Mode için Şarkı Ekle Butonları */
+body.light .btn-deezer-ara {
+  background: linear-gradient(135deg, #00b4db 0%, #0083b0 100%);
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(0, 180, 219, 0.25);
+  border: 1px solid rgba(0, 180, 219, 0.15);
+}
+
+body.light .btn-deezer-ara:hover {
+  background: linear-gradient(135deg, #0083b0 0%, #00b4db 100%);
+  box-shadow: 0 8px 30px rgba(0, 180, 219, 0.35);
+  border-color: rgba(0, 180, 219, 0.25);
+}
+
+body.light .btn-dosya-yukle {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.25);
+  border: 1px solid rgba(102, 126, 234, 0.15);
+}
+
+body.light .btn-dosya-yukle:hover {
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  box-shadow: 0 8px 30px rgba(102, 126, 234, 0.35);
+  border-color: rgba(102, 126, 234, 0.25);
+}
+
+body.light .btn-sarki-ekle {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(240, 147, 251, 0.25);
+  border: 1px solid rgba(240, 147, 251, 0.15);
+}
+
+body.light .btn-sarki-ekle:hover {
+  background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%);
+  box-shadow: 0 8px 30px rgba(240, 147, 251, 0.35);
+  border-color: rgba(240, 147, 251, 0.25);
+}
+
+/* Responsive Tasarım */
+@media (max-width: 768px) {
+  .sarki-ekle-buttons {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .btn-deezer-ara,
+  .btn-dosya-yukle,
+  .btn-sarki-ekle {
+    width: 100%;
+    padding: 16px 20px;
+    font-size: 15px;
+  }
+
+  .btn-sarki-ekle {
+    margin-top: 15px;
+    max-width: none;
+  }
+}
+
+/* Buton Focus States */
+.btn-deezer-ara:focus-visible,
+.btn-dosya-yukle:focus-visible,
+.btn-sarki-ekle:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 180, 219, 0.4),
+    0 4px 20px rgba(0, 180, 219, 0.3);
+}
+
+.btn-dosya-yukle:focus-visible {
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.4),
+    0 4px 20px rgba(102, 126, 234, 0.3);
+}
+
+.btn-sarki-ekle:focus-visible {
+  box-shadow: 0 0 0 3px rgba(240, 147, 251, 0.4),
+    0 4px 20px rgba(240, 147, 251, 0.3);
+}
+
+/* Yetkiliyi Ekle Butonu - Özel Stil */
+.btn-yetkili-ekle {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  color: #fff;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+  min-width: 140px;
+  max-width: 180px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  position: relative;
+  overflow: hidden;
+  letter-spacing: 0.3px;
+  text-transform: none;
+}
+
+.btn-yetkili-ekle::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.6s ease;
+}
+
+.btn-yetkili-ekle::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    135deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    transparent 100%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.btn-yetkili-ekle:hover {
+  background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(79, 70, 229, 0.4);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.btn-yetkili-ekle:hover::before {
+  left: 100%;
+}
+
+.btn-yetkili-ekle:hover::after {
+  opacity: 1;
+}
+
+.btn-yetkili-ekle:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+}
+
+.btn-yetkili-ekle i {
+  font-size: 14px;
+  transition: transform 0.3s ease;
+}
+
+.btn-yetkili-ekle:hover i {
+  transform: scale(1.1);
+}
+
+/* Light Mode için Yetkiliyi Ekle Butonu */
+body.light .btn-yetkili-ekle {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(79, 70, 229, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+body.light .btn-yetkili-ekle:hover {
+  background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
+  box-shadow: 0 8px 25px rgba(79, 70, 229, 0.35);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Responsive Tasarım */
+@media (max-width: 768px) {
+  .btn-yetkili-ekle {
+    width: 100%;
+    max-width: none;
+    padding: 14px 20px;
+    font-size: 15px;
+  }
+}
+
+/* Focus State */
+.btn-yetkili-ekle:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.4),
+    0 4px 15px rgba(79, 70, 229, 0.3);
+}
+
+/* Yenile Butonları - Modern ve Şık Tasarım */
+.btn-yenile-modern {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+  width: 120px;
+  height: 45px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  position: relative;
+  overflow: hidden;
+  letter-spacing: 0.3px;
+  text-transform: none;
+}
+
+.btn-yenile-modern::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.6s ease;
+}
+
+.btn-yenile-modern::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    135deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    transparent 100%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.btn-yenile-modern:hover {
+  background: linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.btn-yenile-modern:hover::before {
+  left: 100%;
+}
+
+.btn-yenile-modern:hover::after {
+  opacity: 1;
+}
+
+.btn-yenile-modern:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+}
+
+.btn-yenile-modern i {
+  font-size: 13px;
+  transition: transform 0.3s ease;
+}
+
+.btn-yenile-modern:hover i {
+  transform: rotate(180deg) scale(1.1);
+}
+
+/* Light Mode için Yenile Butonları */
+body.light .btn-yenile-modern {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+body.light .btn-yenile-modern:hover {
+  background: linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%);
+  box-shadow: 0 8px 25px rgba(139, 92, 246, 0.35);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Responsive Tasarım */
+@media (max-width: 768px) {
+  .btn-yenile-modern {
+    width: 120px;
+    height: 45px;
+    padding: 10px 18px;
+    font-size: 15px;
+  }
+  
+  .islem-yenile-btn {
+    width: 120px;
+    height: 45px;
+    padding: 10px 18px;
+    font-size: 15px;
+  }
+}
+
+/* Focus State */
+.btn-yenile-modern:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.4),
+    0 4px 15px rgba(139, 92, 246, 0.3);
 }

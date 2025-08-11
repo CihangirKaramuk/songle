@@ -73,15 +73,14 @@
             <select id="altKategori" style="display: none">
               <option value="">Alt Kategori Seç *</option>
             </select>
-            <div
-              class="deezer-search"
-              style="display: flex; gap: 10px; margin-bottom: 15px"
-            >
-              <button type="button" id="deezerAraBtn" style="flex: 1">
-                Deezer'dan Ara
+            <div class="sarki-ekle-buttons">
+              <button type="button" id="deezerAraBtn" class="btn-deezer-ara">
+                <i class="fas fa-search"></i>
+                <span>Deezer'dan Ara</span>
               </button>
-              <button type="button" id="dosyaYukleBtn" style="flex: 1">
-                Dosya Yükle
+              <button type="button" id="dosyaYukleBtn" class="btn-dosya-yukle">
+                <i class="fas fa-upload"></i>
+                <span>Dosya Yükle</span>
               </button>
             </div>
             <input
@@ -105,7 +104,10 @@
             >
               <!-- Deezer sonuçları buraya eklenecek -->
             </div>
-            <button id="ekleBtn">Şarkıyı Ekle</button>
+            <button id="ekleBtn" class="btn-sarki-ekle">
+              <i class="fas fa-plus"></i>
+              <span>Şarkıyı Ekle</span>
+            </button>
           </div>
         </section>
 
@@ -167,7 +169,7 @@
                   <option value="">Ana Kategori</option>
                 </select>
               </div>
-              <button id="kategoriEkleBtn" class="btn-primary">
+              <button id="kategoriEkleBtn" class="btn-kategori-ekle">
                 Kategori Ekle
               </button>
             </div>
@@ -278,8 +280,7 @@
                         Kategori Değiştirme
                       </option>
                     </select>
-
-                    <button id="islemKayitlariYenile" class="islem-yenile-btn">
+                    <button id="islemKayitlariYenile" class="btn-yenile-modern">
                       <i class="fas fa-sync-alt"></i>
                       <span>Yenile</span>
                     </button>
@@ -326,6 +327,13 @@
                       <span id="sayfaBilgisi">Sayfa 1 / 1</span>
                       <div class="pagination-dots">
                         <span class="dot active"></span>
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                        <span class="dot"></span>
                         <span class="dot"></span>
                         <span class="dot"></span>
                       </div>
@@ -392,8 +400,9 @@
                     </span>
                   </div>
                 </div>
-                <button id="yetkiliEkleBtn" class="btn-primary">
-                  Yetkiliyi Ekle
+                <button id="yetkiliEkleBtn" class="btn-yetkili-ekle">
+                  <i class="fas fa-user-plus"></i>
+                  <span>Yetkiliyi Ekle</span>
                 </button>
               </div>
 
@@ -406,17 +415,18 @@
                   style="
                     display: flex;
                     gap: 10px;
-                    flex-wrap: wrap;
+                    flex-wrap: nowrap;
                     margin-bottom: 10px;
+                    align-items: center;
                   "
                 >
                   <input
                     type="text"
                     id="kullaniciAra"
                     placeholder="Kullanıcı ara..."
-                    style="flex: 1; min-width: 200px"
+                    style="flex: 1; min-width: 300px"
                   />
-                  <button id="kullanicilariYenile" class="islem-yenile-btn">
+                  <button id="kullanicilariYenile" class="btn-yenile-modern">
                     <i class="fas fa-sync-alt"></i>
                     <span>Yenile</span>
                   </button>
@@ -549,8 +559,14 @@
               margin-top: 10px;
             "
           >
-            <button id="sifreIptal" class="btn-ghost">İptal</button>
-            <button id="sifreKaydet" class="btn-primary">Kaydet</button>
+            <div class="modal-btn-group">
+              <button id="sifreIptal" class="modal-btn modal-btn-cancel">
+                İptal
+              </button>
+              <button id="sifreKaydet" class="modal-btn modal-btn-save">
+                Kaydet
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -591,8 +607,14 @@
               margin-top: 12px;
             "
           >
-            <button id="rolIptal" class="btn-ghost">İptal</button>
-            <button id="rolKaydet" class="btn-primary">Kaydet</button>
+            <div class="modal-btn-group">
+              <button id="rolIptal" class="modal-btn modal-btn-cancel">
+                İptal
+              </button>
+              <button id="rolKaydet" class="modal-btn modal-btn-save">
+                Kaydet
+              </button>
+            </div>
           </div>
         </div>
       </div>
