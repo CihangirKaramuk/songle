@@ -2060,7 +2060,7 @@ body.light .kategori-modal-btn.cancel:hover {
 .ayarlar-form {
   display: flex;
   flex-direction: column;
-  gap: 10px; /* küçük boşaltma: uyarı yazısı kalktığı için alanı sıkılaştır */
+  gap: 15px;
 }
 
 /* Responsive Tasarım */
@@ -2957,12 +2957,17 @@ body.light .btn-batch-cancel:hover {
   background: linear-gradient(135deg, #6c5ce7, #a29bfe);
   color: white;
   border: none;
-  padding: 12px 24px;
+  padding: 10px 20px;
   border-radius: 8px;
   font-weight: 600;
+  font-size: 14px;
   cursor: pointer;
   transition: all 0.3s ease;
-  margin-top: 10px;
+  margin-top: 15px;
+  width: auto;
+  min-width: 140px;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(108, 92, 231, 0.2);
 }
 
 #ayarlarKaydet:hover {
@@ -3031,8 +3036,17 @@ body.light .ayarlar-grup select:hover {
 }
 
 body.light #ayarlarKaydet {
-  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
-  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.2);
+}
+
+body.light #ayarlarKaydet:hover {
+  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+}
+
+#ayarlarKaydet:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(108, 92, 231, 0.3);
 }
 
 body.light .bilgi-item {
@@ -3054,6 +3068,11 @@ body.light .bilgi-deger {
   .ayarlar-container {
     grid-template-columns: 1fr;
     gap: 20px;
+  }
+  
+  #ayarlarKaydet {
+    padding: 8px 16px;
+    font-size: 13px;
   }
 }
 
@@ -4424,7 +4443,7 @@ body.light .modal-btn-save:hover {
   padding: 10px 20px;
   border-radius: 12px;
   font-weight: 600;
-  font-size: 13px;
+  font-size: 14px;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
@@ -4575,10 +4594,10 @@ body.light .btn-kategori-ekle:active {
 
 /* Deezer'dan Ara Butonu */
 .btn-deezer-ara {
-  background: linear-gradient(135deg, #00b4db 0%, #0083b0 100%);
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
   color: #fff;
-  box-shadow: 0 4px 20px rgba(0, 180, 219, 0.3);
-  border: 1px solid rgba(0, 180, 219, 0.2);
+  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.3);
+  border: 1px solid rgba(139, 92, 246, 0.2);
 }
 
 .btn-deezer-ara::before {
@@ -4598,10 +4617,10 @@ body.light .btn-kategori-ekle:active {
 }
 
 .btn-deezer-ara:hover {
-  background: linear-gradient(135deg, #0083b0 0%, #00b4db 100%);
+  background: linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%);
   transform: translateY(-3px);
-  box-shadow: 0 8px 30px rgba(0, 180, 219, 0.4);
-  border-color: rgba(0, 180, 219, 0.3);
+  box-shadow: 0 8px 30px rgba(139, 92, 246, 0.4);
+  border-color: rgba(139, 92, 246, 0.3);
 }
 
 .btn-deezer-ara:hover::before {
@@ -4610,7 +4629,7 @@ body.light .btn-kategori-ekle:active {
 
 .btn-deezer-ara:active {
   transform: translateY(-1px);
-  box-shadow: 0 4px 20px rgba(0, 180, 219, 0.3);
+  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.3);
 }
 
 /* Dosya Yükle Butonu */
@@ -4655,10 +4674,10 @@ body.light .btn-kategori-ekle:active {
 
 /* Şarkıyı Ekle Butonu */
 .btn-sarki-ekle {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  background: linear-gradient(135deg, #4c1d95 0%, #581c87 100%);
   color: #fff;
-  box-shadow: 0 4px 20px rgba(240, 147, 251, 0.3);
-  border: 1px solid rgba(240, 147, 251, 0.2);
+  box-shadow: 0 4px 20px rgba(76, 29, 149, 0.3);
+  border: 1px solid rgba(76, 29, 149, 0.2);
   margin-top: 10px;
   width: 100%;
   max-width: 300px;
@@ -4681,10 +4700,10 @@ body.light .btn-kategori-ekle:active {
 }
 
 .btn-sarki-ekle:hover {
-  background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%);
+  background: linear-gradient(135deg, #581c87 0%, #4c1d95 100%);
   transform: translateY(-3px);
-  box-shadow: 0 8px 30px rgba(240, 147, 251, 0.4);
-  border-color: rgba(240, 147, 251, 0.3);
+  box-shadow: 0 8px 30px rgba(76, 29, 149, 0.4);
+  border-color: rgba(76, 29, 149, 0.3);
 }
 
 .btn-sarki-ekle:hover::before {
@@ -4693,7 +4712,7 @@ body.light .btn-kategori-ekle:active {
 
 .btn-sarki-ekle:active {
   transform: translateY(-1px);
-  box-shadow: 0 4px 20px rgba(240, 147, 251, 0.3);
+  box-shadow: 0 4px 20px rgba(76, 29, 149, 0.3);
 }
 
 /* Buton İkonları */
@@ -4712,16 +4731,16 @@ body.light .btn-kategori-ekle:active {
 
 /* Light Mode için Şarkı Ekle Butonları */
 body.light .btn-deezer-ara {
-  background: linear-gradient(135deg, #00b4db 0%, #0083b0 100%);
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
   color: #fff;
-  box-shadow: 0 4px 20px rgba(0, 180, 219, 0.25);
-  border: 1px solid rgba(0, 180, 219, 0.15);
+  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.25);
+  border: 1px solid rgba(139, 92, 246, 0.15);
 }
 
 body.light .btn-deezer-ara:hover {
-  background: linear-gradient(135deg, #0083b0 0%, #00b4db 100%);
-  box-shadow: 0 8px 30px rgba(0, 180, 219, 0.35);
-  border-color: rgba(0, 180, 219, 0.25);
+  background: linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%);
+  box-shadow: 0 8px 30px rgba(139, 92, 246, 0.35);
+  border-color: rgba(139, 92, 246, 0.25);
 }
 
 body.light .btn-dosya-yukle {
@@ -4738,16 +4757,16 @@ body.light .btn-dosya-yukle:hover {
 }
 
 body.light .btn-sarki-ekle {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  background: linear-gradient(135deg, #4c1d95 0%, #581c87 100%);
   color: #fff;
-  box-shadow: 0 4px 20px rgba(240, 147, 251, 0.25);
-  border: 1px solid rgba(240, 147, 251, 0.15);
+  box-shadow: 0 4px 20px rgba(76, 29, 149, 0.25);
+  border: 1px solid rgba(76, 29, 149, 0.15);
 }
 
 body.light .btn-sarki-ekle:hover {
-  background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%);
-  box-shadow: 0 8px 30px rgba(240, 147, 251, 0.35);
-  border-color: rgba(240, 147, 251, 0.25);
+  background: linear-gradient(135deg, #581c87 0%, #4c1d95 100%);
+  box-shadow: 0 8px 30px rgba(76, 29, 149, 0.35);
+  border-color: rgba(76, 29, 149, 0.25);
 }
 
 /* Responsive Tasarım */
@@ -4776,8 +4795,8 @@ body.light .btn-sarki-ekle:hover {
 .btn-dosya-yukle:focus-visible,
 .btn-sarki-ekle:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(0, 180, 219, 0.4),
-    0 4px 20px rgba(0, 180, 219, 0.3);
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.4),
+    0 4px 20px rgba(139, 92, 246, 0.3);
 }
 
 .btn-dosya-yukle:focus-visible {
@@ -4786,8 +4805,8 @@ body.light .btn-sarki-ekle:hover {
 }
 
 .btn-sarki-ekle:focus-visible {
-  box-shadow: 0 0 0 3px rgba(240, 147, 251, 0.4),
-    0 4px 20px rgba(240, 147, 251, 0.3);
+  box-shadow: 0 0 0 3px rgba(76, 29, 149, 0.4),
+    0 4px 20px rgba(76, 29, 149, 0.3);
 }
 
 /* Yetkiliyi Ekle Butonu - Özel Stil */
