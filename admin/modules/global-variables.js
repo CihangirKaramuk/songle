@@ -65,6 +65,9 @@ const GlobalVars = {
   get currentPage() {
     return currentPage
   },
+  set currentPage(newPage) {
+    currentPage = newPage
+  },
   get selectedSongIds() {
     return selectedSongIds
   },

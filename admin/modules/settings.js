@@ -142,13 +142,22 @@ function updatePageSizeAndRefresh(newPageSize) {
 }
 
 // İşlem Kayıtları Fonksiyonları
+// Global değişkenler
 let islemKayitlari = []
 let seciliKayitlar = []
-let currentPage = 1
-const itemsPerPage = 10
-let serverSidePagination = true
-let lastTotalPages = 1
+let itemsPerPage = 10
 let lastTotalRecords = 0
+let lastTotalPages = 1
+let serverSidePagination = true
+
+// currentPage'i global'den al
+function getCurrentPage() {
+  return GlobalVars.currentPage
+}
+
+function setCurrentPage(page) {
+  GlobalVars.currentPage = page
+}
 
 // Basit XSS koruması için HTML kaçış fonksiyonu
 function escapeHtml(value) {
@@ -168,8 +177,22 @@ async function loadIslemKayitlari() {
     const islemTipiFiltre =
       document.getElementById('islemTipiFiltre')?.value || ''
     const params = new URLSearchParams()
-    if (islemTipiFiltre) params.append('islem_tipi', islemTipiFiltre)
-    params.append('sayfa', currentPage.toString())
+
+    // Ana kategori filtrelerini işlem tipi filtrelerine çevir
+    let islemTipiParam = ''
+    if (islemTipiFiltre === 'sarki_islemleri') {
+      islemTipiParam = 'sarki_ekleme,sarki_silme,sarki_degistirme'
+    } else if (islemTipiFiltre === 'kategori_islemleri') {
+      islemTipiParam = 'kategori_ekleme,kategori_silme,kategori_degistirme'
+    } else if (islemTipiFiltre === 'yetkili_islemleri') {
+      islemTipiParam =
+        'yetkili_ekleme,yetkili_silme,yetkili_guncelleme,sifre_sifirlama,rol_degistirme'
+    } else if (islemTipiFiltre) {
+      islemTipiParam = islemTipiFiltre
+    }
+
+    if (islemTipiParam) params.append('islem_tipi', islemTipiParam)
+    params.append('sayfa', getCurrentPage().toString())
     params.append('limit', itemsPerPage.toString())
 
     const response = await fetch(
@@ -186,6 +209,10 @@ async function loadIslemKayitlari() {
       result.pagination?.total_records ?? islemKayitlari.length
     lastTotalRecords = totalRecords
     lastTotalPages = Math.max(1, Math.ceil(totalRecords / itemsPerPage))
+
+    // Global değişkeni güncelle
+    setCurrentPage(getCurrentPage())
+
     updatePagination(totalRecords)
 
     // Listeyi render et
@@ -274,7 +301,7 @@ function renderIslemKayitlari(kayitlar) {
   // Server-side modda gelen sayfa hazır; local modda slice uygula
   let paginatedKayitlar = kayitlar
   if (!serverSidePagination) {
-    const startIndex = (currentPage - 1) * itemsPerPage
+    const startIndex = (getCurrentPage() - 1) * itemsPerPage
     const endIndex = startIndex + itemsPerPage
     paginatedKayitlar = kayitlar.slice(startIndex, endIndex)
   }
@@ -297,9 +324,16 @@ function renderIslemKayitlari(kayitlar) {
         )}</span>
       </div>
       <div class="islem-kayit-detay">${escapeHtml(kayit.detay)}</div>
-      <div class="islem-kayit-kullanici">Kullanıcı: ${escapeHtml(
+      <div class="islem-kayit-kullanici">İşlemi Yapan: ${escapeHtml(
         kayit.kullanici_adi
       )}</div>
+      ${
+        kayit.hedef_kullanici_adi
+          ? `<div class="islem-kayit-hedef">Hedef Kullanıcı: ${escapeHtml(
+              kayit.hedef_kullanici_adi
+            )}</div>`
+          : ''
+      }
     </div>
   `
     )
@@ -323,6 +357,11 @@ function getIslemTipiText(islemTipi) {
     kategori_ekleme: 'Kategori Ekleme',
     kategori_silme: 'Kategori Silme',
     kategori_degistirme: 'Kategori Değiştirme',
+    yetkili_ekleme: 'Yetkili Ekleme',
+    yetkili_silme: 'Yetkili Silme',
+    yetkili_guncelleme: 'Yetkili Güncelleme',
+    sifre_sifirlama: 'Şifre Sıfırlama',
+    rol_degistirme: 'Rol Değiştirme',
   }
   return islemTipleri[islemTipi] || islemTipi
 }
@@ -349,22 +388,22 @@ function updatePagination(totalItems) {
   const dots = document.querySelectorAll('.dot')
 
   if (sayfaBilgisi) {
-    sayfaBilgisi.textContent = `Sayfa ${currentPage} / ${totalPages}`
+    sayfaBilgisi.textContent = `Sayfa ${getCurrentPage()} / ${totalPages}`
   }
 
   if (oncekiBtn) {
-    oncekiBtn.disabled = currentPage <= 1
+    oncekiBtn.disabled = getCurrentPage() <= 1
   }
 
   if (sonrakiBtn) {
-    sonrakiBtn.disabled = currentPage >= totalPages
+    sonrakiBtn.disabled = getCurrentPage() >= totalPages
   }
 
   // Nokta animasyonlarını güncelle
   dots.forEach((dot, index) => {
     if (index < totalPages) {
       dot.style.display = 'block'
-      dot.classList.toggle('active', index + 1 === currentPage)
+      dot.classList.toggle('active', index + 1 === getCurrentPage())
     } else {
       dot.style.display = 'none'
     }
@@ -557,7 +596,7 @@ function setupIslemKayitlariEventListeners() {
 
   if (islemTipiFiltre) {
     islemTipiFiltre.addEventListener('change', () => {
-      currentPage = 1
+      setCurrentPage(1)
       loadIslemKayitlari()
     })
   }
@@ -618,8 +657,8 @@ function setupIslemKayitlariEventListeners() {
 
   if (oncekiBtn) {
     oncekiBtn.addEventListener('click', () => {
-      if (currentPage > 1) {
-        currentPage--
+      if (getCurrentPage() > 1) {
+        setCurrentPage(getCurrentPage() - 1)
         loadIslemKayitlari()
       }
     })
@@ -630,8 +669,8 @@ function setupIslemKayitlariEventListeners() {
       const totalPages = serverSidePagination
         ? lastTotalPages
         : Math.ceil(islemKayitlari.length / itemsPerPage)
-      if (currentPage < totalPages) {
-        currentPage++
+      if (getCurrentPage() < totalPages) {
+        setCurrentPage(getCurrentPage() + 1)
         loadIslemKayitlari()
       }
     })

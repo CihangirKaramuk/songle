@@ -5189,3 +5189,36 @@ body.light .btn-yenile-modern:hover {
   box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.4),
     0 4px 15px rgba(139, 92, 246, 0.3);
 }
+
+.islem-kayit-kullanici {
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 5px;
+}
+
+.islem-kayit-item.selected .islem-kayit-kullanici {
+  /* Kullanıcı rengini değiştirme */
+}
+
+.islem-kayit-hedef {
+  font-size: 12px;
+  color: #8b5cf6;
+  margin-top: 3px;
+  font-weight: 500;
+}
+
+.islem-kayit-item.selected .islem-kayit-hedef {
+  color: #a78bfa;
+}
+
+body.light .islem-kayit-kullanici {
+  color: #94a3b8;
+}
+
+body.light .islem-kayit-hedef {
+  color: #7c3aed;
+}
+
+body.light .islem-kayit-item.selected .islem-kayit-hedef {
+  color: #8b5cf6;
+}
