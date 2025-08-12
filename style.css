@@ -129,8 +129,9 @@ body {
 }
 
 .game-screen {
-  position: relative;
   text-align: center;
+  display: none;
+  position: relative;
 }
 
 .oyun-baslik {
@@ -195,7 +196,7 @@ body {
   border-radius: 20px;
   overflow: hidden; /* blur içeride kalsın, çerçeve net kalsın */
   margin: 0; /* margin handled by wrapper */
-  font-size: 18px;
+  font-size: 22px;
   color: #fff;
 }
 
@@ -238,7 +239,7 @@ body {
 /* Çerçeve (albüm kapağından biraz dışarıda) */
 .album-cover-wrapper {
   padding: 16px; /* daha geniş boşluk */
-  margin: 28px auto 0 auto; /* eşit boşluk */
+  margin: 80px auto 0 auto; /* üst boşluğu daha da artırdım */
   border: 2px solid rgba(255, 255, 255, 0.25);
   border-radius: 28px; /* 12px + padding(16px) */
   box-shadow: 0 4px 22px rgba(0, 0, 0, 0.22),
@@ -334,6 +335,57 @@ body.disabled
 }
 .time-up.show {
   opacity: 1;
+}
+
+/* ---- Puan Göstergesi ---- */
+.puan-goster {
+  position: absolute;
+  top: 4%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  opacity: 0;
+  z-index: 1200;
+  pointer-events: none;
+  transition: all 0.5s cubic-bezier(0.22, 0.82, 0.46, 1.02);
+}
+
+.puan-goster.show {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+.puan-deger {
+  font-size: 32px;
+  font-weight: 700;
+  color: #6c5ce7;
+  text-shadow: 0 2px 8px rgba(108, 92, 231, 0.3);
+  margin-right: 8px;
+  display: inline-block;
+  animation: puanPulse 0.6s ease-out;
+}
+
+.puan-birim {
+  font-size: 18px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.8);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+@keyframes puanPulse {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 /* ----- Disabled during time-up ----- */

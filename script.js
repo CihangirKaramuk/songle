@@ -487,6 +487,11 @@ document
     document.querySelector('.container').style.display = 'none'
     document.querySelector('.game-screen').style.display = 'block'
     document.getElementById('geriBtn').style.display = 'block'
+
+    // Input'u otomatik seçili yap
+    setTimeout(() => {
+      document.querySelector('.tahmin-input').focus()
+    }, 100)
   })
 
 const geriBtn = document.getElementById('geriBtn')
@@ -497,6 +502,10 @@ geriBtn.addEventListener('click', function () {
   document.getElementById('zamanGoster').textContent = 'Kalan Süre: 30'
   clearInterval(sayacInterval)
   clearTimeout(yeniSoruTimeout) // Bekleyen timeout'u temizle
+  clearTimeout(audioPlayTimeout) // Şarkı çalma timeout'unu temizle
+
+  // Puanı gizle
+  puanGizle()
 
   audioPlayer.pause()
   audioPlayer.currentTime = 0
@@ -572,6 +581,36 @@ function benzerlikHesapla(str1, str2) {
   return maxLen === 0 ? 1 : (maxLen - matrix[len1][len2]) / maxLen
 }
 
+// Puan hesaplama fonksiyonu
+function puanHesapla(kalanSure) {
+  // 30 saniyede 30 puan, 1 saniyede 1 puan
+  return Math.max(0, kalanSure)
+}
+
+// Puan gösterme fonksiyonu
+function puanGoster(puan) {
+  const puanGosterEl = document.getElementById('puanGoster')
+  const puanDegerEl = puanGosterEl.querySelector('.puan-deger')
+
+  puanDegerEl.textContent = puan
+  puanGosterEl.style.display = 'block'
+
+  // Animasyon için kısa gecikme
+  setTimeout(() => {
+    puanGosterEl.classList.add('show')
+  }, 50)
+}
+
+// Puan gizleme fonksiyonu
+function puanGizle() {
+  const puanGosterEl = document.getElementById('puanGoster')
+  puanGosterEl.classList.remove('show')
+
+  setTimeout(() => {
+    puanGosterEl.style.display = 'none'
+  }, 500)
+}
+
 document.querySelector('.tahmin-gonder').addEventListener('click', function () {
   const input = document.querySelector('.tahmin-input')
   const tahmin = input.value.trim()
@@ -580,10 +619,18 @@ document.querySelector('.tahmin-gonder').addEventListener('click', function () {
     albumCover.style.filter = 'blur(0px)'
     // Blur kaldır
     sarkiKutusu.classList.remove('blurred')
+
+    // Puan hesapla ve göster
+    const kazanilanPuan = puanHesapla(kalanSure)
+    puanGoster(kazanilanPuan)
+
     confetti()
     clearInterval(sayacInterval)
 
     yeniSoruTimeout = setTimeout(() => {
+      // Puanı gizle
+      puanGizle()
+
       soruIndex = rastgeleSoruIndex()
       guncelleSoru()
       baslatSayac()
@@ -624,12 +671,29 @@ function guncelleSoru() {
   tahminInputEl.value = ''
   tahminInputEl.focus()
   document.getElementById('zamanGoster').textContent = 'Kalan Süre: 30'
+
+  // Puanı gizle
+  puanGizle()
+
   // Önceki çalmayı durdur ve yeni şarkıyı yükle
   audioPlayer.pause()
   audioPlayer.currentTime = 0
   audioPlayer.src = soru.dosya
   audioPlayer.load()
-  audioPlayer.play().catch(() => {})
+
+  try {
+    audioPlayer.play().catch((error) => {
+      // AbortError'ı yakala (kullanıcı geri butonuna bastığında)
+      if (error.name !== 'AbortError') {
+        console.log('Şarkı çalma hatası:', error)
+      }
+    })
+  } catch (error) {
+    // Genel hata yakalama
+    if (error.name !== 'AbortError') {
+      console.log('Şarkı çalma hatası:', error)
+    }
+  }
 
   // Albüm kapağını güncelle
   if (albumCover) {
@@ -647,14 +711,28 @@ function guncelleSoru() {
   if (window.progressGlow) progressGlow.style.left = '0px'
   if (window.durdurCalmaAnimasyonu) durdurCalmaAnimasyonu()
 
-  setTimeout(() => {
-    audioPlayer.play()
+  audioPlayTimeout = setTimeout(() => {
+    try {
+      audioPlayer.play().catch((error) => {
+        // AbortError'ı yakala (kullanıcı geri butonuna bastığında)
+        if (error.name !== 'AbortError') {
+          console.log('Şarkı çalma hatası:', error)
+        }
+      })
+    } catch (error) {
+      // Genel hata yakalama
+      if (error.name !== 'AbortError') {
+        console.log('Şarkı çalma hatası:', error)
+      }
+    }
   }, 150)
 }
 
 let kalanSure = 30
 let sayacInterval
 let yeniSoruTimeout // Yeni soruya geçiş için bekleyen timeout
+let mevcutPuan = 0 // Mevcut puan
+let audioPlayTimeout // Şarkı çalma için bekleyen timeout
 
 function baslatSayac() {
   // Önceki interval'ı temizle, hızlanmayı önle
