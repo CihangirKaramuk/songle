@@ -496,6 +496,7 @@ geriBtn.addEventListener('click', function () {
   document.getElementById('geriBtn').style.display = 'none'
   document.getElementById('zamanGoster').textContent = 'Kalan Süre: 30'
   clearInterval(sayacInterval)
+  clearTimeout(yeniSoruTimeout) // Bekleyen timeout'u temizle
 
   audioPlayer.pause()
   audioPlayer.currentTime = 0
@@ -582,7 +583,7 @@ document.querySelector('.tahmin-gonder').addEventListener('click', function () {
     confetti()
     clearInterval(sayacInterval)
 
-    setTimeout(() => {
+    yeniSoruTimeout = setTimeout(() => {
       soruIndex = rastgeleSoruIndex()
       guncelleSoru()
       baslatSayac()
@@ -653,6 +654,7 @@ function guncelleSoru() {
 
 let kalanSure = 30
 let sayacInterval
+let yeniSoruTimeout // Yeni soruya geçiş için bekleyen timeout
 
 function baslatSayac() {
   // Önceki interval'ı temizle, hızlanmayı önle
