@@ -10,6 +10,11 @@ let selectedTurkceAltKategori = ''
 let selectedYabanciAltKategori = ''
 let anaKategoriler = []
 let altKategoriler = []
+let mevcutSoruSayisi = 0 // Mevcut soru sayısı
+const TOPLAM_SORU_SAYISI = 20 // Toplam soru sayısı
+let dogruBilinenSorular = [] // Doğru bilinen sorular
+let sureDolanSorular = [] // Süre dolan sorular
+let dogruSoruSayisi = 0 // Gerçek doğru soru sayısı
 const dropdownSelected = document.querySelector('.dropdown-selected')
 const dropdownOptions = document.querySelector('.dropdown-options')
 const options = document.querySelectorAll('.option')
@@ -479,8 +484,18 @@ document
       'secili-kategori'
     ).textContent = `${gorunurAnaKategori} ${gorunurAltKategori}`
 
+    // Oyun başlangıcında soru sayacını ve puanı sıfırla
+    mevcutSoruSayisi = 0
+    mevcutPuan = 0
     kullanilanSarkilar = []
+    dogruBilinenSorular = []
+    sureDolanSorular = []
+    dogruSoruSayisi = 0
     soruIndex = rastgeleSoruIndex()
+
+    // Progress göstergesini başlangıçta güncelle (0/20)
+    guncelleProgressGosterge()
+
     guncelleSoru()
     baslatSayac()
 
@@ -499,10 +514,14 @@ geriBtn.addEventListener('click', function () {
   document.querySelector('.container').style.display = 'flex'
   document.querySelector('.game-screen').style.display = 'none'
   document.getElementById('geriBtn').style.display = 'none'
-  document.getElementById('zamanGoster').textContent = 'Kalan Süre: 30'
+  document.getElementById('zamanGoster').textContent = '⏱️ Kalan Süre: 30'
   clearInterval(sayacInterval)
   clearTimeout(yeniSoruTimeout) // Bekleyen timeout'u temizle
   clearTimeout(audioPlayTimeout) // Şarkı çalma timeout'unu temizle
+
+  // Progress göstergesini sıfırla
+  mevcutSoruSayisi = 0
+  guncelleProgressGosterge()
 
   // Puanı gizle
   puanGizle()
@@ -611,6 +630,150 @@ function puanGizle() {
   }, 500)
 }
 
+// Soru sayısı göstergesi güncelleme fonksiyonu
+function guncelleProgressGosterge() {
+  const progressGostergeEl = document.getElementById('progress-gosterge')
+  if (progressGostergeEl) {
+    progressGostergeEl.textContent = `${mevcutSoruSayisi}/${TOPLAM_SORU_SAYISI}`
+  }
+}
+
+// Detaylı sonuçları gösterme fonksiyonu
+function gosterDetayliSonuclar() {
+  // Doğru soru sayısını göster
+  const dogruSayiEl = document.getElementById('dogru-sayi')
+  if (dogruSayiEl) {
+    dogruSayiEl.textContent = dogruSoruSayisi
+  }
+
+  // Süre dolan soru sayısını göster
+  const sureDolanSayiEl = document.getElementById('sure-dolan-sayi')
+  if (sureDolanSayiEl) {
+    sureDolanSayiEl.textContent = sureDolanSorular.length
+  }
+
+  // Doğru bilinen soruları listele
+  const dogruListeEl = document.getElementById('dogru-liste')
+  if (dogruListeEl) {
+    dogruListeEl.innerHTML = ''
+    dogruBilinenSorular.forEach((soru) => {
+      const soruDiv = document.createElement('div')
+      soruDiv.className = 'soru-item dogru'
+      soruDiv.innerHTML = `
+        <span class="soru-numarasi">${soru.soru}</span>
+        <span class="sarki-adi">${soru.sarki}</span>
+        <span class="soru-puan">+${soru.puan} puan</span>
+      `
+      dogruListeEl.appendChild(soruDiv)
+    })
+  }
+
+  // Süre dolan soruları listele
+  const sureDolanListeEl = document.getElementById('sure-dolan-liste')
+  if (sureDolanListeEl) {
+    sureDolanListeEl.innerHTML = ''
+    sureDolanSorular.forEach((soru) => {
+      const soruDiv = document.createElement('div')
+      soruDiv.className = 'soru-item sure-dolan'
+      soruDiv.innerHTML = `
+        <span class="soru-numarasi">${soru.soru}</span>
+        <span class="sarki-adi">${soru.sarki}</span>
+        <span class="soru-durum">⏱️ Süre doldu</span>
+      `
+      sureDolanListeEl.appendChild(soruDiv)
+    })
+  }
+}
+
+// Oyun sonu gösterme fonksiyonu
+function oyunSonuGoster() {
+  // Arkada çalan müziği durdur
+  if (audioPlayer) {
+    audioPlayer.pause()
+    audioPlayer.currentTime = 0
+  }
+
+  // Oyun ekranını gizle
+  document.querySelector('.game-screen').style.display = 'none'
+
+  // Sonuç ekranını göster
+  const sonucEkrani = document.getElementById('sonuc-ekrani')
+  if (sonucEkrani) {
+    sonucEkrani.style.display = 'block'
+
+    // Toplam puanı hesapla ve göster
+    const toplamPuanEl = document.getElementById('toplam-puan')
+    if (toplamPuanEl) {
+      toplamPuanEl.textContent = mevcutPuan
+    }
+
+    // Doğru soru sayısını göster
+    const dogruSoruSayisiEl = document.getElementById('dogru-soru-sayisi')
+    if (dogruSoruSayisiEl) {
+      dogruSoruSayisiEl.textContent = dogruSoruSayisi
+    }
+
+    // Detaylı sonuçları göster
+    gosterDetayliSonuclar()
+  }
+}
+
+// Tekrar oyna fonksiyonu
+function tekrarOyna() {
+  // Sonuç ekranını gizle
+  document.getElementById('sonuc-ekrani').style.display = 'none'
+
+  // Oyun ekranını göster
+  document.querySelector('.game-screen').style.display = 'block'
+
+  // Kilitleri aç
+  const guessInput = document.querySelector('.tahmin-input')
+  const guessBtn = document.querySelector('.tahmin-gonder')
+  const replayBtn = document.querySelector('.replay-btn')
+
+  if (guessInput) guessInput.disabled = false
+  if (guessBtn) guessBtn.disabled = false
+  if (replayBtn) replayBtn.disabled = false
+
+  // Oyunu sıfırla ve yeniden başlat
+  mevcutSoruSayisi = 0
+  mevcutPuan = 0
+  kullanilanSarkilar = []
+  dogruBilinenSorular = []
+  sureDolanSorular = []
+  dogruSoruSayisi = 0
+  soruIndex = rastgeleSoruIndex()
+  guncelleSoru()
+  baslatSayac()
+}
+
+// Ana menüye dön fonksiyonu
+function anaMenuyeDon() {
+  // Sonuç ekranını gizle
+  document.getElementById('sonuc-ekrani').style.display = 'none'
+
+  // Ana menüyü göster
+  document.querySelector('.container').style.display = 'flex'
+  document.getElementById('geriBtn').style.display = 'none'
+
+  // Kilitleri aç
+  const guessInput = document.querySelector('.tahmin-input')
+  const guessBtn = document.querySelector('.tahmin-gonder')
+  const replayBtn = document.querySelector('.replay-btn')
+
+  if (guessInput) guessInput.disabled = false
+  if (guessBtn) guessBtn.disabled = false
+  if (replayBtn) replayBtn.disabled = false
+
+  // Progress göstergesini sıfırla
+  mevcutSoruSayisi = 0
+  guncelleProgressGosterge()
+}
+
+// Global scope'a fonksiyonları ekle
+window.tekrarOyna = tekrarOyna
+window.anaMenuyeDon = anaMenuyeDon
+
 document.querySelector('.tahmin-gonder').addEventListener('click', function () {
   const input = document.querySelector('.tahmin-input')
   const tahmin = input.value.trim()
@@ -620,21 +783,40 @@ document.querySelector('.tahmin-gonder').addEventListener('click', function () {
     // Blur kaldır
     sarkiKutusu.classList.remove('blurred')
 
+    // Doğru bilinen soruyu kaydet
+    dogruBilinenSorular.push({
+      soru: mevcutSoruSayisi,
+      sarki: soruListesi[soruIndex].cevap,
+      puan: puanHesapla(kalanSure),
+    })
+    dogruSoruSayisi++
+
     // Puan hesapla ve göster
     const kazanilanPuan = puanHesapla(kalanSure)
+    mevcutPuan += kazanilanPuan // Toplam puana ekle
     puanGoster(kazanilanPuan)
 
     confetti()
     clearInterval(sayacInterval)
 
-    yeniSoruTimeout = setTimeout(() => {
-      // Puanı gizle
-      puanGizle()
+    // Oyun sonu kontrolü
+    if (mevcutSoruSayisi >= TOPLAM_SORU_SAYISI) {
+      // Oyun bitti, sonuç ekranını göster
+      setTimeout(() => {
+        puanGizle()
+        oyunSonuGoster()
+      }, 2000)
+    } else {
+      // Yeni soruya geç
+      yeniSoruTimeout = setTimeout(() => {
+        // Puanı gizle
+        puanGizle()
 
-      soruIndex = rastgeleSoruIndex()
-      guncelleSoru()
-      baslatSayac()
-    }, 1500)
+        soruIndex = rastgeleSoruIndex()
+        guncelleSoru()
+        baslatSayac()
+      }, 2000)
+    }
   } else {
     document.body.classList.add('error')
     input.classList.add('shake')
@@ -664,13 +846,30 @@ document.addEventListener('keydown', function (e) {
 
 function guncelleSoru() {
   const soru = soruListesi[soruIndex]
+
+  // Progress göstergesini güncelle (soru sayısını artır)
+  // İlk soruda 1 olması için burada artırıyoruz
+  mevcutSoruSayisi++
+  guncelleProgressGosterge()
+
   // Blur while playing (apply before updating text to avoid flicker)
   sarkiKutusu.classList.add('blurred')
   sarkiKutusu.textContent = soru.cevap // Veritabanındaki cevap alanını kullan
+
+  // Kilitleri aç
   const tahminInputEl = document.querySelector('.tahmin-input')
-  tahminInputEl.value = ''
-  tahminInputEl.focus()
-  document.getElementById('zamanGoster').textContent = 'Kalan Süre: 30'
+  const guessBtn = document.querySelector('.tahmin-gonder')
+  const replayBtn = document.querySelector('.replay-btn')
+
+  if (tahminInputEl) {
+    tahminInputEl.value = ''
+    tahminInputEl.disabled = false
+    tahminInputEl.focus()
+  }
+  if (guessBtn) guessBtn.disabled = false
+  if (replayBtn) replayBtn.disabled = false
+
+  document.getElementById('zamanGoster').textContent = '⏱️ Kalan Süre: 30'
 
   // Puanı gizle
   puanGizle()
@@ -740,13 +939,13 @@ function baslatSayac() {
   kalanSure = 30
   document.getElementById(
     'zamanGoster'
-  ).textContent = `Kalan Süre: ${kalanSure}`
+  ).textContent = `⏱️ Kalan Süre: ${kalanSure}`
 
   sayacInterval = setInterval(() => {
     kalanSure--
     document.getElementById(
       'zamanGoster'
-    ).textContent = `Kalan Süre: ${kalanSure}`
+    ).textContent = `⏱️ Kalan Süre: ${kalanSure}`
 
     // Albüm kapağı blur seviyesini kalan süreye göre güncelle
     if (albumCoverWrapper && albumCoverWrapper.style.display !== 'none') {
@@ -765,17 +964,30 @@ function baslatSayac() {
 
       albumCover.style.filter = 'blur(0px)'
 
+      // Süre bitti, süre dolan olarak kaydet
+      sureDolanSorular.push({
+        soru: mevcutSoruSayisi,
+        sarki: soruListesi[soruIndex].cevap,
+      })
+
       timeUpEl.classList.add('show')
 
       setTimeout(() => {
         timeUpEl.classList.remove('show')
-        // controls aç
-        guessInput.disabled = false
-        guessBtn.disabled = false
-        replayBtn.disabled = false
-        soruIndex = rastgeleSoruIndex()
-        guncelleSoru()
-        baslatSayac()
+
+        // Oyun sonu kontrolü
+        if (mevcutSoruSayisi >= TOPLAM_SORU_SAYISI) {
+          // Oyun bitti, sonuç ekranını göster
+          oyunSonuGoster()
+        } else {
+          // controls aç
+          guessInput.disabled = false
+          guessBtn.disabled = false
+          replayBtn.disabled = false
+          soruIndex = rastgeleSoruIndex()
+          guncelleSoru()
+          baslatSayac()
+        }
       }, 2000)
     }
   }, 1000)

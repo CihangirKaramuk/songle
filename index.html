@@ -62,15 +62,16 @@
     </div>
 
     <div class="game-screen" style="display: none">
-      <h2 class="oyun-baslik">Kategori: <span id="secili-kategori">-</span></h2>
+      <h2 class="oyun-baslik">
+        🎵 Kategori: <span id="secili-kategori">-</span>
+      </h2>
 
-      <div id="zamanGoster" class="zaman-sayaci">Kalan Süre: 30</div>
-
-      <!-- Puan göstergesi -->
-      <div id="puanGoster" class="puan-goster" style="display: none">
-        <span class="puan-deger">0</span>
-        <span class="puan-birim">puan</span>
+      <!-- Soru sayısı göstergesi -->
+      <div class="soru-sayisi-container">
+        <div class="soru-sayisi-text" id="progress-gosterge">0/20</div>
       </div>
+
+      <div id="zamanGoster" class="zaman-sayaci">⏱️ Kalan Süre: 30</div>
 
       <!-- Albüm kapağı görüntüsü -->
       <div class="album-cover-wrapper" style="display: none">
@@ -175,6 +176,49 @@
     <div id="no-songs" class="no-songs">Bu kategoride henüz şarkı yok!</div>
     <!-- Genel oyun uyarı bildirimi -->
     <div id="alert-box" class="alert-box"></div>
+
+    <!-- Sonuç ekranı -->
+    <div id="sonuc-ekrani" class="sonuc-ekrani" style="display: none">
+      <div class="sonuc-content">
+        <h2 class="sonuc-baslik">🎉 Oyun Tamamlandı! 🎉</h2>
+        <div class="sonuc-puan">
+          <span class="puan-label">Toplam Puan:</span>
+          <span class="puan-deger-sonuc" id="toplam-puan">0</span>
+        </div>
+        <div class="sonuc-bilgi">
+          <p>
+            20 sorudan <span id="dogru-soru-sayisi">0</span> tanesini doğru
+            bildin!
+          </p>
+          <p>Tebrikler! 🎵</p>
+        </div>
+
+        <!-- Detaylı sonuç bilgileri -->
+        <div class="sonuc-detay">
+          <div class="detay-baslik">📊 Detaylı Sonuçlar</div>
+          <div class="detay-icerik">
+            <div class="dogru-sorular">
+              <h4>✅ Doğru Bildiklerin (<span id="dogru-sayi">0</span>)</h4>
+              <div id="dogru-liste" class="soru-liste"></div>
+            </div>
+            <div class="yanlis-sorular">
+              <h4>⏱️ Süre Dolanlar (<span id="sure-dolan-sayi">0</span>)</h4>
+              <div id="sure-dolan-liste" class="soru-liste"></div>
+            </div>
+          </div>
+        </div>
+        <button class="tekrar-oyna-btn" onclick="tekrarOyna()">
+          Tekrar Oyna
+        </button>
+        <button class="ana-menu-btn" onclick="anaMenuyeDon()">Ana Menü</button>
+      </div>
+    </div>
+
+    <!-- Puan göstergesi -->
+    <div id="puanGoster" class="puan-goster" style="display: none">
+      <span class="puan-deger">0</span>
+      <span class="puan-birim">🏆 puan</span>
+    </div>
 
     <script type="module" src="script.js"></script>
     <script
