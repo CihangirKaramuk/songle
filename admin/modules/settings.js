@@ -1,6 +1,11 @@
 import apiService from '../../apiService.js'
 import { showSuccessToast, showModernAlert, getCurrentUserId } from './utils.js'
-import { GlobalVars, updatePageSize } from './global-variables.js'
+import {
+  GlobalVars,
+  updatePageSize,
+  updateCurrentPage,
+  currentPage,
+} from './global-variables.js'
 
 // Ayarlar sayfası fonksiyonları
 async function loadAyarlar() {
@@ -130,6 +135,11 @@ async function updateSistemBilgileri() {
 function updatePageSizeAndRefresh(newPageSize) {
   updatePageSize(newPageSize)
 
+  // İşlem kayıtları sayfasındaysa sayfa boyutunu güncelle
+  if (typeof itemsPerPage !== 'undefined') {
+    itemsPerPage = newPageSize
+  }
+
   // Şarkı listesini yeniden yükle
   if (typeof guncelleListe === 'function') {
     guncelleListe(1) // İlk sayfaya dön
@@ -150,14 +160,7 @@ let lastTotalRecords = 0
 let lastTotalPages = 1
 let serverSidePagination = true
 
-// currentPage'i global'den al
-function getCurrentPage() {
-  return GlobalVars.currentPage
-}
-
-function setCurrentPage(page) {
-  GlobalVars.currentPage = page
-}
+// currentPage artık doğrudan import ediliyor
 
 // Basit XSS koruması için HTML kaçış fonksiyonu
 function escapeHtml(value) {
@@ -192,7 +195,7 @@ async function loadIslemKayitlari() {
     }
 
     if (islemTipiParam) params.append('islem_tipi', islemTipiParam)
-    params.append('sayfa', getCurrentPage().toString())
+    params.append('sayfa', currentPage.toString())
     params.append('limit', itemsPerPage.toString())
 
     const response = await fetch(
@@ -211,7 +214,7 @@ async function loadIslemKayitlari() {
     lastTotalPages = Math.max(1, Math.ceil(totalRecords / itemsPerPage))
 
     // Global değişkeni güncelle
-    setCurrentPage(getCurrentPage())
+    // setCurrentPage(getCurrentPage()) // Bu satır gereksiz, kaldırıldı
 
     updatePagination(totalRecords)
 
@@ -301,7 +304,7 @@ function renderIslemKayitlari(kayitlar) {
   // Server-side modda gelen sayfa hazır; local modda slice uygula
   let paginatedKayitlar = kayitlar
   if (!serverSidePagination) {
-    const startIndex = (getCurrentPage() - 1) * itemsPerPage
+    const startIndex = (currentPage - 1) * itemsPerPage
     const endIndex = startIndex + itemsPerPage
     paginatedKayitlar = kayitlar.slice(startIndex, endIndex)
   }
@@ -382,28 +385,29 @@ function updatePagination(totalItems) {
   const totalPages = Math.ceil(totalItems / itemsPerPage)
   lastTotalPages = Math.max(1, totalPages)
   lastTotalRecords = totalItems
+
   const sayfaBilgisi = document.getElementById('sayfaBilgisi')
   const oncekiBtn = document.getElementById('oncekiSayfa')
   const sonrakiBtn = document.getElementById('sonrakiSayfa')
   const dots = document.querySelectorAll('.dot')
 
   if (sayfaBilgisi) {
-    sayfaBilgisi.textContent = `Sayfa ${getCurrentPage()} / ${totalPages}`
+    sayfaBilgisi.textContent = `Sayfa ${currentPage} / ${totalPages}`
   }
 
   if (oncekiBtn) {
-    oncekiBtn.disabled = getCurrentPage() <= 1
+    oncekiBtn.disabled = currentPage <= 1
   }
 
   if (sonrakiBtn) {
-    sonrakiBtn.disabled = getCurrentPage() >= totalPages
+    sonrakiBtn.disabled = currentPage >= totalPages
   }
 
   // Nokta animasyonlarını güncelle
   dots.forEach((dot, index) => {
     if (index < totalPages) {
       dot.style.display = 'block'
-      dot.classList.toggle('active', index + 1 === getCurrentPage())
+      dot.classList.toggle('active', index + 1 === currentPage)
     } else {
       dot.style.display = 'none'
     }
@@ -591,12 +595,22 @@ async function performIslemKayitlariSil() {
 
 // Event listener'ları ekle
 function setupIslemKayitlariEventListeners() {
+  // Önceki event listener'ları temizle
+  const oncekiBtnTemp = document.getElementById('oncekiSayfa')
+  const sonrakiBtnTemp = document.getElementById('sonrakiSayfa')
+
+  if (oncekiBtnTemp) {
+    oncekiBtnTemp.replaceWith(oncekiBtnTemp.cloneNode(true))
+  }
+  if (sonrakiBtnTemp) {
+    sonrakiBtnTemp.replaceWith(sonrakiBtnTemp.cloneNode(true))
+  }
   // Filtre değişiklikleri
   const islemTipiFiltre = document.getElementById('islemTipiFiltre')
 
   if (islemTipiFiltre) {
     islemTipiFiltre.addEventListener('change', () => {
-      setCurrentPage(1)
+      updateCurrentPage(1)
       loadIslemKayitlari()
     })
   }
@@ -657,8 +671,9 @@ function setupIslemKayitlariEventListeners() {
 
   if (oncekiBtn) {
     oncekiBtn.addEventListener('click', () => {
-      if (getCurrentPage() > 1) {
-        setCurrentPage(getCurrentPage() - 1)
+      if (currentPage > 1) {
+        const yeniSayfa = currentPage - 1
+        updateCurrentPage(yeniSayfa)
         loadIslemKayitlari()
       }
     })
@@ -669,8 +684,9 @@ function setupIslemKayitlariEventListeners() {
       const totalPages = serverSidePagination
         ? lastTotalPages
         : Math.ceil(islemKayitlari.length / itemsPerPage)
-      if (getCurrentPage() < totalPages) {
-        setCurrentPage(getCurrentPage() + 1)
+      if (currentPage < totalPages) {
+        const yeniSayfa = currentPage + 1
+        updateCurrentPage(yeniSayfa)
         loadIslemKayitlari()
       }
     })
