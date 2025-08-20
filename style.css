@@ -627,11 +627,22 @@ body > #puanGoster.show,
   border-radius: 30px;
   cursor: pointer;
   font-size: 16px;
-  transition: background 0.3s ease;
+  font-family: 'Segoe UI', 'Roboto', sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  transition: all 0.3s ease;
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
 }
 
 .tahmin-gonder:hover {
   background-color: #a29bfe;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(108, 92, 231, 0.4);
+}
+
+.tahmin-gonder:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(108, 92, 231, 0.3);
 }
 
 .pas-btn {
@@ -641,11 +652,14 @@ body > #puanGoster.show,
   border: none;
   border-radius: 30px;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 17px;
+  font-family: 'Segoe UI', 'Roboto', sans-serif;
   font-weight: 600;
+  letter-spacing: 0.8px;
   transition: all 0.3s ease;
   box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
   min-width: 80px;
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
 }
 
 .pas-btn:hover {
