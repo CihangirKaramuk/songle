@@ -167,9 +167,15 @@
 
       <audio id="audio-player"></audio>
 
-      <input type="text" placeholder="Tahminini yaz..." class="tahmin-input" />
-
-      <button class="tahmin-gonder">Tahmin Et</button>
+      <div class="tahmin-container">
+        <button class="pas-btn" id="pasBtn">Pas</button>
+        <input
+          type="text"
+          placeholder="Tahminini yaz..."
+          class="tahmin-input"
+        />
+        <button class="tahmin-gonder">Tahmin Et</button>
+      </div>
     </div>
 
     <!-- Şarkı bulunamadı bildirimi -->
@@ -204,6 +210,10 @@
             <div class="yanlis-sorular">
               <h4>⏱️ Süre Dolanlar (<span id="sure-dolan-sayi">0</span>)</h4>
               <div id="sure-dolan-liste" class="soru-liste"></div>
+            </div>
+            <div class="pas-gecilen-sorular">
+              <h4>🟠 Pas Geçilenler (<span id="pas-gecilen-sayi">0</span>)</h4>
+              <div id="pas-gecilen-liste" class="soru-liste"></div>
             </div>
           </div>
         </div>

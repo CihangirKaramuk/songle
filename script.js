@@ -14,6 +14,7 @@ let mevcutSoruSayisi = 0 // Mevcut soru sayısı
 const TOPLAM_SORU_SAYISI = 20 // Toplam soru sayısı
 let dogruBilinenSorular = [] // Doğru bilinen sorular
 let sureDolanSorular = [] // Süre dolan sorular
+let pasGecilenSorular = [] // Pas geçilen sorular
 let dogruSoruSayisi = 0 // Gerçek doğru soru sayısı
 const dropdownSelected = document.querySelector('.dropdown-selected')
 const dropdownOptions = document.querySelector('.dropdown-options')
@@ -490,6 +491,7 @@ document
     kullanilanSarkilar = []
     dogruBilinenSorular = []
     sureDolanSorular = []
+    pasGecilenSorular = []
     dogruSoruSayisi = 0
     soruIndex = rastgeleSoruIndex()
 
@@ -507,6 +509,10 @@ document
     setTimeout(() => {
       document.querySelector('.tahmin-input').focus()
     }, 100)
+
+    // Pas butonunu aktif et
+    const pasBtn = document.getElementById('pasBtn')
+    if (pasBtn) pasBtn.disabled = false
   })
 
 const geriBtn = document.getElementById('geriBtn')
@@ -525,6 +531,9 @@ geriBtn.addEventListener('click', function () {
 
   // Puanı gizle
   puanGizle()
+
+  // Pas geçilen soruları da sıfırla
+  pasGecilenSorular = []
 
   audioPlayer.pause()
   audioPlayer.currentTime = 0
@@ -652,6 +661,12 @@ function gosterDetayliSonuclar() {
     sureDolanSayiEl.textContent = sureDolanSorular.length
   }
 
+  // Pas geçilen soru sayısını göster
+  const pasGecilenSayiEl = document.getElementById('pas-gecilen-sayi')
+  if (pasGecilenSayiEl) {
+    pasGecilenSayiEl.textContent = pasGecilenSorular.length
+  }
+
   // Doğru bilinen soruları listele
   const dogruListeEl = document.getElementById('dogru-liste')
   if (dogruListeEl) {
@@ -678,9 +693,25 @@ function gosterDetayliSonuclar() {
       soruDiv.innerHTML = `
         <span class="soru-numarasi">${soru.soru}</span>
         <span class="sarki-adi">${soru.sarki}</span>
-        <span class="soru-durum">⏱️ Süre doldu</span>
+        <span class="soru-durum">🟠 Pas geçildi</span>
       `
       sureDolanListeEl.appendChild(soruDiv)
+    })
+  }
+
+  // Pas geçilen soruları listele
+  const pasGecilenListeEl = document.getElementById('pas-gecilen-liste')
+  if (pasGecilenListeEl) {
+    pasGecilenListeEl.innerHTML = ''
+    pasGecilenSorular.forEach((soru) => {
+      const soruDiv = document.createElement('div')
+      soruDiv.className = 'soru-item pas-gecilen'
+      soruDiv.innerHTML = `
+        <span class="soru-numarasi">${soru.soru}</span>
+        <span class="sarki-adi">${soru.sarki}</span>
+        <span class="soru-durum">🟠 Pas geçildi</span>
+      `
+      pasGecilenListeEl.appendChild(soruDiv)
     })
   }
 }
@@ -730,10 +761,12 @@ function tekrarOyna() {
   const guessInput = document.querySelector('.tahmin-input')
   const guessBtn = document.querySelector('.tahmin-gonder')
   const replayBtn = document.querySelector('.replay-btn')
+  const pasBtn = document.getElementById('pasBtn')
 
   if (guessInput) guessInput.disabled = false
   if (guessBtn) guessBtn.disabled = false
   if (replayBtn) replayBtn.disabled = false
+  if (pasBtn) pasBtn.disabled = false
 
   // Oyunu sıfırla ve yeniden başlat
   mevcutSoruSayisi = 0
@@ -741,6 +774,7 @@ function tekrarOyna() {
   kullanilanSarkilar = []
   dogruBilinenSorular = []
   sureDolanSorular = []
+  pasGecilenSorular = []
   dogruSoruSayisi = 0
   soruIndex = rastgeleSoruIndex()
   guncelleSoru()
@@ -760,19 +794,92 @@ function anaMenuyeDon() {
   const guessInput = document.querySelector('.tahmin-input')
   const guessBtn = document.querySelector('.tahmin-gonder')
   const replayBtn = document.querySelector('.replay-btn')
+  const pasBtn = document.getElementById('pasBtn')
 
   if (guessInput) guessInput.disabled = false
   if (guessBtn) guessBtn.disabled = false
   if (replayBtn) replayBtn.disabled = false
+  if (pasBtn) pasBtn.disabled = false
 
   // Progress göstergesini sıfırla
   mevcutSoruSayisi = 0
   guncelleProgressGosterge()
+
+  // Pas geçilen soruları da sıfırla
+  pasGecilenSorular = []
 }
 
 // Global scope'a fonksiyonları ekle
 window.tekrarOyna = tekrarOyna
 window.anaMenuyeDon = anaMenuyeDon
+
+// Pas butonu event listener
+document.getElementById('pasBtn').addEventListener('click', function () {
+  // Pas butonunu devre dışı bırak
+  this.disabled = true
+
+  // Tüm kontrolleri kilitle (süre dolduğunda olduğu gibi)
+  const guessInput = document.querySelector('.tahmin-input')
+  const guessBtn = document.querySelector('.tahmin-gonder')
+  const replayBtn = document.querySelector('.replay-btn')
+
+  if (guessInput) guessInput.disabled = true
+  if (guessBtn) guessBtn.disabled = true
+  if (replayBtn) replayBtn.disabled = true
+
+  // Süre sayacını durdur
+  clearInterval(sayacInterval)
+
+  // Pas geçilen olarak kaydet
+  pasGecilenSorular.push({
+    soru: mevcutSoruSayisi,
+    sarki: soruListesi[soruIndex].cevap,
+  })
+
+  // Albüm kapağı blur'ını kaldır
+  if (albumCover) {
+    albumCover.style.filter = 'blur(0px)'
+  }
+  sarkiKutusu.classList.remove('blurred')
+
+  // Pas mesajını göster
+  const pasMesaj = document.createElement('div')
+  pasMesaj.className = 'pas-mesaj'
+  pasMesaj.textContent = 'Pas geçildi! Yeni soruya geçiliyor...'
+  pasMesaj.style.cssText = `
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(135deg, #ffa726, #ff9800);
+    color: white;
+    padding: 15px 25px;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: 600;
+    z-index: 1000;
+    box-shadow: 0 8px 24px rgba(255, 152, 0, 0.4);
+    animation: fadeInOut 2s ease-in-out;
+  `
+
+  document.body.appendChild(pasMesaj)
+
+  // 2 saniye sonra mesajı kaldır ve yeni soruya geç
+  setTimeout(() => {
+    document.body.removeChild(pasMesaj)
+
+    // Oyun sonu kontrolü
+    if (mevcutSoruSayisi >= TOPLAM_SORU_SAYISI) {
+      // Oyun bitti, sonuç ekranını göster
+      oyunSonuGoster()
+    } else {
+      // Yeni soruya geç
+      soruIndex = rastgeleSoruIndex()
+      guncelleSoru()
+      baslatSayac()
+    }
+  }, 2000)
+})
 
 document.querySelector('.tahmin-gonder').addEventListener('click', function () {
   const input = document.querySelector('.tahmin-input')
@@ -836,6 +943,16 @@ document
     }
   })
 
+// Tab tuşu ile pas butonunu çalıştır
+document
+  .querySelector('.tahmin-input')
+  .addEventListener('keydown', function (e) {
+    if (e.key === 'Tab') {
+      e.preventDefault() // Tab'ın normal davranışını engelle
+      document.getElementById('pasBtn').click() // Pas butonunu çalıştır
+    }
+  })
+
 document.addEventListener('keydown', function (e) {
   if (e.key === 'Escape') {
     if (geriBtn && geriBtn.style.display !== 'none') {
@@ -860,6 +977,7 @@ function guncelleSoru() {
   const tahminInputEl = document.querySelector('.tahmin-input')
   const guessBtn = document.querySelector('.tahmin-gonder')
   const replayBtn = document.querySelector('.replay-btn')
+  const pasBtn = document.getElementById('pasBtn')
 
   if (tahminInputEl) {
     tahminInputEl.value = ''
@@ -868,6 +986,7 @@ function guncelleSoru() {
   }
   if (guessBtn) guessBtn.disabled = false
   if (replayBtn) replayBtn.disabled = false
+  if (pasBtn) pasBtn.disabled = false
 
   document.getElementById('zamanGoster').textContent = '⏱️ Kalan Süre: 30'
 
@@ -961,6 +1080,8 @@ function baslatSayac() {
       guessInput.disabled = true
       guessBtn.disabled = true
       replayBtn.disabled = true
+      const pasBtn = document.getElementById('pasBtn')
+      if (pasBtn) pasBtn.disabled = true
 
       albumCover.style.filter = 'blur(0px)'
 
@@ -984,6 +1105,8 @@ function baslatSayac() {
           guessInput.disabled = false
           guessBtn.disabled = false
           replayBtn.disabled = false
+          const pasBtn = document.getElementById('pasBtn')
+          if (pasBtn) pasBtn.disabled = false
           soruIndex = rastgeleSoruIndex()
           guncelleSoru()
           baslatSayac()

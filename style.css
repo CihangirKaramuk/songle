@@ -594,10 +594,19 @@ body > #puanGoster.show,
 /* ----- Disabled during time-up ----- */
 .tahmin-input:disabled,
 .tahmin-gonder:disabled,
+.pas-btn:disabled,
 .replay-btn[disabled] {
   opacity: 0.5;
   cursor: not-allowed !important;
   pointer-events: none;
+}
+
+.tahmin-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  margin: 28px 0 10px 0;
 }
 
 .tahmin-input {
@@ -605,8 +614,9 @@ body > #puanGoster.show,
   border-radius: 30px;
   border: none;
   font-size: 16px;
-  margin: 28px 0 10px 0;
   outline: none;
+  flex: 1;
+  max-width: 300px;
 }
 
 .tahmin-gonder {
@@ -622,6 +632,31 @@ body > #puanGoster.show,
 
 .tahmin-gonder:hover {
   background-color: #a29bfe;
+}
+
+.pas-btn {
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #ffa726, #ff9800);
+  color: white;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
+  min-width: 80px;
+}
+
+.pas-btn:hover {
+  background: linear-gradient(135deg, #ff9800, #f57c00);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255, 152, 0, 0.4);
+}
+
+.pas-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(255, 152, 0, 0.3);
 }
 
 body.error {
@@ -658,6 +693,25 @@ body.error {
   }
   100% {
     transform: translateX(0);
+  }
+}
+
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+  20% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  80% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
   }
 }
 
@@ -1191,7 +1245,7 @@ body.error {
   text-align: center;
   backdrop-filter: blur(20px);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-  max-width: 500px;
+  max-width: 800px;
   width: 90%;
   animation: fadeInUp 0.6s ease-out;
   position: fixed !important;
@@ -1302,12 +1356,13 @@ body.error {
 
 .detay-icerik {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 20px;
 }
 
 .dogru-sorular h4,
-.yanlis-sorular h4 {
+.yanlis-sorular h4,
+.pas-gecilen-sorular h4 {
   font-size: 16px;
   font-weight: 600;
   color: #fff;
@@ -1396,6 +1451,16 @@ body.error {
   color: #ff6b6b;
 }
 
+.soru-item.pas-gecilen {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 167, 38, 0.2),
+    rgba(255, 152, 0, 0.2)
+  );
+  border: 1px solid rgba(255, 167, 38, 0.3);
+  color: #ffa726;
+}
+
 .soru-numarasi {
   font-weight: 600;
   min-width: 30px;
@@ -1418,7 +1483,23 @@ body.error {
   color: #ff6b6b;
 }
 
-/* Responsive tasarım için */
+.soru-item.pas-gecilen .soru-durum {
+  color: #ffa726;
+}
+
+/* Tablet boyutu için */
+@media (max-width: 900px) {
+  .sonuc-content {
+    max-width: 90%;
+  }
+
+  .detay-icerik {
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+  }
+}
+
+/* Mobil boyut için */
 @media (max-width: 600px) {
   .detay-icerik {
     grid-template-columns: 1fr;
@@ -1454,6 +1535,7 @@ body.error {
   .sonuc-content {
     padding: 30px 20px;
     margin: 20px;
+    max-width: 95%;
     position: fixed !important;
     top: 50vh !important;
     left: 50vw !important;
@@ -1508,6 +1590,24 @@ body.error {
     left: 50vw !important;
     transform: translate(-50%, -50%) !important;
     z-index: 9999 !important;
+  }
+
+  /* Mobil için tahmin container */
+  .tahmin-container {
+    flex-direction: column;
+    gap: 12px;
+    margin: 20px 0 10px 0;
+  }
+
+  .tahmin-input {
+    max-width: 280px;
+    width: 100%;
+  }
+
+  .pas-btn {
+    min-width: 70px;
+    padding: 8px 16px;
+    font-size: 14px;
   }
 
   .puan-deger {
