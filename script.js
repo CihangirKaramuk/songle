@@ -134,6 +134,13 @@ function handleCategorySelection() {
   selectedDiziAltKategori = ''
   selectedFilmAltKategori = ''
 
+  // Tüm alt kategori seçimlerini temizle
+  Object.keys(window).forEach((key) => {
+    if (key.startsWith('selectedAltKategori-')) {
+      delete window[key]
+    }
+  })
+
   dropdownSelected.textContent = this.textContent
   dropdownSelected.setAttribute('data-value', this.getAttribute('data-value'))
   dropdownOptions.style.display = 'none'
@@ -525,6 +532,12 @@ geriBtn.addEventListener('click', function () {
   clearTimeout(yeniSoruTimeout) // Bekleyen timeout'u temizle
   clearTimeout(audioPlayTimeout) // Şarkı çalma timeout'unu temizle
 
+  // Pas uyarı mesajını temizle (eğer varsa)
+  const pasMesaj = document.querySelector('.pas-mesaj')
+  if (pasMesaj) {
+    document.body.removeChild(pasMesaj)
+  }
+
   // Progress göstergesini sıfırla
   mevcutSoruSayisi = 0
   guncelleProgressGosterge()
@@ -535,8 +548,12 @@ geriBtn.addEventListener('click', function () {
   // Pas geçilen soruları da sıfırla
   pasGecilenSorular = []
 
+  // Audio player'ı tamamen durdur ve sıfırla
   audioPlayer.pause()
   audioPlayer.currentTime = 0
+  audioPlayer.src = '' // Audio source'u temizle
+  audioPlayer.load() // Audio'yu yeniden yükle
+
   if (window.durdurCalmaAnimasyonu) durdurCalmaAnimasyonu()
 })
 
@@ -572,7 +589,7 @@ function cevapDogruMu(tahmin, cevap) {
   }
 
   // Daha esnek karşılaştırma için benzerlik hesapla
-  return benzerlikHesapla(tahmin, cevap) > 0.7 // %70 benzerlik eşiği
+  return benzerlikHesapla(tahmin, cevap) > 0.75 // %75 benzerlik eşiği
 }
 
 function benzerlikHesapla(str1, str2) {
@@ -790,6 +807,12 @@ function anaMenuyeDon() {
   document.querySelector('.container').style.display = 'flex'
   document.getElementById('geriBtn').style.display = 'none'
 
+  // Pas uyarı mesajını temizle (eğer varsa)
+  const pasMesaj = document.querySelector('.pas-mesaj')
+  if (pasMesaj) {
+    document.body.removeChild(pasMesaj)
+  }
+
   // Kilitleri aç
   const guessInput = document.querySelector('.tahmin-input')
   const guessBtn = document.querySelector('.tahmin-gonder')
@@ -807,6 +830,14 @@ function anaMenuyeDon() {
 
   // Pas geçilen soruları da sıfırla
   pasGecilenSorular = []
+
+  // Audio player'ı tamamen durdur ve sıfırla
+  audioPlayer.pause()
+  audioPlayer.currentTime = 0
+  audioPlayer.src = '' // Audio source'u temizle
+  audioPlayer.load() // Audio'yu yeniden yükle
+
+  if (window.durdurCalmaAnimasyonu) durdurCalmaAnimasyonu()
 }
 
 // Global scope'a fonksiyonları ekle
@@ -866,7 +897,17 @@ document.getElementById('pasBtn').addEventListener('click', function () {
 
   // 2 saniye sonra mesajı kaldır ve yeni soruya geç
   setTimeout(() => {
-    document.body.removeChild(pasMesaj)
+    // Pas mesajını güvenli bir şekilde kaldır
+    if (pasMesaj && pasMesaj.parentNode) {
+      pasMesaj.parentNode.removeChild(pasMesaj)
+    }
+
+    // Oyun ekranının görünür olup olmadığını kontrol et
+    const gameScreen = document.querySelector('.game-screen')
+    if (gameScreen.style.display === 'none') {
+      // Eğer oyun ekranı görünür değilse (ana menüdeyiz), yeni soruya geçme
+      return
+    }
 
     // Oyun sonu kontrolü
     if (mevcutSoruSayisi >= TOPLAM_SORU_SAYISI) {
@@ -906,6 +947,17 @@ document.querySelector('.tahmin-gonder').addEventListener('click', function () {
     confetti()
     clearInterval(sayacInterval)
 
+    // Tüm kontrolleri kilitle (doğru cevap verildikten sonra)
+    const guessInput = document.querySelector('.tahmin-input')
+    const guessBtn = document.querySelector('.tahmin-gonder')
+    const replayBtn = document.querySelector('.replay-btn')
+    const pasBtn = document.getElementById('pasBtn')
+
+    if (guessInput) guessInput.disabled = true
+    if (guessBtn) guessBtn.disabled = true
+    if (replayBtn) replayBtn.disabled = true
+    if (pasBtn) pasBtn.disabled = true
+
     // Oyun sonu kontrolü
     if (mevcutSoruSayisi >= TOPLAM_SORU_SAYISI) {
       // Oyun bitti, sonuç ekranını göster
@@ -916,6 +968,13 @@ document.querySelector('.tahmin-gonder').addEventListener('click', function () {
     } else {
       // Yeni soruya geç
       yeniSoruTimeout = setTimeout(() => {
+        // Oyun ekranının görünür olup olmadığını kontrol et
+        const gameScreen = document.querySelector('.game-screen')
+        if (gameScreen.style.display === 'none') {
+          // Eğer oyun ekranı görünür değilse (ana menüdeyiz), yeni soruya geçme
+          return
+        }
+
         // Puanı gizle
         puanGizle()
 
@@ -1095,6 +1154,13 @@ function baslatSayac() {
 
       setTimeout(() => {
         timeUpEl.classList.remove('show')
+
+        // Oyun ekranının görünür olup olmadığını kontrol et
+        const gameScreen = document.querySelector('.game-screen')
+        if (gameScreen.style.display === 'none') {
+          // Eğer oyun ekranı görünür değilse (ana menüdeyiz), yeni soruya geçme
+          return
+        }
 
         // Oyun sonu kontrolü
         if (mevcutSoruSayisi >= TOPLAM_SORU_SAYISI) {
