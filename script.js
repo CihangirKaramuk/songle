@@ -25,6 +25,9 @@ async function initializeApp() {
   try {
     sarkiListesi = await apiService.getSongs()
     await loadCategories()
+
+    // Kaydedilmiş ses seviyesini yükle
+    loadSavedVolume()
   } catch (error) {
     console.error('Failed to load songs:', error)
     // Show error to user if needed
@@ -710,7 +713,7 @@ function gosterDetayliSonuclar() {
       soruDiv.innerHTML = `
         <span class="soru-numarasi">${soru.soru}</span>
         <span class="sarki-adi">${soru.sarki}</span>
-        <span class="soru-durum">🟠 Pas geçildi</span>
+        <span class="soru-durum">⏱️ Süre doldu</span>
       `
       sureDolanListeEl.appendChild(soruDiv)
     })
@@ -1286,7 +1289,19 @@ const volumeControl = document.querySelector('.volume-control')
 
 volumeSlider.addEventListener('input', function () {
   audioPlayer.volume = this.value
+  // Ses seviyesini localStorage'a kaydet
+  localStorage.setItem('songleVolume', this.value)
 })
+
+// Kaydedilmiş ses seviyesini yükle
+function loadSavedVolume() {
+  const savedVolume = localStorage.getItem('songleVolume')
+  if (savedVolume !== null) {
+    // Kaydedilmiş ses seviyesi varsa uygula
+    audioPlayer.volume = parseFloat(savedVolume)
+    volumeSlider.value = savedVolume
+  }
+}
 
 function isMobile() {
   return /Mobi|Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(
