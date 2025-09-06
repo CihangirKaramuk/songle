@@ -12,43 +12,51 @@ Songle is an interactive web-based music guessing game that challenges players t
 
 ### 🎵 Game Features
 
-- **Multiple Categories**: Turkish, Foreign, TV Series, and Movie music
-- **Sub-categories**: Rock, Pop, Hip Hop, and Mixed genres
+- **Dynamic Categories**: Fully customizable categories and subcategories via admin panel
+- **20 Questions Per Game**: Each game consists of 20 questions for extended gameplay
 - **30-second Timer**: Each round has a time limit for added challenge
-- **Album Cover Hints**: Visual clues with album artwork
-- **Smart Answer Matching**: Fuzzy string matching for song titles
-- **Score Tracking**: Keep track of your guessing performance
-- **Random Daily Songs**: New songs every day for fresh gameplay
+- **Album Cover Hints**: Visual clues with album artwork that gradually becomes clear
+- **Smart Answer Matching**: Advanced fuzzy string matching for song titles with 75% similarity threshold
+- **Score Tracking**: Real-time score calculation based on remaining time
+- **Pass Feature**: Skip difficult questions with Tab key or pass button
+- **Detailed Results**: Comprehensive game statistics and question breakdown
+- **Volume Control**: Persistent volume settings with localStorage
+- **Mobile Optimized**: Touch-friendly controls and responsive design
 
 ### 🎨 User Interface
 
-- **Modern Design**: Clean, neumorphic UI with smooth animations
-- **Responsive Layout**: Works on desktop and mobile devices
-- **Turkish Language**: Fully localized interface
-- **Music Visualizer**: Animated music note during playback
-- **Category Selection**: Intuitive dropdown and card-based selection
+- **Modern Design**: Clean, neumorphic UI with smooth animations and transitions
+- **Responsive Layout**: Works perfectly on desktop, tablet, and mobile devices
+- **Turkish Language**: Fully localized interface with proper Turkish character support
+- **Music Visualizer**: Animated music note during playback with progress bar
+- **Dynamic Category Selection**: Real-time category loading from database
 - **Theme Support**: Light and Dark mode with automatic switching
+- **Accessibility**: Keyboard navigation support (Enter, Tab, Escape keys)
 
 ### 🔧 Technical Features
 
-- **Vanilla JavaScript**: No framework dependencies
-- **RESTful API**: Backend integration for song management
-- **Admin Panel**: Complete content management system with modular architecture
-- **Audio Management**: MP3 file handling and playback
-- **Image Management**: Album cover storage and display
-- **Deezer Integration**: Direct song search and download from Deezer
-- **Comprehensive Logging**: Operation logs for all admin actions
-- **User Management**: Role-based access control for administrators
+- **Vanilla JavaScript**: No framework dependencies, pure ES6+ modules
+- **RESTful API**: Complete backend integration for all game data
+- **Modular Architecture**: Clean, maintainable code structure
+- **Real-time Updates**: Automatic category refresh every 10 seconds
+- **Audio Management**: MP3 file handling with error recovery
+- **Image Management**: Album cover storage with blur effects
+- **Deezer Integration**: Direct song search and download from Deezer API
+- **Comprehensive Logging**: Complete audit trail of all admin actions
+- **User Management**: Role-based access control with password security
 
 ### 🛡️ Admin Panel Features
 
-- **Song Management**: Add, edit, delete songs with audio and cover files
-- **Category Management**: Organize songs into categories and subcategories
-- **User Management**: Add, edit, delete authorized personnel with role management
-- **Operation Logs**: Complete audit trail of all admin actions
-- **File Management**: Upload and manage MP3 files and album covers
+- **Complete Song Management**: Add, edit, delete songs with audio and cover files
+- **Dynamic Category Management**: Create and manage categories and subcategories
+- **Advanced User Management**: Add, edit, delete users with role-based permissions
+- **Comprehensive Operation Logs**: Complete audit trail with filtering and pagination
+- **File Management**: Secure upload and management of MP3 files and album covers
 - **Deezer Integration**: Search and download songs directly from Deezer
-- **Responsive Design**: Works on all devices with modern UI
+- **Batch Operations**: Select and delete multiple songs or operation logs
+- **Settings Management**: Theme, pagination, and notification preferences
+- **System Monitoring**: Real-time statistics and system information
+- **Responsive Design**: Works seamlessly on all devices with modern UI
 
 ## 🚀 Installation
 
@@ -91,21 +99,25 @@ Songle is an interactive web-based music guessing game that challenges players t
 
    - Click "Oynamaya Başla" (Start Playing)
    - Select a music category from the dropdown
+   - Choose a sub-category (Rock, Pop, Hip Hop, Mixed, etc.)
 
-2. **Choose Sub-category**
-
-   - Select from available sub-categories (Rock, Pop, Hip Hop, Mixed)
-   - For TV Series/Movies: Choose Turkish or Foreign
-
-3. **Guess the Song**
+2. **Play the Game**
 
    - Listen to the 30-second audio clip
    - Type your guess in the input field
-   - Submit your answer before time runs out
+   - Press Enter to submit or Tab to pass
+   - Use the replay button to hear the song again
 
-4. **Track Your Score**
-   - Correct answers earn points
-   - Try to achieve the highest score possible
+3. **Score Points**
+
+   - Correct answers earn points based on remaining time
+   - 30 seconds = 30 points, 1 second = 1 point
+   - Pass difficult questions to continue playing
+
+4. **Complete the Game**
+   - Play through 20 questions
+   - View detailed results and statistics
+   - See which songs you got right, wrong, or passed
 
 ## 🔧 Configuration
 
@@ -130,12 +142,14 @@ $password = ''
 
 ### Categories
 
-The game supports the following categories:
+The game supports dynamic categories that can be managed through the admin panel:
 
-- **Türkçe** (Turkish): Rock, Pop, Hip Hop, Mixed
-- **Yabancı** (Foreign): Rock, Pop, Hip Hop, Mixed
-- **Dizi** (TV Series): Turkish, Foreign
-- **Film** (Movies): Turkish, Foreign
+- **Türkçe** (Turkish): Rock, Pop, Hip Hop, Mixed, and custom subcategories
+- **Yabancı** (Foreign): Rock, Pop, Hip Hop, Mixed, and custom subcategories
+- **Dizi** (TV Series): Turkish, Foreign, and custom subcategories
+- **Film** (Movies): Turkish, Foreign, and custom subcategories
+
+Categories are loaded dynamically from the database and can be customized through the admin panel.
 
 ## 🛠️ Development
 
@@ -178,16 +192,16 @@ Access the admin panel at `http://localhost/songle/admin/` to:
 
 ### Modular Architecture
 
-The admin panel uses a modular JavaScript architecture:
+The admin panel uses a modular JavaScript architecture with ES6 modules:
 
-- **`global-variables.js`**: Centralized state management
-- **`settings.js`**: Operation logs and system settings
-- **`song-management.js`**: Song CRUD operations
-- **`category-management.js`**: Category management
-- **`deezer.js`**: Deezer API integration
-- **`utils.js`**: Utility functions and helpers
-- **`theme.js`**: Theme management
-- **`logout.js`**: Session management
+- **`global-variables.js`**: Centralized state management and global variables
+- **`settings.js`**: Operation logs, system settings, and user management
+- **`song-management.js`**: Complete song CRUD operations with batch operations
+- **`category-management.js`**: Dynamic category and subcategory management
+- **`deezer.js`**: Deezer API integration for song search and download
+- **`utils.js`**: Utility functions, toast messages, and common helpers
+- **`theme.js`**: Theme management with localStorage persistence
+- **`logout.js`**: Secure session management and logout functionality
 
 ### Customization
 
@@ -263,26 +277,39 @@ For questions, issues, or contributions, please open an issue on GitHub or conta
 
 ## 🔄 Recent Updates
 
+### v2.1.0 - Enhanced Game Experience
+
+- **20 Questions Per Game**: Extended gameplay with comprehensive scoring
+- **Pass Feature**: Skip difficult questions with Tab key or pass button
+- **Detailed Results**: Complete game statistics and question breakdown
+- **Volume Control**: Persistent volume settings with localStorage
+- **Mobile Optimization**: Enhanced touch controls and responsive design
+- **Dynamic Categories**: Real-time category loading from database
+- **Advanced Scoring**: Time-based scoring system with visual feedback
+
 ### v2.0.0 - Major Admin Panel Update
 
-- Complete modular JavaScript architecture
-- Comprehensive operation logging system
-- Enhanced user management with role-based access
+- Complete modular JavaScript architecture with ES6 modules
+- Comprehensive operation logging system with filtering and pagination
+- Enhanced user management with role-based access and password security
 - Deezer integration for song search and download
-- Improved UI/UX with theme support
-- Better error handling and validation
+- Batch operations for songs and operation logs
+- Improved UI/UX with theme support and modern design
+- Better error handling and validation throughout
 
 ### v1.5.0 - Operation Logs
 
 - Added comprehensive logging for all admin actions
-- User activity tracking
-- Audit trail for compliance and debugging
+- User activity tracking with detailed audit trails
+- Advanced filtering and pagination for operation logs
+- System monitoring and statistics dashboard
 
 ### v1.0.0 - Initial Release
 
-- Core game functionality
-- Basic admin panel
-- Song and category management
+- Core game functionality with 30-second timer
+- Basic admin panel with song management
+- Category and subcategory management
+- Album cover hints and visual feedback
 
 ---
 
