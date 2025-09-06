@@ -325,6 +325,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // Şarkı ekleme işlemi
 document.getElementById('ekleBtn').addEventListener('click', async () => {
   const sarki = document.getElementById('sarkiAdi').value.trim()
+  const sanatci = document.getElementById('sanatciAdi').value.trim()
   const kategori = document.getElementById('kategori').value
   const altKategori = document.getElementById('altKategori').value
   const mp3File = document.getElementById('mp3File').files[0]
@@ -338,7 +339,7 @@ document.getElementById('ekleBtn').addEventListener('click', async () => {
     return
   }
 
-  if (!sarki || !kategori) {
+  if (!sarki || !sanatci || !kategori) {
     showCenterAlert('Lütfen tüm alanları doldurun!')
     return
   }
@@ -444,26 +445,40 @@ document.getElementById('ekleBtn').addEventListener('click', async () => {
     const songData = {
       kategori: kategoriBilgisi,
       cevap: sarki,
-      sarki: ' ' + sarki + '',
+      sarki: sanatci,
       dosya: dosyaYolu,
       kapak: kapakYolu,
     }
 
     // Şarkıyı ekle
-    await apiService.addSong(songData)
-    showSuccessToast(' Şarkı başarıyla eklendi!')
+    try {
+      await apiService.addSong(songData)
+      showSuccessToast(' Şarkı başarıyla eklendi!')
 
-    // Formu temizle
-    document.getElementById('sanatciAdi').value = ''
-    document.getElementById('sarkiAdi').value = ''
-    document.getElementById('kategori').value = ''
-    document.getElementById('altKategori').innerHTML =
-      '<option value="">Alt Kategori Seç</option>'
-    document.getElementById('altKategori').style.display = 'none'
-    document.getElementById('mp3File').value = ''
+      // Formu temizle
+      document.getElementById('sanatciAdi').value = ''
+      document.getElementById('sarkiAdi').value = ''
+      document.getElementById('kategori').value = ''
+      document.getElementById('altKategori').innerHTML =
+        '<option value="">Alt Kategori Seç</option>'
+      document.getElementById('altKategori').style.display = 'none'
+      document.getElementById('mp3File').value = ''
 
-    // Listeyi güncelle
-    await guncelleListe()
+      // Listeyi güncelle
+      await guncelleListe()
+    } catch (addError) {
+      // Şarkı zaten mevcut hatası
+      if (addError.status === 409) {
+        const errorData = await addError.response.json()
+        showModernAlert(
+          'Bu şarkı zaten mevcut!',
+          `"${errorData.existing_song.cevap}" - "${errorData.existing_song.sarki}" şarkısı zaten veritabanında bulunuyor.`,
+          'warning'
+        )
+      } else {
+        throw addError // Diğer hataları yukarı fırlat
+      }
+    }
   } catch (error) {
     console.error('Hata:', error)
     showGuncelleToast('Hata: ' + error.message)

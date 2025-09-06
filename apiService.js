@@ -82,14 +82,31 @@ const apiService = {
       })
 
       if (!response.ok) {
-        throw new Error(
+        // 409 Conflict hatası özel durum - şarkı zaten mevcut
+        if (response.status === 409) {
+          const error = new Error(
+            `Song already exists: ${response.status} ${response.statusText}`
+          )
+          error.status = response.status
+          error.response = response
+          throw error
+        }
+
+        // Diğer hatalar için normal hata mesajı
+        const error = new Error(
           `Failed to add song: ${response.status} ${response.statusText}`
         )
+        error.status = response.status
+        error.response = response
+        throw error
       }
 
       return await response.json()
     } catch (error) {
-      console.error('Add song error:', error)
+      // 409 hatası normal bir durum, console'da loglama
+      if (error.status !== 409) {
+        console.error('Add song error:', error)
+      }
       throw error // Re-throw to handle in the calling code
     }
   },
