@@ -520,7 +520,32 @@ function showIslemKayitDetay(kayitId) {
     
     <div class="islem-detay-grup">
       <div class="islem-detay-baslik">Detay</div>
-      <div class="islem-detay-aciklama">${escapeHtml(kayit.detay)}</div>
+      ${
+        kayit.eski_deger && kayit.yeni_deger
+          ? `
+      <div class="islem-detay-degisiklik">
+        <div class="eski-deger">
+          <div class="deger-baslik">
+            <span class="deger-text">Önceki</span>
+          </div>
+          <div class="deger-icerik">${escapeHtml(kayit.eski_deger).replace(
+            /, /g,
+            '<br>'
+          )}</div>
+        </div>
+        <div class="yeni-deger">
+          <div class="deger-baslik">
+            <span class="deger-text">Sonraki</span>
+          </div>
+          <div class="deger-icerik">${escapeHtml(kayit.yeni_deger).replace(
+            /, /g,
+            '<br>'
+          )}</div>
+        </div>
+      </div>
+      `
+          : `<div class="islem-detay-aciklama">${escapeHtml(kayit.detay)}</div>`
+      }
     </div>
   `
 
