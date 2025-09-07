@@ -4111,27 +4111,52 @@ body.light .kullanicilar-liste::-webkit-scrollbar-thumb {
 }
 
 /* İşlem Kaydı Detay Modal */
-.islem-kayit-detay-modal {
-  width: 600px;
-  max-width: 90vw;
-  max-height: 80vh;
-  overflow-y: auto;
+.modal-content.islem-kayit-detay-modal {
+  width: 500px !important;
+  max-width: 90vw !important;
+  max-height: 80vh !important;
+  overflow-y: auto !important;
+  text-align: left !important;
+  padding: 0 !important;
+  background: linear-gradient(145deg, #1e1e3c 0%, #2a2a4a 100%) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  animation: modalSlideIn 0.3s ease-out !important;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: 15px;
-  border-bottom: 1px solid #4a4a6a;
-  margin-bottom: 20px;
+  padding: 24px 24px 16px 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 0;
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(99, 102, 241, 0.05) 100%);
+  border-radius: 16px 16px 0 0;
 }
 
 .modal-header h2 {
   margin: 0;
   color: #fff;
   font-size: 20px;
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .modal-close {
@@ -4139,25 +4164,24 @@ body.light .kullanicilar-liste::-webkit-scrollbar-thumb {
   align-items: center;
   justify-content: center;
   flex: 0 0 auto;
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   padding: 0;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.04);
-  color: #cbd5e1;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #a1a1aa;
   cursor: pointer;
-  transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease,
-    box-shadow 0.2s ease, border-color 0.2s ease;
-  backdrop-filter: blur(4px);
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
 }
 
 .modal-close:hover {
   color: #ffffff;
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.18);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 .modal-close:active {
@@ -4183,54 +4207,109 @@ body.light .kullanicilar-liste::-webkit-scrollbar-thumb {
 
 .modal-body {
   color: #d1d5db;
+  padding: 24px;
+  background: linear-gradient(145deg, #1e1e3c 0%, #2a2a4a 100%);
+  border-radius: 0 0 16px 16px;
 }
 
 .islem-detay-grup {
-  margin-bottom: 20px;
+  margin-bottom: 24px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.islem-detay-grup:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
 }
 
 .islem-detay-baslik {
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 700;
   color: #8b5cf6;
-  margin-bottom: 10px;
-  padding-bottom: 5px;
-  border-bottom: 1px solid #4a4a6a;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid rgba(139, 92, 246, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.islem-detay-baslik::before {
+  content: "●";
+  color: #8b5cf6;
+  font-size: 12px;
 }
 
 .islem-detay-satir {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 0;
-  border-bottom: 1px solid rgba(74, 74, 106, 0.3);
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.2s ease;
 }
 
 .islem-detay-satir:last-child {
   border-bottom: none;
 }
 
+.islem-detay-satir:hover {
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 8px;
+  padding: 12px 8px;
+  margin: 0 -8px;
+}
+
 .islem-detay-label {
-  font-weight: 500;
+  font-weight: 600;
   color: #a1a1aa;
-  min-width: 120px;
+  min-width: 130px;
+  font-size: 14px;
+  letter-spacing: 0.3px;
 }
 
 .islem-detay-deger {
   color: #fff;
   text-align: right;
   flex: 1;
-  margin-left: 15px;
+  margin-left: 20px;
+  font-weight: 500;
+  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .islem-detay-aciklama {
-  background: linear-gradient(135deg, #2a2a4a 0%, #1e1e3c 100%);
-  border: 1px solid #4a4a6a;
-  border-radius: 8px;
-  padding: 15px;
-  margin-top: 10px;
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(99, 102, 241, 0.05) 100%);
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 16px;
   font-size: 14px;
-  line-height: 1.5;
+  line-height: 1.6;
+  color: #e2e8f0;
+  font-weight: 500;
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+}
+
+.islem-detay-aciklama::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #8b5cf6 0%, #6366f1 100%);
 }
 
 /* Light Mode İşlem Kayıtları */
@@ -4367,11 +4446,16 @@ body.light #sayfaBilgisi {
 }
 
 body.light .modal-header {
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(99, 102, 241, 0.04) 100%);
 }
 
 body.light .modal-header h2 {
   color: #1e293b;
+  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 body.light .modal-close {
@@ -4388,15 +4472,30 @@ body.light .modal-close:hover {
 
 body.light .modal-body {
   color: #475569;
+  background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+}
+
+body.light .islem-detay-grup {
+  background: rgba(139, 92, 246, 0.02);
+  border: 1px solid rgba(139, 92, 246, 0.1);
+}
+
+body.light .islem-detay-grup:hover {
+  background: rgba(139, 92, 246, 0.05);
+  border-color: rgba(139, 92, 246, 0.2);
 }
 
 body.light .islem-detay-baslik {
   color: #8b5cf6;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 2px solid rgba(139, 92, 246, 0.2);
 }
 
 body.light .islem-detay-satir {
-  border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.3);
+}
+
+body.light .islem-detay-satir:hover {
+  background: rgba(139, 92, 246, 0.05);
 }
 
 body.light .islem-detay-label {
@@ -4405,11 +4504,15 @@ body.light .islem-detay-label {
 
 body.light .islem-detay-deger {
   color: #1e293b;
+  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 body.light .islem-detay-aciklama {
-  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-  border: 1px solid #cbd5e1;
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(99, 102, 241, 0.04) 100%);
+  border: 1px solid rgba(139, 92, 246, 0.2);
   color: #475569;
 }
 
@@ -4447,22 +4550,50 @@ body.light .islem-detay-aciklama {
 
   .islem-kayit-detay-modal {
     width: 95vw;
+    max-width: 95vw;
     margin: 10px;
+    max-height: 85vh;
+  }
+
+  .modal-header {
+    padding: 20px 20px 12px 20px;
+  }
+
+  .modal-body {
+    padding: 20px;
+  }
+
+  .islem-detay-grup {
+    padding: 16px;
+    margin-bottom: 20px;
   }
 
   .islem-detay-satir {
     flex-direction: column;
     align-items: flex-start;
-    gap: 5px;
+    gap: 8px;
+    padding: 10px 0;
+  }
+
+  .islem-detay-satir:hover {
+    padding: 10px 6px;
+    margin: 0 -6px;
   }
 
   .islem-detay-label {
     min-width: auto;
+    font-size: 13px;
   }
 
   .islem-detay-deger {
     text-align: left;
     margin-left: 0;
+    font-size: 14px;
+  }
+
+  .islem-detay-aciklama {
+    padding: 16px;
+    font-size: 13px;
   }
 }
 
