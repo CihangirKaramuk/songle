@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost/songle-backend/api'
+const API_BASE_URL = 'https://songle.app/songle-backend/api'
 
 const apiService = {
   // Get all songs

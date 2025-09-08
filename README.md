@@ -78,7 +78,7 @@ Songle is an interactive web-based music guessing game that challenges players t
 2. **Set up the backend**
 
    - Place the project in your XAMPP `htdocs` folder
-   - Ensure the backend API is running at `http://localhost/songle-backend/api`
+   - Ensure the backend API is running at `https://songle.app/songle-backend/api`
    - Import `songle-backend/songle.sql` to create the database
    - Configure your database connection in `songle-backend/config/database.php`
 
@@ -90,8 +90,8 @@ Songle is an interactive web-based music guessing game that challenges players t
 
 4. **Start the server**
    - Start XAMPP Apache and MySQL services
-   - Navigate to `http://localhost/songle` in your browser
-   - Access admin panel at `http://localhost/songle/admin/`
+   - Navigate to `https://songle.app` in your browser
+   - Access admin panel at `https://songle.app/admin/`
 
 ## 🎯 How to Play
 
@@ -126,7 +126,7 @@ Songle is an interactive web-based music guessing game that challenges players t
 The game connects to a backend API for song management. Update the API base URL in `apiService.js`:
 
 ```javascript
-const API_BASE_URL = 'http://localhost/songle-backend/api'
+const API_BASE_URL = 'https://songle.app/songle-backend/api'
 ```
 
 ### Database Configuration
@@ -181,7 +181,7 @@ songle/
 
 ### Admin Panel
 
-Access the admin panel at `http://localhost/songle/admin/` to:
+Access the admin panel at `https://songle.app/admin/` to:
 
 - Add/edit/delete songs with audio and cover files
 - Manage categories and subcategories

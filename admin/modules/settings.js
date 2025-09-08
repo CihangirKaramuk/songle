@@ -199,7 +199,7 @@ async function loadIslemKayitlari() {
     params.append('limit', itemsPerPage.toString())
 
     const response = await fetch(
-      `http://localhost/songle-backend/api/islem-kayitlari.php?${params.toString()}`
+      `https://songle.app/songle-backend/api/islem-kayitlari.php?${params.toString()}`
     )
 
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
@@ -584,7 +584,7 @@ async function performIslemKayitlariSil() {
   try {
     // API'ye silme isteği gönder
     const response = await fetch(
-      'http://localhost/songle-backend/api/islem-kayitlari-sil.php',
+      'https://songle.app/songle-backend/api/islem-kayitlari-sil.php',
       {
         method: 'POST',
         headers: {
@@ -844,7 +844,7 @@ async function testIslemKaydiOlustur() {
     }
 
     const response = await fetch(
-      'http://localhost/songle-backend/api/islem-kayit-ekle.php',
+      'https://songle.app/songle-backend/api/islem-kayit-ekle.php',
       {
         method: 'POST',
         headers: {
@@ -916,7 +916,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     try {
       const resp = await fetch(
-        'http://localhost/songle-backend/api/kullanicilar.php',
+        'https://songle.app/songle-backend/api/kullanicilar.php',
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -954,7 +954,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const qs = new URLSearchParams()
     if (query) qs.append('kullanici_adi', query)
     const resp = await fetch(
-      `http://localhost/songle-backend/api/kullanicilar.php?${qs.toString()}`
+      `https://songle.app/songle-backend/api/kullanicilar.php?${qs.toString()}`
     )
     const data = await resp.json()
     if (!resp.ok || !data.success) {
@@ -1081,7 +1081,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function userUpdate(payload) {
     const resp = await fetch(
-      'http://localhost/songle-backend/api/kullanicilar.php',
+      'https://songle.app/songle-backend/api/kullanicilar.php',
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -1094,7 +1094,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function userDelete(id) {
     const resp = await fetch(
-      'http://localhost/songle-backend/api/kullanicilar.php',
+      'https://songle.app/songle-backend/api/kullanicilar.php',
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -1192,7 +1192,7 @@ function openUserDeleteModal(userId) {
 // API kullanıcı sil helper (global)
 async function apiUserDelete(id) {
   const resp = await fetch(
-    'http://localhost/songle-backend/api/kullanicilar.php',
+    'https://songle.app/songle-backend/api/kullanicilar.php',
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

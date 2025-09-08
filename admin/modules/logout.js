@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
       try {
         // Backend'e logout isteği gönder
         const response = await fetch(
-          'http://localhost/songle-backend/api/kullanicilar.php',
+          'https://songle.app/songle-backend/api/kullanicilar.php',
           {
             method: 'DELETE',
             headers: {
