@@ -27,7 +27,7 @@ function girisKontrol() {
           })
         )
 
-        window.location.href = 'panel.html'
+        window.location.href = 'api-panel.html'
       } else {
         document.getElementById('errorMsg').textContent =
           'Kullanıcı adı veya şifre yanlış!'
