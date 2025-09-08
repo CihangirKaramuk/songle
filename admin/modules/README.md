@@ -1,6 +1,6 @@
 # API Panel Modüler Yapısı 🏗️
 
-Bu klasör, `api-panel.js` dosyasının modüler hale getirilmiş versiyonunu içerir. Ana dosya artık daha küçük, yönetilebilir ve sürdürülebilir hale getirilmiştir.
+Bu klasör, `panel.js` dosyasının modüler hale getirilmiş versiyonunu içerir. Ana dosya artık daha küçük, yönetilebilir ve sürdürülebilir hale getirilmiştir.
 
 ## 🎯 Modüler Mimari Avantajları
 
@@ -193,7 +193,7 @@ const currentPage = GlobalVars.currentPage
 
 ### Ana Dosya Entegrasyonu
 
-Ana dosya (`api-panel.js`) tüm modülleri import eder ve global değişkenleri window objesine ekler:
+Ana dosya (`panel.js`) tüm modülleri import eder ve global değişkenleri window objesine ekler:
 
 ```javascript
 import { GlobalVars } from './modules/global-variables.js'

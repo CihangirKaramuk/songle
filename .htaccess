@@ -1,0 +1,28 @@
+# Tüm klasörlerde listeleme yasak
+Options -Indexes
+
+# Ana sayfa yönlendirmesi
+DirectoryIndex index.html
+
+# Rewrite engine'i aktif et
+RewriteEngine On
+
+# Ana sayfa için songle klasörüne yönlendir
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^$ songle/ [L]
+
+# Admin klasörü için login.html'e yönlendir
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^admin/?$ admin/login.html [L]
+
+# Backend klasörü için oyuna yönlendir
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^songle-backend/?$ songle/ [L]
+
+# Eğer dosya yoksa 404 hatası ver
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^.*$ - [R=404,L]
