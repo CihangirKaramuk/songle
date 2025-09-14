@@ -1725,7 +1725,7 @@ body.error {
 
   /* Mobil için soru sayısı göstergesi */
   .soru-sayisi-container {
-    top: -35px; /* Biraz daha aşağı kaydır */
+    top: -15px; /* Daha aşağı kaydır */
   }
 
   .soru-sayisi-text {
@@ -1740,13 +1740,13 @@ body.error {
     font-size: 14px; /* Daha küçük font */
     padding: 6px 14px; /* Daha küçük padding */
     border-radius: 20px; /* Daha küçük border radius */
-    top: 18px; /* Biraz daha aşağı indir */
+    top: 35px; /* Daha aşağı kaydır */
     letter-spacing: 0.2px; /* Daha az letter spacing */
   }
 
   /* Mobil için kategori başlığı */
   .oyun-baslik {
-    top: -100px; /* Daha aşağı kaydır - soru sayısına yakın */
+    top: -80px; /* Daha aşağı kaydır - soru sayısına yakın */
     font-size: 14px; /* Daha küçük font */
     padding: 6px 16px; /* Daha küçük padding */
     border-radius: 20px; /* Daha küçük border radius */
@@ -2201,7 +2201,7 @@ body.error {
 
   /* Çok küçük ekranlar için göstergeleri daha da yakınlaştır */
   .soru-sayisi-container {
-    top: -25px; /* Çok küçük ekranlarda daha da aşağı */
+    top: -5px; /* Çok küçük ekranlarda daha da aşağı kaydır */
   }
 
   .soru-sayisi-text {
@@ -2212,7 +2212,7 @@ body.error {
   }
 
   .zaman-sayaci {
-    top: 22px; /* Çok küçük ekranlarda daha da aşağı */
+    top: 40px; /* Çok küçük ekranlarda daha da aşağı kaydır */
     font-size: 12px; /* Çok küçük ekranlarda daha da küçük */
     padding: 5px 10px; /* Çok küçük ekranlarda daha da küçük padding */
     border-radius: 16px; /* Çok küçük ekranlarda daha da küçük border radius */
@@ -2221,7 +2221,7 @@ body.error {
 
   /* Çok küçük ekranlar için kategori başlığı */
   .oyun-baslik {
-    top: -85px; /* Çok küçük ekranlarda daha da aşağı - soru sayısına yakın */
+    top: -65px; /* Çok küçük ekranlarda daha da aşağı kaydır */
     font-size: 12px; /* Çok küçük ekranlarda daha da küçük */
     padding: 5px 12px; /* Çok küçük ekranlarda daha da küçük padding */
     border-radius: 16px; /* Çok küçük ekranlarda daha da küçük border radius */
