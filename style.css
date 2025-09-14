@@ -1152,13 +1152,22 @@ body.error {
 
 @media (max-width: 600px) {
   .dizi-alt-kategoriler {
-    flex-direction: column;
-    gap: 14px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    max-width: 300px;
+    margin: 20px auto 18px auto;
   }
   .dizi-alt-kategori-card {
-    padding: 19px 0;
-    font-size: 17px;
+    padding: 14px 8px;
+    font-size: 16px;
     min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 
@@ -1199,13 +1208,22 @@ body.error {
 
 @media (max-width: 600px) {
   .dizi-alt-kategoriler {
-    flex-direction: column;
-    gap: 16px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    max-width: 300px;
+    margin: 20px auto 18px auto;
   }
   .dizi-alt-kategori-card {
-    padding: 14px 0;
+    padding: 14px 8px;
     font-size: 16px;
     min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 
@@ -1273,13 +1291,22 @@ body.error {
 
 @media (max-width: 600px) {
   .film-alt-kategoriler {
-    flex-direction: column;
-    gap: 16px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    max-width: 300px;
+    margin: 20px auto 18px auto;
   }
   .film-alt-kategori-card {
-    padding: 14px 0;
+    padding: 14px 8px;
     font-size: 16px;
     min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 
@@ -1329,13 +1356,22 @@ body.error {
 }
 @media (max-width: 600px) {
   .alt-kategoriler {
-    flex-direction: column;
-    gap: 13px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    max-width: 300px;
+    margin: 20px auto 18px auto;
   }
   .alt-kategori-card {
-    padding: 14px 0;
+    padding: 14px 8px;
     font-size: 16px;
     min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 
