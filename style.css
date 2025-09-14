@@ -323,6 +323,20 @@ body {
   display: block;
   margin: 0; /* margin handled by wrapper */
   transition: filter 0.3s linear;
+  /* Smooth blur rendering */
+  -webkit-filter: blur(20px);
+  /* GPU acceleration */
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  /* Smooth image rendering */
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  /* Anti-aliasing */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Performance hint */
+  will-change: filter;
+  -webkit-will-change: filter;
 }
 
 /* Çerçeve (şarkı kutusu için) */
@@ -1721,6 +1735,22 @@ body.error {
     flex-shrink: 0;
   }
 
+  /* Mobil için album cover blur optimizasyonu */
+  .album-cover {
+    filter: blur(20px);
+    /* Mobilde daha smooth blur için */
+    -webkit-filter: blur(20px);
+    /* GPU acceleration */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    /* Smooth rendering */
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+    /* Anti-aliasing */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
   .puan-deger {
     font-size: 32px;
     margin-right: 8px;
@@ -2078,5 +2108,17 @@ body.error {
     min-width: 55px;
     padding: 6px 10px;
     font-size: 12px;
+  }
+
+  /* Çok küçük ekranlar için album cover blur optimizasyonu */
+  .album-cover {
+    filter: blur(18px);
+    -webkit-filter: blur(18px);
+    /* Daha az blur ama daha smooth */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    /* Performance optimizasyonu */
+    will-change: filter;
+    -webkit-will-change: filter;
   }
 }
