@@ -515,6 +515,9 @@ document
     document.querySelector('.game-screen').style.display = 'block'
     document.getElementById('geriBtn').style.display = 'block'
 
+    // History'ye oyun state'i ekle ki geri buton çalışsın
+    history.pushState({ gameActive: true }, '', window.location.pathname)
+
     // Input'u otomatik seçili yap
     setTimeout(() => {
       document.querySelector('.tahmin-input').focus()
@@ -1087,6 +1090,29 @@ document.addEventListener('keydown', function (e) {
       showExitWarningModal()
     }
     // ESC ile modalı kapatma özelliği kaldırıldı
+  }
+})
+
+// Tarayıcı geri butonuna basıldığında modal göster
+window.addEventListener('popstate', function (e) {
+  // Oyun ekranı görünürse ve modal açık değilse
+  const gameScreen = document.querySelector('.game-screen')
+  const exitModal = document.getElementById('exitWarningModal')
+
+  if (
+    gameScreen &&
+    gameScreen.style.display !== 'none' &&
+    exitModal &&
+    !exitModal.classList.contains('show')
+  ) {
+    // Tarayıcının geri gitmesini engelle
+    e.preventDefault()
+
+    // Modal göster
+    showExitWarningModal()
+
+    // History'ye tekrar ekle ki geri buton çalışmaya devam etsin
+    history.pushState(null, null, window.location.pathname)
   }
 })
 
