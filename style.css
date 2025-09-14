@@ -1692,20 +1692,33 @@ body.error {
 
   /* Mobil için tahmin container */
   .tahmin-container {
-    flex-direction: column;
-    gap: 12px;
+    flex-direction: row;
+    gap: 8px;
     margin: 20px 0 10px 0;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: nowrap;
   }
 
   .tahmin-input {
-    max-width: 280px;
+    max-width: 180px;
     width: 100%;
+    flex: 1;
+    min-width: 0;
   }
 
   .pas-btn {
-    min-width: 70px;
-    padding: 8px 16px;
-    font-size: 14px;
+    min-width: 50px;
+    padding: 8px 12px;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+
+  .tahmin-gonder {
+    min-width: 60px;
+    padding: 8px 12px;
+    font-size: 13px;
+    flex-shrink: 0;
   }
 
   .puan-deger {
@@ -2042,5 +2055,28 @@ body.error {
     max-width: 160px;
     padding: 10px 20px;
     font-size: 14px;
+  }
+
+  /* Çok küçük ekranlar için tahmin container */
+  .tahmin-container {
+    gap: 6px;
+    margin: 16px 0 8px 0;
+  }
+
+  .tahmin-input {
+    max-width: 150px;
+    font-size: 14px;
+  }
+
+  .pas-btn {
+    min-width: 45px;
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
+  .tahmin-gonder {
+    min-width: 55px;
+    padding: 6px 10px;
+    font-size: 12px;
   }
 }
