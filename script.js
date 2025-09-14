@@ -530,16 +530,54 @@ function showExitWarningModal() {
   const modal = document.getElementById('exitWarningModal')
   modal.classList.add('show')
   document.body.style.overflow = 'hidden' // Sayfa scroll'unu engelle
+
+  // Oyun kontrollerini kilitle
+  lockGameControls()
 }
 
 function hideExitWarningModal() {
   const modal = document.getElementById('exitWarningModal')
   modal.classList.remove('show')
   document.body.style.overflow = '' // Sayfa scroll'unu geri aç
+
+  // Oyun kontrollerini geri aç
+  unlockGameControls()
+}
+
+// Oyun kontrollerini kilitleme fonksiyonları
+function lockGameControls() {
+  const guessInput = document.querySelector('.tahmin-input')
+  const guessBtn = document.querySelector('.tahmin-gonder')
+  const replayBtn = document.querySelector('.replay-btn')
+  const pasBtn = document.getElementById('pasBtn')
+
+  if (guessInput) {
+    guessInput.disabled = true
+    guessInput.blur() // Focus'u kaldır
+  }
+  if (guessBtn) guessBtn.disabled = true
+  if (replayBtn) replayBtn.disabled = true
+  if (pasBtn) pasBtn.disabled = true
+}
+
+function unlockGameControls() {
+  const guessInput = document.querySelector('.tahmin-input')
+  const guessBtn = document.querySelector('.tahmin-gonder')
+  const replayBtn = document.querySelector('.replay-btn')
+  const pasBtn = document.getElementById('pasBtn')
+
+  if (guessInput) {
+    guessInput.disabled = false
+    guessInput.focus() // Focus'u geri ver
+  }
+  if (guessBtn) guessBtn.disabled = false
+  if (replayBtn) replayBtn.disabled = false
+  if (pasBtn) pasBtn.disabled = false
 }
 
 function exitToMainMenu() {
-  hideExitWarningModal()
+  hideExitWarningModal() // Bu fonksiyon zaten unlockGameControls() çağırıyor
+
   document.querySelector('.container').style.display = 'flex'
   document.querySelector('.game-screen').style.display = 'none'
   document.getElementById('geriBtn').style.display = 'none'
