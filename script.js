@@ -1497,3 +1497,77 @@ style.innerHTML = `
   }
 `
 document.head.appendChild(style)
+
+// Mobil input viewport sorununu düzelt
+function setupMobileInputHandling() {
+  const tahminInput = document.querySelector('.tahmin-input')
+  if (!tahminInput) return
+
+  let originalViewportHeight = window.innerHeight
+  let isKeyboardOpen = false
+
+  // Input focus olduğunda
+  tahminInput.addEventListener('focus', function () {
+    if (isMobile()) {
+      isKeyboardOpen = true
+
+      // Hemen input'u pozisyonla (ilk tıklama için)
+      setTimeout(() => {
+        tahminInput.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }, 100)
+
+      // Klavye açılmasını bekle ve tekrar pozisyonla
+      setTimeout(() => {
+        const newHeight = window.innerHeight
+        // Eğer klavye açıldıysa (ekran küçüldüyse)
+        if (newHeight < originalViewportHeight * 0.8) {
+          // Input'u klavyenin hemen üstüne getir (daha az kaydır)
+          tahminInput.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+        }
+      }, 400)
+    }
+  })
+
+  // Input blur olduğunda
+  tahminInput.addEventListener('blur', function () {
+    if (isMobile()) {
+      isKeyboardOpen = false
+
+      // Klavye kapanmasını bekle
+      setTimeout(() => {
+        const currentHeight = window.innerHeight
+
+        // Eğer klavye kapandıysa (ekran büyüdüyse)
+        if (currentHeight > originalViewportHeight * 0.9) {
+          originalViewportHeight = currentHeight
+          // Sayfayı en üste kaydır
+          window.scrollTo({ top: 0, behavior: 'smooth' })
+        }
+      }, 300)
+    }
+  })
+
+  // Window resize olduğunda (klavye kapanma)
+  let resizeTimeout
+  window.addEventListener('resize', function () {
+    if (isMobile()) {
+      // Resize debounce
+      clearTimeout(resizeTimeout)
+      resizeTimeout = setTimeout(() => {
+        const currentHeight = window.innerHeight
+
+        if (!isKeyboardOpen && currentHeight > originalViewportHeight * 0.9) {
+          // Klavye kapandı, viewport'u güncelle
+          originalViewportHeight = currentHeight
+          // Sayfayı en üste kaydır
+          window.scrollTo({ top: 0, behavior: 'smooth' })
+        }
+      }, 100)
+    }
+  })
+}
+
+// Sayfa yüklendiğinde mobil input handling'i kur
+document.addEventListener('DOMContentLoaded', function () {
+  setupMobileInputHandling()
+})
