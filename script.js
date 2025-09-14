@@ -545,6 +545,9 @@ function hideExitWarningModal() {
 
   // Oyun kontrollerini geri aç
   unlockGameControls()
+
+  // History state'ini yenile ki bir sonraki geri buton basışında da modal çıksın
+  history.replaceState({ gameActive: true }, '', window.location.pathname)
 }
 
 // Oyun kontrollerini kilitleme fonksiyonları
@@ -1111,8 +1114,8 @@ window.addEventListener('popstate', function (e) {
     // Modal göster
     showExitWarningModal()
 
-    // History'ye tekrar ekle ki geri buton çalışmaya devam etsin
-    history.pushState(null, null, window.location.pathname)
+    // History'ye oyun state'ini tekrar ekle ki geri buton çalışmaya devam etsin
+    history.pushState({ gameActive: true }, '', window.location.pathname)
   }
 })
 
