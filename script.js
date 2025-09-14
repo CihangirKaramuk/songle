@@ -525,8 +525,21 @@ document
     if (pasBtn) pasBtn.disabled = false
   })
 
-const geriBtn = document.getElementById('geriBtn')
-geriBtn.addEventListener('click', function () {
+// Modal fonksiyonları
+function showExitWarningModal() {
+  const modal = document.getElementById('exitWarningModal')
+  modal.classList.add('show')
+  document.body.style.overflow = 'hidden' // Sayfa scroll'unu engelle
+}
+
+function hideExitWarningModal() {
+  const modal = document.getElementById('exitWarningModal')
+  modal.classList.remove('show')
+  document.body.style.overflow = '' // Sayfa scroll'unu geri aç
+}
+
+function exitToMainMenu() {
+  hideExitWarningModal()
   document.querySelector('.container').style.display = 'flex'
   document.querySelector('.game-screen').style.display = 'none'
   document.getElementById('geriBtn').style.display = 'none'
@@ -558,6 +571,11 @@ geriBtn.addEventListener('click', function () {
   audioPlayer.load() // Audio'yu yeniden yükle
 
   if (window.durdurCalmaAnimasyonu) durdurCalmaAnimasyonu()
+}
+
+const geriBtn = document.getElementById('geriBtn')
+geriBtn.addEventListener('click', function () {
+  showExitWarningModal()
 })
 
 function rastgeleSoruIndex() {
@@ -1015,11 +1033,22 @@ document
     }
   })
 
+// ESC tuşu event listener'ı - daha güvenli
 document.addEventListener('keydown', function (e) {
   if (e.key === 'Escape') {
-    if (geriBtn && geriBtn.style.display !== 'none') {
-      geriBtn.click()
+    // Oyun ekranı görünürse ve modal açık değilse
+    const gameScreen = document.querySelector('.game-screen')
+    const exitModal = document.getElementById('exitWarningModal')
+
+    if (
+      gameScreen &&
+      gameScreen.style.display !== 'none' &&
+      exitModal &&
+      !exitModal.classList.contains('show')
+    ) {
+      showExitWarningModal()
     }
+    // ESC ile modalı kapatma özelliği kaldırıldı
   }
 })
 
@@ -1346,6 +1375,32 @@ if (isMobile()) {
     }, 1100)
   })
 }
+
+// Modal butonları için event listener'lar
+document.addEventListener('DOMContentLoaded', function () {
+  const exitWarningModal = document.getElementById('exitWarningModal')
+  const cancelBtn = exitWarningModal.querySelector('.exit-cancel-btn')
+  const confirmBtn = exitWarningModal.querySelector('.exit-confirm-btn')
+
+  // İptal butonu - modalı kapat
+  cancelBtn.addEventListener('click', function () {
+    hideExitWarningModal()
+  })
+
+  // Onay butonu - ana menüye dön
+  confirmBtn.addEventListener('click', function () {
+    exitToMainMenu()
+  })
+
+  // Modal dışına tıklayınca kapatma - oyuna devam et
+  exitWarningModal.addEventListener('click', function (e) {
+    if (e.target === exitWarningModal) {
+      hideExitWarningModal() // Modal dışına tıklayınca kapanır ve oyuna devam eder
+    }
+  })
+
+  // ESC tuşu ile modalı kapat - yukarıda genel ESC handler var
+})
 
 // Add user-select none to song box to prevent text selection
 const style = document.createElement('style')
