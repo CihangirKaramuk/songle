@@ -312,6 +312,20 @@ body {
   pointer-events: none;
   user-select: none;
   transition: none;
+  /* Mobil blur optimizasyonu */
+  -webkit-filter: blur(6px);
+  /* GPU acceleration */
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  /* Smooth rendering */
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  /* Anti-aliasing */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Performance hint */
+  will-change: filter;
+  -webkit-will-change: filter;
 }
 
 .album-cover {
@@ -1774,6 +1788,22 @@ body.error {
     -moz-osx-font-smoothing: grayscale;
   }
 
+  /* Mobil için şarkı kutusu blur optimizasyonu */
+  .sarki-kutusu.blurred {
+    filter: blur(6px);
+    /* Mobilde daha smooth blur için */
+    -webkit-filter: blur(6px);
+    /* GPU acceleration */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    /* Smooth rendering */
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+    /* Anti-aliasing */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
   .puan-deger {
     font-size: 32px;
     margin-right: 8px;
@@ -2176,6 +2206,18 @@ body.error {
     filter: blur(18px);
     -webkit-filter: blur(18px);
     /* Daha az blur ama daha smooth */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    /* Performance optimizasyonu */
+    will-change: filter;
+    -webkit-will-change: filter;
+  }
+
+  /* Çok küçük ekranlar için şarkı kutusu blur optimizasyonu */
+  .sarki-kutusu.blurred {
+    filter: blur(5px);
+    -webkit-filter: blur(5px);
+    /* Çok küçük ekranlarda daha az blur ama daha smooth */
     transform: translateZ(0);
     -webkit-transform: translateZ(0);
     /* Performance optimizasyonu */
