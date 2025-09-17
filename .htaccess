@@ -26,3 +26,7 @@ RewriteRule ^songle-backend/?$ songle/ [L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^.*$ - [R=404,L]
+
+# Yönlendir
+RewriteCond %{HTTP_HOST} ^www\.songle\.app$ [NC]
+RewriteRule ^(.*)$ https://songle.app/$1 [L,R=301]
