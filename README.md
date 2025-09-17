@@ -1,137 +1,137 @@
 # Songle 🎵
 
-A music guessing game inspired by Wordle, where players listen to song clips and try to guess the song title. Built with vanilla JavaScript, HTML, and CSS.
+Wordle'dan ilham alınan müzik tahmin oyunu. Oyuncular şarkı kliplerini dinleyerek şarkı adını tahmin etmeye çalışır. Vanilla JavaScript, HTML ve CSS ile geliştirilmiştir.
 
-## 🎮 About
+## 🎮 Hakkında
 
-Songle is an interactive web-based music guessing game that challenges players to identify songs from short audio clips. The game features various music categories including Turkish and foreign songs, as well as music from TV series and movies.
+Songle, oyuncuları kısa ses kliplerinden şarkıları tanımlamaya zorlayan interaktif web tabanlı bir müzik tahmin oyunudur. Oyun, Türkçe ve yabancı şarkıların yanı sıra dizi ve film müzikleri de dahil olmak üzere çeşitli müzik kategorileri içerir.
 
-**"Şarkıyı tahmin et. Atmosferi hisset."** _(Guess the song. Feel the atmosphere.)_
+**"Şarkıyı tahmin et. Atmosferi hisset."**
 
-## ✨ Features
+## ✨ Özellikler
 
-### 🎵 Game Features
+### 🎵 Oyun Özellikleri
 
-- **Dynamic Categories**: Fully customizable categories and subcategories via admin panel
-- **20 Questions Per Game**: Each game consists of 20 questions for extended gameplay
-- **30-second Timer**: Each round has a time limit for added challenge
-- **Album Cover Hints**: Visual clues with album artwork that gradually becomes clear
-- **Smart Answer Matching**: Advanced fuzzy string matching for song titles with 75% similarity threshold
-- **Score Tracking**: Real-time score calculation based on remaining time
-- **Pass Feature**: Skip difficult questions with Tab key or pass button
-- **Detailed Results**: Comprehensive game statistics and question breakdown
-- **Volume Control**: Persistent volume settings with localStorage
-- **Mobile Optimized**: Touch-friendly controls and responsive design
+- **Dinamik Kategoriler**: Admin paneli üzerinden tamamen özelleştirilebilir kategoriler ve alt kategoriler
+- **Oyun Başına 20 Soru**: Her oyun genişletilmiş oynanış için 20 sorudan oluşur
+- **30 Saniyelik Zamanlayıcı**: Her tur için ek zorluk için zaman sınırı
+- **Albüm Kapağı İpuçları**: Giderek netleşen albüm sanat eseri ile görsel ipuçları
+- **Akıllı Cevap Eşleştirme**: %75 benzerlik eşiği ile şarkı başlıkları için gelişmiş bulanık string eşleştirme
+- **Puan Takibi**: Kalan zamana dayalı gerçek zamanlı puan hesaplama
+- **Pas Özelliği**: Tab tuşu veya pas butonu ile zor soruları atlama
+- **Detaylı Sonuçlar**: Kapsamlı oyun istatistikleri ve soru analizi
+- **Ses Kontrolü**: localStorage ile kalıcı ses ayarları
+- **Mobil Optimizasyon**: Dokunmatik kontroller ve duyarlı tasarım
 
-### 🎨 User Interface
+### 🎨 Kullanıcı Arayüzü
 
-- **Modern Design**: Clean, neumorphic UI with smooth animations and transitions
-- **Responsive Layout**: Works perfectly on desktop, tablet, and mobile devices
-- **Turkish Language**: Fully localized interface with proper Turkish character support
-- **Music Visualizer**: Animated music note during playback with progress bar
-- **Dynamic Category Selection**: Real-time category loading from database
-- **Theme Support**: Light and Dark mode with automatic switching
-- **Accessibility**: Keyboard navigation support (Enter, Tab, Escape keys)
+- **Modern Tasarım**: Yumuşak animasyonlar ve geçişlerle temiz, neumorfik UI
+- **Duyarlı Düzen**: Masaüstü, tablet ve mobil cihazlarda mükemmel çalışır
+- **Türkçe Dil Desteği**: Uygun Türkçe karakter desteği ile tamamen yerelleştirilmiş arayüz
+- **Müzik Görselleştirici**: Oynatma sırasında ilerleme çubuğu ile animasyonlu müzik notası
+- **Dinamik Kategori Seçimi**: Veritabanından gerçek zamanlı kategori yükleme
+- **Tema Desteği**: Otomatik geçiş ile Açık ve Koyu mod
+- **Erişilebilirlik**: Klavye navigasyon desteği (Enter, Tab, Escape tuşları)
 
-### 🔧 Technical Features
+### 🔧 Teknik Özellikler
 
-- **Vanilla JavaScript**: No framework dependencies, pure ES6+ modules
-- **RESTful API**: Complete backend integration for all game data
-- **Modular Architecture**: Clean, maintainable code structure
-- **Real-time Updates**: Automatic category refresh every 10 seconds
-- **Audio Management**: MP3 file handling with error recovery
-- **Image Management**: Album cover storage with blur effects
-- **Deezer Integration**: Direct song search and download from Deezer API
-- **Comprehensive Logging**: Complete audit trail of all admin actions
-- **User Management**: Role-based access control with password security
+- **Vanilla JavaScript**: Framework bağımlılığı yok, saf ES6+ modülleri
+- **RESTful API**: Tüm oyun verileri için tam backend entegrasyonu
+- **Modüler Mimari**: Temiz, sürdürülebilir kod yapısı
+- **Gerçek Zamanlı Güncellemeler**: Her 10 saniyede bir otomatik kategori yenileme
+- **Ses Yönetimi**: Hata kurtarma ile MP3 dosya işleme
+- **Görsel Yönetimi**: Bulanık efektler ile albüm kapağı depolama
+- **Deezer Entegrasyonu**: Deezer API'den doğrudan şarkı arama ve indirme
+- **Kapsamlı Loglama**: Tüm admin işlemlerinin tam denetim izi
+- **Kullanıcı Yönetimi**: Şifre güvenliği ile rol tabanlı erişim kontrolü
 
-### 🛡️ Admin Panel Features
+### 🛡️ Admin Panel Özellikleri
 
-- **Complete Song Management**: Add, edit, delete songs with audio and cover files
-- **Dynamic Category Management**: Create and manage categories and subcategories
-- **Advanced User Management**: Add, edit, delete users with role-based permissions
-- **Comprehensive Operation Logs**: Complete audit trail with filtering and pagination
-- **File Management**: Secure upload and management of MP3 files and album covers
-- **Deezer Integration**: Search and download songs directly from Deezer
-- **Batch Operations**: Select and delete multiple songs or operation logs
-- **Settings Management**: Theme, pagination, and notification preferences
-- **System Monitoring**: Real-time statistics and system information
-- **Responsive Design**: Works seamlessly on all devices with modern UI
+- **Tam Şarkı Yönetimi**: Ses ve kapak dosyaları ile şarkı ekleme, düzenleme, silme
+- **Dinamik Kategori Yönetimi**: Kategoriler ve alt kategoriler oluşturma ve yönetme
+- **Gelişmiş Kullanıcı Yönetimi**: Rol tabanlı izinler ile kullanıcı ekleme, düzenleme, silme
+- **Kapsamlı İşlem Kayıtları**: Filtreleme ve sayfalama ile tam denetim izi
+- **Dosya Yönetimi**: MP3 dosyaları ve albüm kapaklarının güvenli yükleme ve yönetimi
+- **Deezer Entegrasyonu**: Doğrudan Deezer'dan şarkı arama ve indirme
+- **Toplu İşlemler**: Birden fazla şarkı veya işlem kaydını seçme ve silme
+- **Ayarlar Yönetimi**: Tema, sayfalama ve bildirim tercihleri
+- **Sistem İzleme**: Gerçek zamanlı istatistikler ve sistem bilgileri
+- **Duyarlı Tasarım**: Modern UI ile tüm cihazlarda sorunsuz çalışır
 
-## 🚀 Installation
+## 🚀 Kurulum
 
-### Prerequisites
+### Gereksinimler
 
-- XAMPP (or similar local server with PHP and MySQL)
-- Web browser with JavaScript enabled
-- PHP 7.4+ with MySQL support
+- XAMPP (veya PHP ve MySQL ile benzer yerel sunucu)
+- JavaScript etkin web tarayıcısı
+- MySQL desteği ile PHP 7.4+
 
-### Setup Instructions
+### Kurulum Adımları
 
-1. **Clone the repository**
+1. **Depoyu klonlayın**
 
    ```bash
    git clone https://github.com/yourusername/songle.git
    cd songle
    ```
 
-2. **Set up the backend**
+2. **Backend'i kurun**
 
-   - Place the project in your XAMPP `htdocs` folder
-   - Ensure the backend API is running at `https://songle.app/songle-backend/api`
-   - Import `songle-backend/songle.sql` to create the database
-   - Configure your database connection in `songle-backend/config/database.php`
+   - Projeyi XAMPP `htdocs` klasörüne yerleştirin
+   - Backend API'nin `https://songle.app/songle-backend/api` adresinde çalıştığından emin olun
+   - Veritabanını oluşturmak için `songle-backend/songle.sql` dosyasını import edin
+   - Veritabanı bağlantınızı `songle-backend/config/database.php` dosyasında yapılandırın
 
-3. **Add music files**
+3. **Müzik dosyalarını ekleyin**
 
-   - Place MP3 files in the `songs/` directory
-   - Add album cover images to the `kapaklar/` directory
-   - Update the database with song information via admin panel
+   - MP3 dosyalarını `songs/` dizinine yerleştirin
+   - Albüm kapak görsellerini `kapaklar/` dizinine ekleyin
+   - Admin paneli üzerinden veritabanını şarkı bilgileriyle güncelleyin
 
-4. **Start the server**
-   - Start XAMPP Apache and MySQL services
-   - Navigate to `https://songle.app` in your browser
-   - Access admin panel at `https://songle.app/admin/`
+4. **Sunucuyu başlatın**
+   - XAMPP Apache ve MySQL servislerini başlatın
+   - Tarayıcınızda `https://songle.app` adresine gidin
+   - Admin paneline `https://songle.app/admin/` adresinden erişin
 
-## 🎯 How to Play
+## 🎯 Nasıl Oynanır
 
-1. **Start the Game**
+1. **Oyunu Başlatın**
 
-   - Click "Oynamaya Başla" (Start Playing)
-   - Select a music category from the dropdown
-   - Choose a sub-category (Rock, Pop, Hip Hop, Mixed, etc.)
+   - "Oynamaya Başla" butonuna tıklayın
+   - Dropdown'dan bir müzik kategorisi seçin
+   - Alt kategori seçin (Rock, Pop, Hip Hop, Karışık, vb.)
 
-2. **Play the Game**
+2. **Oyunu Oynayın**
 
-   - Listen to the 30-second audio clip
-   - Type your guess in the input field
-   - Press Enter to submit or Tab to pass
-   - Use the replay button to hear the song again
+   - 30 saniyelik ses klibini dinleyin
+   - Tahmininizi giriş alanına yazın
+   - Göndermek için Enter'a basın veya geçmek için Tab'a basın
+   - Şarkıyı tekrar dinlemek için tekrar oynat butonunu kullanın
 
-3. **Score Points**
+3. **Puan Kazanın**
 
-   - Correct answers earn points based on remaining time
-   - 30 seconds = 30 points, 1 second = 1 point
-   - Pass difficult questions to continue playing
+   - Doğru cevaplar kalan zamana göre puan kazandırır
+   - 30 saniye = 30 puan, 1 saniye = 1 puan
+   - Zor soruları geçerek oynamaya devam edin
 
-4. **Complete the Game**
-   - Play through 20 questions
-   - View detailed results and statistics
-   - See which songs you got right, wrong, or passed
+4. **Oyunu Tamamlayın**
+   - 20 soru boyunca oynayın
+   - Detaylı sonuçları ve istatistikleri görüntüleyin
+   - Hangi şarkıları doğru, yanlış veya geçtiğinizi görün
 
-## 🔧 Configuration
+## 🔧 Yapılandırma
 
-### API Configuration
+### API Yapılandırması
 
-The game connects to a backend API for song management. Update the API base URL in `apiService.js`:
+Oyun şarkı yönetimi için bir backend API'ye bağlanır. `apiService.js` dosyasındaki API base URL'ini güncelleyin:
 
 ```javascript
 const API_BASE_URL = 'https://songle.app/songle-backend/api'
 ```
 
-### Database Configuration
+### Veritabanı Yapılandırması
 
-Update database settings in `songle-backend/config/database.php`:
+`songle-backend/config/database.php` dosyasındaki veritabanı ayarlarını güncelleyin:
 
 ```php
 $host = 'localhost'
@@ -140,177 +140,177 @@ $username = 'root'
 $password = ''
 ```
 
-### Categories
+### Kategoriler
 
-The game supports dynamic categories that can be managed through the admin panel:
+Oyun admin paneli üzerinden yönetilebilen dinamik kategorileri destekler:
 
-- **Türkçe** (Turkish): Rock, Pop, Hip Hop, Mixed, and custom subcategories
-- **Yabancı** (Foreign): Rock, Pop, Hip Hop, Mixed, and custom subcategories
-- **Dizi** (TV Series): Turkish, Foreign, and custom subcategories
-- **Film** (Movies): Turkish, Foreign, and custom subcategories
+- **Türkçe**: Rock, Pop, Hip Hop, Karışık ve özel alt kategoriler
+- **Yabancı**: Rock, Pop, Hip Hop, Karışık ve özel alt kategoriler
+- **Dizi**: Türkçe, Yabancı ve özel alt kategoriler
+- **Film**: Türkçe, Yabancı ve özel alt kategoriler
 
-Categories are loaded dynamically from the database and can be customized through the admin panel.
+Kategoriler veritabanından dinamik olarak yüklenir ve admin paneli üzerinden özelleştirilebilir.
 
-## 🛠️ Development
+## 🛠️ Geliştirme
 
-### Project Structure
+### Proje Yapısı
 
 ```
 songle/
-├── admin/                 # Admin panel files
-│   ├── modules/          # Modular JavaScript files
-│   ├── api-panel.html    # Main admin interface
-│   └── panel-style.css   # Admin panel styles
+├── admin/                 # Admin panel dosyaları
+│   ├── modules/          # Modüler JavaScript dosyaları
+│   ├── api-panel.html    # Ana admin arayüzü
+│   └── panel-style.css   # Admin panel stilleri
 ├── songle-backend/        # Backend API
-│   ├── api/              # API endpoints
-│   ├── config/           # Configuration files
-│   └── songle.sql        # Database schema
-├── songs/                 # MP3 audio files
-├── kapaklar/              # Album cover images
-├── script.js              # Main game logic
-├── apiService.js          # API communication
-└── style.css              # Game styles
+│   ├── api/              # API endpoint'leri
+│   ├── config/           # Yapılandırma dosyaları
+│   └── songle.sql        # Veritabanı şeması
+├── songs/                 # MP3 ses dosyaları
+├── kapaklar/              # Albüm kapak görselleri
+├── script.js              # Ana oyun mantığı
+├── apiService.js          # API iletişimi
+└── style.css              # Oyun stilleri
 ```
 
-### Adding New Songs
+### Yeni Şarkı Ekleme
 
-1. Upload MP3 files to the `songs/` directory
-2. Add album cover images to the `kapaklar/` directory
-3. Use the admin panel to add song metadata to the database
-4. Or use Deezer integration to search and download songs
+1. MP3 dosyalarını `songs/` dizinine yükleyin
+2. Albüm kapak görsellerini `kapaklar/` dizinine ekleyin
+3. Admin paneli kullanarak şarkı meta verilerini veritabanına ekleyin
+4. Veya Deezer entegrasyonunu kullanarak şarkı arayın ve indirin
 
 ### Admin Panel
 
-Access the admin panel at `https://songle.app/admin/` to:
+Admin paneline `https://songle.app/admin/` adresinden erişerek:
 
-- Add/edit/delete songs with audio and cover files
-- Manage categories and subcategories
-- Upload audio files and images
-- Monitor operation logs and system statistics
-- Manage authorized personnel with role-based access
-- Search and download songs from Deezer
+- Ses ve kapak dosyaları ile şarkı ekleme/düzenleme/silme
+- Kategoriler ve alt kategorileri yönetme
+- Ses dosyaları ve görselleri yükleme
+- İşlem kayıtlarını ve sistem istatistiklerini izleme
+- Rol tabanlı erişim ile yetkili personeli yönetme
+- Deezer'dan şarkı arama ve indirme
 
-### Modular Architecture
+### Modüler Mimari
 
-The admin panel uses a modular JavaScript architecture with ES6 modules:
+Admin paneli ES6 modülleri ile modüler JavaScript mimarisi kullanır:
 
-- **`global-variables.js`**: Centralized state management and global variables
-- **`settings.js`**: Operation logs, system settings, and user management
-- **`song-management.js`**: Complete song CRUD operations with batch operations
-- **`category-management.js`**: Dynamic category and subcategory management
-- **`deezer.js`**: Deezer API integration for song search and download
-- **`utils.js`**: Utility functions, toast messages, and common helpers
-- **`theme.js`**: Theme management with localStorage persistence
-- **`logout.js`**: Secure session management and logout functionality
+- **`global-variables.js`**: Merkezi durum yönetimi ve global değişkenler
+- **`settings.js`**: İşlem kayıtları, sistem ayarları ve kullanıcı yönetimi
+- **`song-management.js`**: Toplu işlemler ile tam şarkı CRUD operasyonları
+- **`category-management.js`**: Dinamik kategori ve alt kategori yönetimi
+- **`deezer.js`**: Şarkı arama ve indirme için Deezer API entegrasyonu
+- **`utils.js`**: Yardımcı fonksiyonlar, toast mesajları ve ortak yardımcılar
+- **`theme.js`**: localStorage kalıcılığı ile tema yönetimi
+- **`logout.js`**: Güvenli oturum yönetimi ve çıkış işlevselliği
 
-### Customization
+### Özelleştirme
 
-- Modify `style.css` for visual changes
-- Update game logic in `script.js`
-- Add new categories in the HTML structure
-- Customize admin panel in `admin/modules/`
+- Görsel değişiklikler için `style.css` dosyasını değiştirin
+- Oyun mantığını `script.js` dosyasında güncelleyin
+- HTML yapısında yeni kategoriler ekleyin
+- Admin panelini `admin/modules/` klasöründe özelleştirin
 
-## 🎵 Supported Audio Formats
+## 🎵 Desteklenen Ses Formatları
 
-- **Primary**: MP3 files
-- **Location**: `songs/` directory
-- **Naming**: Use descriptive filenames (e.g., `Artist-Song_Title.mp3`)
-- **Size**: Recommended under 10MB for optimal performance
+- **Ana Format**: MP3 dosyaları
+- **Konum**: `songs/` dizini
+- **İsimlendirme**: Açıklayıcı dosya adları kullanın (örn., `Sanatci-Sarki_Adi.mp3`)
+- **Boyut**: Optimal performans için 10MB'ın altında önerilir
 
-## 🖼️ Image Requirements
+## 🖼️ Görsel Gereksinimleri
 
 - **Format**: JPG/PNG
-- **Location**: `kapaklar/` directory
-- **Naming**: `song_[ID].jpg` format
-- **Size**: Recommended 300x300px or larger
-- **Quality**: High quality for better visual experience
+- **Konum**: `kapaklar/` dizini
+- **İsimlendirme**: `song_[ID].jpg` formatı
+- **Boyut**: 300x300px veya daha büyük önerilir
+- **Kalite**: Daha iyi görsel deneyim için yüksek kalite
 
-## 🌐 Browser Compatibility
+## 🌐 Tarayıcı Uyumluluğu
 
-- Chrome (recommended)
+- Chrome (önerilen)
 - Firefox
 - Safari
 - Edge
-- Mobile browsers
+- Mobil tarayıcılar
 
-## 📱 Mobile Support
+## 📱 Mobil Desteği
 
-The game is fully responsive and optimized for mobile devices with touch-friendly controls and adaptive layouts. The admin panel also works seamlessly on mobile devices.
+Oyun tamamen duyarlıdır ve dokunmatik kontroller ve uyarlanabilir düzenlerle mobil cihazlar için optimize edilmiştir. Admin paneli de mobil cihazlarda sorunsuz çalışır.
 
-## 🔐 Security Features
+## 🔐 Güvenlik Özellikleri
 
-- **Session Management**: Secure admin authentication
-- **Role-based Access**: Different permission levels for users
-- **Operation Logging**: Complete audit trail of all actions
-- **Input Validation**: XSS and SQL injection protection
-- **File Upload Security**: Secure file handling and validation
+- **Oturum Yönetimi**: Güvenli admin kimlik doğrulama
+- **Rol Tabanlı Erişim**: Kullanıcılar için farklı izin seviyeleri
+- **İşlem Loglama**: Tüm işlemlerin tam denetim izi
+- **Girdi Doğrulama**: XSS ve SQL injection koruması
+- **Dosya Yükleme Güvenliği**: Güvenli dosya işleme ve doğrulama
 
-## 📊 Monitoring & Logging
+## 📊 İzleme ve Loglama
 
-- **Operation Logs**: Track all admin actions with timestamps
-- **User Activity**: Monitor user login/logout and actions
-- **System Statistics**: View game usage and performance metrics
-- **Error Logging**: Comprehensive error tracking and reporting
+- **İşlem Kayıtları**: Zaman damgaları ile tüm admin işlemlerini takip edin
+- **Kullanıcı Aktivitesi**: Kullanıcı giriş/çıkış ve işlemlerini izleyin
+- **Sistem İstatistikleri**: Oyun kullanımı ve performans metriklerini görüntüleyin
+- **Hata Loglama**: Kapsamlı hata takibi ve raporlama
 
-## 🤝 Contributing
+## 🤝 Katkıda Bulunma
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+1. Depoyu fork edin
+2. Bir özellik dalı oluşturun (`git checkout -b feature/harika-ozellik`)
+3. Değişikliklerinizi commit edin (`git commit -m 'Harika özellik ekle'`)
+4. Dalı push edin (`git push origin feature/harika-ozellik`)
+5. Pull Request açın
 
-## 📄 License
+## 📄 Lisans
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+Bu proje MIT Lisansı altında lisanslanmıştır - detaylar için LICENSE dosyasına bakın.
 
-## 🙏 Acknowledgments
+## 🙏 Teşekkürler
 
-- Inspired by Wordle's guessing game concept
-- Built with vanilla web technologies
-- Turkish music community for song suggestions
-- Deezer for music API integration
+- Wordle'ın tahmin oyunu konseptinden ilham alınmıştır
+- Vanilla web teknolojileri ile geliştirilmiştir
+- Şarkı önerileri için Türk müzik topluluğu
+- Müzik API entegrasyonu için Deezer
 
-## 📞 Support
+## 📞 Destek
 
-For questions, issues, or contributions, please open an issue on GitHub or contact the development team.
+Sorular, sorunlar veya katkılar için lütfen GitHub'da bir issue açın veya geliştirme ekibiyle iletişime geçin.
 
-## 🔄 Recent Updates
+## 🔄 Son Güncellemeler
 
-### v2.1.0 - Enhanced Game Experience
+### v2.1.0 - Gelişmiş Oyun Deneyimi
 
-- **20 Questions Per Game**: Extended gameplay with comprehensive scoring
-- **Pass Feature**: Skip difficult questions with Tab key or pass button
-- **Detailed Results**: Complete game statistics and question breakdown
-- **Volume Control**: Persistent volume settings with localStorage
-- **Mobile Optimization**: Enhanced touch controls and responsive design
-- **Dynamic Categories**: Real-time category loading from database
-- **Advanced Scoring**: Time-based scoring system with visual feedback
+- **Oyun Başına 20 Soru**: Kapsamlı puanlama ile genişletilmiş oynanış
+- **Pas Özelliği**: Tab tuşu veya pas butonu ile zor soruları atlama
+- **Detaylı Sonuçlar**: Tam oyun istatistikleri ve soru analizi
+- **Ses Kontrolü**: localStorage ile kalıcı ses ayarları
+- **Mobil Optimizasyon**: Gelişmiş dokunmatik kontroller ve duyarlı tasarım
+- **Dinamik Kategoriler**: Veritabanından gerçek zamanlı kategori yükleme
+- **Gelişmiş Puanlama**: Görsel geri bildirim ile zaman tabanlı puanlama sistemi
 
-### v2.0.0 - Major Admin Panel Update
+### v2.0.0 - Büyük Admin Panel Güncellemesi
 
-- Complete modular JavaScript architecture with ES6 modules
-- Comprehensive operation logging system with filtering and pagination
-- Enhanced user management with role-based access and password security
-- Deezer integration for song search and download
-- Batch operations for songs and operation logs
-- Improved UI/UX with theme support and modern design
-- Better error handling and validation throughout
+- ES6 modülleri ile tam modüler JavaScript mimarisi
+- Filtreleme ve sayfalama ile kapsamlı işlem loglama sistemi
+- Rol tabanlı erişim ve şifre güvenliği ile gelişmiş kullanıcı yönetimi
+- Şarkı arama ve indirme için Deezer entegrasyonu
+- Şarkılar ve işlem kayıtları için toplu işlemler
+- Tema desteği ve modern tasarım ile geliştirilmiş UI/UX
+- Genel olarak daha iyi hata yönetimi ve doğrulama
 
-### v1.5.0 - Operation Logs
+### v1.5.0 - İşlem Kayıtları
 
-- Added comprehensive logging for all admin actions
-- User activity tracking with detailed audit trails
-- Advanced filtering and pagination for operation logs
-- System monitoring and statistics dashboard
+- Tüm admin işlemleri için kapsamlı loglama eklendi
+- Detaylı denetim izleri ile kullanıcı aktivite takibi
+- İşlem kayıtları için gelişmiş filtreleme ve sayfalama
+- Sistem izleme ve istatistik paneli
 
-### v1.0.0 - Initial Release
+### v1.0.0 - İlk Sürüm
 
-- Core game functionality with 30-second timer
-- Basic admin panel with song management
-- Category and subcategory management
-- Album cover hints and visual feedback
+- 30 saniyelik zamanlayıcı ile temel oyun işlevselliği
+- Şarkı yönetimi ile temel admin paneli
+- Kategori ve alt kategori yönetimi
+- Albüm kapağı ipuçları ve görsel geri bildirim
 
 ---
 
-**Enjoy playing Songle! 🎵✨**
+**Songle'ı oynamanın keyfini çıkarın! 🎵✨**
